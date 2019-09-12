@@ -26,3 +26,4 @@ hs_err_pid*
 application.properties
 .idea
 .mvn
+target
