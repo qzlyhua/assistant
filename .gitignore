@@ -25,5 +25,5 @@ hs_err_pid*
 # 配置文件
 application.properties
 .idea
-.mvn
 target
+/.mvn/
