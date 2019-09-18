@@ -7,6 +7,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 public class WebController {
+    @RequestMapping(value = {"/login"})
+    public String login() {
+        return "login/login";
+    }
+
     @RequestMapping(value = {"/fwqd", "/"})
     public String admin() {
         return "admin/fwqd";

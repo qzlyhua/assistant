@@ -12,7 +12,7 @@
 		<section id="main">
 			<header>
 				<img th:src="@{assets/public/img/logo_.png}" width="100%;" style="max-width:100px;"/>
-				<br><h2>云端资源配置管理平台</h2>
+				<br><h2>身边医生云平台升级助手</h2>
 			</header>
 			<hr/>
 			<form method="post" th:action="@{/login}" style="padding-top:1em;" id="loginForm">
@@ -25,13 +25,14 @@
 				<div style="color:red; font-style: italic;"  th:if="${param.error}">用户名或密码错误</div>
 				<div style="color:red; font-style: italic;"  th:if="${param.logout}">您已注销成功</div>
 				<ul class="actions" style="padding-top:1em;">
-					<li><a href="javascript:;" onclick="document.getElementById('loginForm').submit();return false;" class="button" id="loginBtn">登&nbsp;&nbsp;录</a></li>
+					<li style="width:50%;float:left;"><a style="width:100%;" href="javascript:;" onclick="document.getElementById('loginForm').submit();return false;" class="button" id="loginBtn">账号登录</a></li>
+					<li style="width:50%;float:right;"><a style="width:100%;" href="javascript:;" onclick="return false;" class="button" id="loginByWechatBtn">微信登录</a></li>
 				</ul>
 			</form>
 		</section>
 		<footer id="footer">
 			<ul class="copyright">
-				<li>Copyright &copy; 2018 杭州身边医生信息技术有限公司 All Rights Reserved</li>
+				<li>Copyright &copy; 2019 杭州身边医生信息技术有限公司 All Rights Reserved</li>
 			</ul>
 		</footer>
 	</div>
