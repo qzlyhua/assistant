@@ -26,7 +26,7 @@
 				<div style="color:red; font-style: italic;"  th:if="${param.logout}">您已注销成功</div>
 				<ul class="actions" style="padding-top:1em;">
 					<li style="width:50%;float:left;"><a style="width:100%;" href="javascript:;" onclick="document.getElementById('loginForm').submit();return false;" class="button" id="loginBtn">账号登录</a></li>
-					<li style="width:50%;float:right;"><a style="width:100%;" href="javascript:;" onclick="return false;" class="button" id="loginByWechatBtn">微信登录</a></li>
+					<li style="width:50%;float:right;"><a style="width:100%;" th:href="${url}" class="button" id="loginByDingBtn">钉钉登录</a></li>
 				</ul>
 			</form>
 		</section>
@@ -36,6 +36,24 @@
 			</ul>
 		</footer>
 	</div>
+	<script src="https://g.alicdn.com/dingding/dinglogin/0.0.5/ddLogin.js"></script>
+	<script>
+		/*
+		* 解释一下goto参数，参考以下例子：
+		* var url = encodeURIComponent('http://localhost.me/index.php?test=1&aa=2');
+		* var goto = encodeURIComponent('https://oapi.dingtalk.com/connect/oauth2/sns_authorize?appid=appid&response_type=code&scope=snsapi_login&state=STATE&redirect_uri='+url)
+		*/
+		var url = encodeURIComponent('http://localhost:8888/');
+		var goto = encodeURIComponent('https://oapi.dingtalk.com/connect/oauth2/sns_authorize?appid=dingoachxhsrxcqlqtichv&response_type=code&scope=snsapi_login&state=STATE&redirect_uri='+url);
+
+		var obj = DDLogin({
+			id:"login_container",//这里需要你在自己的页面定义一个HTML标签并设置id，例如<div id="login_container"></div>或<span id="login_container"></span>
+			goto: goto, //请参考注释里的方式
+			style: "border:none;background-color:#FFFFFF;",
+			width : "365",
+			height: "400"
+		});
+	</script>
 	<script>
 		/*<![CDATA[*/
 		if ('addEventListener' in window) {
@@ -64,5 +82,6 @@
 		}, 200);
 		/*]]>*/
 	</script>
+
 </body>
 </html>

@@ -13,12 +13,14 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
+ * 简易内置用户
+ *
  * @author Yang Hua
  */
 @Component
 public class InMemoryAuthenticationProvider implements AuthenticationProvider {
     private final String adminName = "root";
-    private final String adminPassword = "rootPass！@#";
+    private final String adminPassword = "Na&kOSgpL@66";
 
     /**
      * 根用户拥有全部的权限
