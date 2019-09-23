@@ -1,6 +1,8 @@
 package com.shenbianys.assisant.controller.login;
 
-import org.springframework.beans.factory.annotation.Value;
+import com.shenbianys.assisant.config.DingDingLoginProperties;
+import com.shenbianys.assisant.config.security.dingding.DingLoginAuthenticationProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,19 +17,16 @@ import java.util.UUID;
  */
 @Controller
 public class WebLoginController {
-    @Value("${assisant.dingding.login.callback}")
-    private String callbackUrl;
-
-    @Value("${assisant.dingding.login.appid}")
-    private String appId;
+    @Autowired
+    DingDingLoginProperties dingDingLoginProperties;
 
     @RequestMapping(value = {"/login"})
     public String login(Model model) throws UnsupportedEncodingException {
-        String callback = URLEncoder.encode(callbackUrl, "utf-8");
-        String state = UUID.randomUUID().toString();
+        String callback = URLEncoder.encode(dingDingLoginProperties.getCallback(), "utf-8");
+        String state = DingLoginAuthenticationProvider.LOGIN_PREFIX + UUID.randomUUID();
         StringBuffer url = new StringBuffer();
         url.append("https://oapi.dingtalk.com/connect/qrconnect?appid=");
-        url.append(appId);
+        url.append(dingDingLoginProperties.getAppid());
         url.append("&response_type=code&scope=snsapi_login&state=");
         url.append(state);
         url.append("&redirect_uri=");
