@@ -1,4 +1,4 @@
-package com.shenbianys.assisant.controller;
+package com.shenbianys.assisant.controller.api;
 
 import com.alibaba.fastjson.JSONObject;
 import com.shenbianys.assisant.dto.FwqdCompareDTO;

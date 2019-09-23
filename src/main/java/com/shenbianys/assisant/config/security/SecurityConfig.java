@@ -24,6 +24,10 @@ import java.util.Arrays;
 @EnableWebSecurity
 @Slf4j
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+    public static final String ROLE_ADMIN = "ROLE_ADMIN";
+    public static final String ROLE_USER = "ROLE_USER";
+    public static final String ROLE_DING = "ROLE_DING";
+
     @Autowired
     InMemoryAuthenticationProvider inMemoryAuthenticationProvider;
 

@@ -26,8 +26,9 @@ public class InMemoryAuthenticationProvider implements AuthenticationProvider {
      * 根用户拥有全部的权限
      */
     private final List<GrantedAuthority> authorities = Arrays.asList(
-            new SimpleGrantedAuthority("ROLE_ADMIN"),
-            new SimpleGrantedAuthority("ROLE_USER")
+            new SimpleGrantedAuthority(SecurityConfig.ROLE_ADMIN),
+            new SimpleGrantedAuthority(SecurityConfig.ROLE_USER),
+            new SimpleGrantedAuthority(SecurityConfig.ROLE_DING)
     );
 
     @Override

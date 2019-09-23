@@ -3,6 +3,7 @@
     <ul>
         <li><a th:href="@{/}">服务清单</a></li>
         <li><a th:href="@{/bd}">表单清单</a></li>
+        <li th:if="${isAdmin}"><a th:href="@{/addUser}">钉钉授权</a></li>
         <li><a th:href="@{/logout}">注销登录</a></li>
     </ul>
 </nav>

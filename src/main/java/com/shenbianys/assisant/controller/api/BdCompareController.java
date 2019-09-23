@@ -1,4 +1,4 @@
-package com.shenbianys.assisant.controller;
+package com.shenbianys.assisant.controller.api;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;

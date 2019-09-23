@@ -1,5 +1,6 @@
 package com.shenbianys.assisant.config.security.dingding;
 
+import com.shenbianys.assisant.config.security.SecurityConfig;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.Authentication;
@@ -37,7 +38,8 @@ public class DingLoginAuthenticationProcessingFilter extends AbstractAuthenticat
      * 钉钉登录用户拥有 ROLE_DING 权限
      */
     private final List<GrantedAuthority> authorities = Arrays.asList(
-            new SimpleGrantedAuthority("ROLE_DING")
+            new SimpleGrantedAuthority(SecurityConfig.ROLE_DING),
+            new SimpleGrantedAuthority(SecurityConfig.ROLE_USER)
     );
 
     protected String obtainCode(HttpServletRequest request) {

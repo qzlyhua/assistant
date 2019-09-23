@@ -1,4 +1,4 @@
-package com.shenbianys.assisant.controller;
+package com.shenbianys.assisant.controller.api;
 
 import com.shenbianys.assisant.service.MongoService;
 import com.shenbianys.assisant.service.impl.MysqlServiceImpl;

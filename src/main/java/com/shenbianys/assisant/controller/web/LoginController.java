@@ -1,4 +1,4 @@
-package com.shenbianys.assisant.controller.login;
+package com.shenbianys.assisant.controller.web;
 
 import com.shenbianys.assisant.config.DingDingLoginProperties;
 import com.shenbianys.assisant.config.security.dingding.DingLoginAuthenticationProvider;
@@ -16,7 +16,7 @@ import java.util.UUID;
  * @author Yang Hua
  */
 @Controller
-public class WebLoginController {
+public class LoginController {
     @Autowired
     DingDingLoginProperties dingDingLoginProperties;
 
