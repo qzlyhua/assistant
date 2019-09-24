@@ -42,8 +42,29 @@ public class WebController {
      * @return
      */
     @RequestMapping(value = {"/", "/fwqd"})
-    public String admin(Model model) {
+    public String fwqd(Model model) {
         return "admin/fwqd";
     }
 
+    /**
+     * 功能授权
+     *
+     * @param model
+     * @return
+     */
+    @RequestMapping(value = {"/gnsq"})
+    public String gnsq(Model model) {
+        return "admin/gnsq";
+    }
+
+    /**
+     * 表单列表
+     *
+     * @param model
+     * @return
+     */
+    @RequestMapping(value = {"/bd"})
+    public String bd(Model model) {
+        return "admin/bd";
+    }
 }

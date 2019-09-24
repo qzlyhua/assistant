@@ -47,9 +47,8 @@ public class ControllerLogAop {
         }
         startTime.set(System.currentTimeMillis());
         HttpServletRequest request = sra.getRequest();
-        log.info("URL :{} ", request.getRequestURL().toString());
-        log.info("method :{} ", request.getMethod());
-        log.info("IP :{}", request.getRemoteAddr());
+        log.info("============================================================");
+        log.info("{} [{}] : {} ", request.getRemoteAddr(), request.getMethod(), request.getRequestURL().toString());
         log.info("ARGS :{} ", Arrays.toString(joinPoint.getArgs()));
     }
 
@@ -66,7 +65,7 @@ public class ControllerLogAop {
             log.warn("Cant serialize return Object as json string", e);
         }
 
-        log.info("HANDLE_TIME : {}", +(System.currentTimeMillis() - startTime.get()));
+        log.info("HANDLE_TIME : {} ms", +(System.currentTimeMillis() - startTime.get()));
         startTime.remove();
     }
 }
