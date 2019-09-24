@@ -1,6 +1,10 @@
 package com.shenbianys.assisant.controller.web;
 
+import com.shenbianys.assisant.config.properties.DingDingLoginProperties;
 import com.shenbianys.assisant.config.security.SecurityConfig;
+import com.shenbianys.assisant.config.security.dingding.DingLoginAuthenticationProvider;
+import com.shenbianys.assisant.util.DingDingUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -15,10 +19,20 @@ import java.util.Set;
  */
 @Controller
 public class WebController {
+    @Autowired
+    DingDingLoginProperties dingDingLoginProperties;
+
     @ModelAttribute
     public void addRoleInfo(Model model) {
         Set<String> roles = AuthorityUtils.authorityListToSet(SecurityContextHolder.getContext().getAuthentication().getAuthorities());
-        model.addAttribute("isAdmin", roles.contains(SecurityConfig.ROLE_ADMIN));
+        boolean isAdmin = roles.contains(SecurityConfig.ROLE_ADMIN);
+        model.addAttribute("isAdmin", isAdmin);
+
+        if (isAdmin) {
+            String state = DingLoginAuthenticationProvider.ADD_PREFIX;
+            String url = DingDingUtils.getUrl(dingDingLoginProperties, state);
+            model.addAttribute("url", url);
+        }
     }
 
     /**

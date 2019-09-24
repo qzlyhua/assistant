@@ -1,4 +1,4 @@
-package com.shenbianys.assisant.config;
+package com.shenbianys.assisant.config.properties;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

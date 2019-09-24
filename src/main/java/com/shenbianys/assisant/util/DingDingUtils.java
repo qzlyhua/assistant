@@ -1,13 +1,14 @@
 package com.shenbianys.assisant.util;
 
 import com.alibaba.fastjson.JSONObject;
-import com.shenbianys.assisant.config.DingDingLoginProperties;
+import com.shenbianys.assisant.config.properties.DingDingLoginProperties;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.client.RestTemplate;
 
+import java.net.URLEncoder;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -20,6 +21,22 @@ public class DingDingUtils {
      * 缓存的 AccessToken
      */
     private static AccessToken accessToken = new AccessToken();
+
+    public static String getUrl(DingDingLoginProperties dingDingLoginProperties, String state) {
+        try {
+            String callback = URLEncoder.encode(dingDingLoginProperties.getCallback(), "utf-8");
+            StringBuffer url = new StringBuffer();
+            url.append("https://oapi.dingtalk.com/connect/qrconnect?appid=");
+            url.append(dingDingLoginProperties.getAppid());
+            url.append("&response_type=code&scope=snsapi_login&state=");
+            url.append(state);
+            url.append("&redirect_uri=");
+            url.append(callback);
+            return url.toString();
+        } catch (Exception e) {
+            return "";
+        }
+    }
 
     /**
      * 根据钉钉扫码登录的回调code获取该用户的openid

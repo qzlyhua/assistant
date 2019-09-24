@@ -1,14 +1,19 @@
 package com.shenbianys.assisant.config.security.dingding;
 
-import com.shenbianys.assisant.config.DingDingLoginProperties;
+import com.shenbianys.assisant.config.properties.DingDingLoginProperties;
 import com.shenbianys.assisant.util.DingDingUtils;
+import com.shenbianys.assisant.util.EhcacheUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.Resource;
+import java.util.Set;
 
 /**
  * 钉钉用户认证
@@ -19,9 +24,13 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class DingLoginAuthenticationProvider implements AuthenticationProvider {
     public static final String LOGIN_PREFIX = "LOGIN-";
+    public static final String ADD_PREFIX = "ADD-b2d58e8f-3506-44af-90f4-c46fbabc308f";
 
     @Autowired
     DingDingLoginProperties dingDingLoginProperties;
+
+    @Resource
+    private CacheManager cacheManager;
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
@@ -42,7 +51,23 @@ public class DingLoginAuthenticationProvider implements AuthenticationProvider {
         log.info("钉钉扫码登录 code:{}，state:{}", code, state);
         if (state.startsWith(LOGIN_PREFIX)) {
             String openid = DingDingUtils.getOpenIdByCode(dingDingLoginProperties, code);
-            return dingDingLoginProperties.getAdminOpenid().equals(openid);
+            if (dingDingLoginProperties.getAdminOpenid().equals(openid)) {
+                return true;
+            } else {
+                Set<String> users = EhcacheUtils.getCacheUser(cacheManager);
+                for (String s : users) {
+                    if (s.equals(openid)) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        } else if (ADD_PREFIX.equals(state)) {
+            String openid = DingDingUtils.getOpenIdByCode(dingDingLoginProperties, code);
+            log.info("新增钉钉用户！openid：{}", openid);
+            // 添加openid
+            EhcacheUtils.addCacheUser(cacheManager, openid);
+            return true;
         } else {
             return false;
         }

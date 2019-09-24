@@ -48,7 +48,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable().authorizeRequests()
-                .antMatchers("/login", "/dinglogin", "/error/**", "/assets/**").permitAll().anyRequest().authenticated()
+                .antMatchers("/login", "/dinglogin", "/hello/**", "/error/**", "/assets/**")
+                .permitAll().anyRequest().authenticated()
                 .and().apply(new DingLoginConfigurer())
                 .and().formLogin().loginPage("/login").permitAll()
                 .and().logout().permitAll()
