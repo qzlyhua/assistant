@@ -67,4 +67,26 @@ public class WebController {
     public String bd(Model model) {
         return "admin/bd";
     }
+
+    /**
+     * 业务领域
+     *
+     * @param model
+     * @return
+     */
+    @RequestMapping(value = {"/ywly"})
+    public String ywly(Model model) {
+        return "admin/ywly";
+    }
+
+    /**
+     * 系统参数
+     *
+     * @param model
+     * @return
+     */
+    @RequestMapping(value = {"/xtcs"})
+    public String xtcs(Model model) {
+        return "admin/xtcs";
+    }
 }

@@ -62,7 +62,7 @@ public class ControllerLogAop {
         try {
             log.info("RESPONSE : {}", objectMapper.writeValueAsString(response));
         } catch (IOException e) {
-            log.warn("Cant serialize return Object as json string", e);
+            log.warn("Can't serialize return Object to json string", e);
         }
 
         log.info("HANDLE_TIME : {} ms", +(System.currentTimeMillis() - startTime.get()));

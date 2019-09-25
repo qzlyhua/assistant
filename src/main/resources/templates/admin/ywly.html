@@ -1,0 +1,42 @@
+<!DOCTYPE HTML>
+<html>
+<head th:replace="admin/fragments/head :: head"></head>
+<body>
+	<div id="wrapper">
+		<header id="header" th:replace="admin/fragments/header :: header"></header>
+		<nav th:replace="admin/fragments/nav :: nav"></nav>
+		<div id="main" style="min-height: 600px">
+			<div class="inner">
+				<h2>业务领域</h2>
+				<div class="table-wrapper">
+					<table>
+						<thead>
+							<tr>
+								<th style="text-align:center">#</th>
+								<th style="text-align:center">应用类型</th>
+								<th style="text-align:center">级别</th>
+								<th style="text-align:center">业务领域名称</th>
+								<th style="text-align:center">开发</th>
+								<th style="text-align:center">测试</th>
+								<th style="text-align:center">突击队</th>
+								<th style="text-align:center">生产</th>
+							</tr>
+						</thead>
+						<tbody id="data-table">
+						</tbody>
+					</table>
+				</div>
+				<ul class="actions">
+					<li><a id="btnRefresh" href="javascript:YwlyPage.refresh();" class="button">隐藏相同</a></li>
+				</ul>
+			</div>
+		</div>
+		<footer id="footer" th:replace="admin/fragments/footer :: footer"></footer>
+	</div>
+	<script th:src="@{/assets/common/js/jquery.min.js}"></script>
+	<script th:src="@{/assets/common/js/skel.min.js}"></script>
+	<script th:src="@{/assets/admin/js/main.js}"></script>
+	<script th:src="@{/assets/admin/js/util.js}"></script>
+	<script th:src="@{/assets/admin/js/ywly.js}"></script>
+</body>
+</html>
