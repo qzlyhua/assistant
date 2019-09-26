@@ -36,12 +36,23 @@ public class WebController {
     }
 
     /**
-     * 首页-服务清单
+     * 首页
      *
      * @param model
      * @return
      */
-    @RequestMapping(value = {"/", "/fwqd"})
+    @RequestMapping(value = {"/"})
+    public String index(Model model) {
+        return "admin/index";
+    }
+
+    /**
+     * 服务清单
+     *
+     * @param model
+     * @return
+     */
+    @RequestMapping(value = {"/fwqd"})
     public String fwqd(Model model) {
         return "admin/fwqd";
     }
