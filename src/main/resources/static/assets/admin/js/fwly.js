@@ -25,7 +25,7 @@ var FwlyPage = function() {
 						if (check == 2){
 							toastr.success("点【配置比较】查看结果");
 						} else if (check > 2){
-							toastr.error("只能选择两个用户域");
+							toastr.warning("只能选择两个用户域");
 						}
 					});
 				});
@@ -71,5 +71,6 @@ var FwlyPage = function() {
 
 jQuery(document).ready(function() {
 	FwlyPage.init();
+	toastr.options = {positionClass: "toast-top-center"};
 	toastr.info("选两个用户域进行比较");
 });
