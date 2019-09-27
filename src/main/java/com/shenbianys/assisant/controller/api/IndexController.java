@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 /**
  * @author Yang Hua
@@ -23,7 +24,7 @@ public class IndexController extends BaseController {
      */
     @RequestMapping("/xtgl")
     @ResponseBody
-    public List<Map<String, String>> xtgl() {
+    public List<Map<String, String>> xtgl() throws ExecutionException, InterruptedException {
         StringBuffer sql = new StringBuffer();
         sql.append("SELECT '业务领域' as xmmc, count(ywly.ywlybh) as count FROM fw_ywly ywly");
         sql.append(" UNION ALL ").append("SELECT '功能授权', count(gnsq.id) FROM sq_gnsq gnsq");

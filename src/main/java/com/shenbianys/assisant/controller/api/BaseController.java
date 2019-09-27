@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 /**
  * @author Yang Hua
@@ -22,16 +24,23 @@ public class BaseController {
     @Autowired
     private MongoService mongoService;
 
+    @Autowired
+    private AsyncTask asyncTask;
+
     protected List<Map<String, Object>> queryForList(String env, String sql) {
         return mysqlService.queryForList(env, sql);
     }
 
-    protected Map<String, List<Map<String, Object>>> queryForListFromAll(String sql) {
+    protected Map<String, List<Map<String, Object>>> queryForListFromAll(String sql) throws ExecutionException, InterruptedException {
         Map<String, List<Map<String, Object>>> res = new HashMap<>(4);
-        res.put("dev", queryForList("dev", sql));
-        res.put("test", queryForList("test", sql));
-        res.put("testtjd", queryForList("testtjd", sql));
-        res.put("pro", queryForList("pro", sql));
+        Future<List<Map<String, Object>>> dev =  asyncTask.getList("dev", sql);
+        Future<List<Map<String, Object>>> test =  asyncTask.getList("test", sql);
+        Future<List<Map<String, Object>>> testtjd =  asyncTask.getList("testtjd", sql);
+        Future<List<Map<String, Object>>> pro =  asyncTask.getList("pro", sql);
+        res.put("dev", dev.get());
+        res.put("test", test.get());
+        res.put("testtjd", testtjd.get());
+        res.put("pro", pro.get());
         return res;
     }
 

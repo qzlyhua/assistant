@@ -21,7 +21,8 @@ public class GnsqCompareController extends BaseController {
     @RequestMapping("/gnsq/{all}")
     @ResponseBody
     public List<Map<String, Object>> getGnsqInfo(@PathVariable String all) {
-        String sql = "SELECT UPPER(MD5(CONCAT(dm,mc,sjdm,lx))) as md5,id,dm,mc,sjdm,lx FROM sq_gnsq order by dm asc";
+        String sql = "SELECT UPPER(MD5(CONCAT(dm,mc,sjdm,lx))) as md5,id,dm,mc,sjdm," +
+                " CASE lx WHEN 1 THEN '医生端' ELSE '居民端' END lx FROM sq_gnsq order by lx, dm asc";
         return getCompareResultMapList(sql, "md5", "all".equals(all));
     }
 }

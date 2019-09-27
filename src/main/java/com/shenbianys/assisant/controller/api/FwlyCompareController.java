@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 
 /**
  * 路由比较（fw_ly表）
@@ -98,7 +99,7 @@ public class FwlyCompareController extends BaseController {
      */
     @RequestMapping("/ly")
     @ResponseBody
-    public List<Map<String, String>> xtgl() {
+    public List<Map<String, String>> xtgl() throws ExecutionException, InterruptedException {
         String sql = "select idx.jgbh, ly.jgmc as jgmc, count(ly.lybh) as count from " +
                 "(select distinct jgbh from fw_ly order by jgbh) idx left join fw_ly ly " +
                 "on idx.jgbh = ly.jgbh " +
