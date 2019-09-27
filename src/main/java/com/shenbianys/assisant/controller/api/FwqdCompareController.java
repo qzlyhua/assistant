@@ -1,7 +1,6 @@
 package com.shenbianys.assisant.controller.api;
 
 import com.alibaba.fastjson.JSONObject;
-import com.shenbianys.assisant.dto.FwqdCompareDTO;
 import com.shenbianys.assisant.entity.ServiceCheckEntity;
 import com.shenbianys.assisant.entity.ServiceListEntity;
 import com.shenbianys.assisant.util.SqlUtils;
@@ -13,8 +12,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 服务清单比较（fw_qd表）
@@ -55,6 +56,15 @@ public class FwqdCompareController extends BaseController {
         return map;
     }
 
+    /**
+     * 服务清单复制：将 fwmc 服务从 sourceEnv 复制到 targetEnv
+     *
+     * @param sourceEnv
+     * @param fwmc
+     * @param targetEnv
+     * @return
+     * @throws Exception
+     */
     @RequestMapping("/fwqd/add/{sourceEnv}/{fwmc}/{targetEnv}")
     @ResponseBody
     public JSONObject add(@PathVariable String sourceEnv, @PathVariable String fwmc, @PathVariable String targetEnv) throws Exception {
@@ -86,7 +96,7 @@ public class FwqdCompareController extends BaseController {
         String selectQdSql = "select * from fw_qd where fwmc = '" + fwmc + "' order by xgsj desc limit 1";
         ServiceListEntity serviceListEntity = queryForObject(sourceEnv, selectQdSql, ServiceListEntity.class);
 
-        if (!"已审核".equals(serviceListEntity.getShzt())){
+        if (!"已审核".equals(serviceListEntity.getShzt())) {
             log.info("执行[{}]服务复制取消，该服务未审核", fwmc);
             log.info("==================================================");
             res.put("result", "cancel");
@@ -138,45 +148,10 @@ public class FwqdCompareController extends BaseController {
 
     @RequestMapping("/fwqd/{all}")
     @ResponseBody
-    public List<FwqdCompareDTO> getFwqdInfo(@PathVariable String all) {
-        String sql = "SELECT MD5(CONCAT(fwbh , \"_\" , fwmc)) as md5, fwbh, fwmc, dbbh, bbh, fwsm, xgsj FROM fw_qd ORDER BY xgsj desc, fwmc ASC";
-        List<Map<String, Object>> listDev = queryForList("dev", sql);
-        List<Map<String, Object>> listTest = queryForList("test", sql);
-        List<Map<String, Object>> listTesttjd = queryForList("testtjd", sql);
-        List<Map<String, Object>> listPro = queryForList("pro", sql);
-
-        Map<String, FwqdCompareDTO> map = new HashMap<>(listDev.size());
-        for (int i = 0; i < listDev.size(); i++) {
-            String md5 = String.valueOf(listDev.get(i).get("md5"));
-            map.put(md5, new FwqdCompareDTO("dev", listDev.get(i)));
-        }
-
-        addListToMap(map, listTest, "test");
-        addListToMap(map, listTesttjd, "testtjd");
-        addListToMap(map, listPro, "pro");
-        List<FwqdCompareDTO> resList = map.values().stream().collect(Collectors.toList());
-
-        // 移除各环境已经都配置的数据
-        if (!"all".equals(all)) {
-            for (Iterator<FwqdCompareDTO> iter = resList.listIterator(); iter.hasNext(); ) {
-                FwqdCompareDTO dto = iter.next();
-                if (dto.isAllSet()) {
-                    iter.remove();
-                }
-            }
-        }
-        return resList;
-    }
-
-    private void addListToMap(Map<String, FwqdCompareDTO> map, List<Map<String, Object>> list, String env) {
-        for (int i = 0; i < list.size(); i++) {
-            String md5 = String.valueOf(list.get(i).get("md5"));
-            if (map.containsKey(md5)) {
-                FwqdCompareDTO dto = map.get(md5);
-                dto.setEnv(env);
-            } else {
-                map.put(md5, new FwqdCompareDTO(env, list.get(i)));
-            }
-        }
+    public List<Map<String, Object>> getFwqdInfo(@PathVariable String all) throws Exception {
+        String sql = "SELECT UPPER(MD5(CONCAT(fwbh, ';', fwmc, ';', dbbh, ';', bbh))) as md5," +
+                " fwbh, fwmc, CONCAT(dbbh, '-', bbh) as bbh, fwsm, DATE_FORMAT(xgsj, '%Y-%m-%d %T') as xgsj" +
+                " FROM fw_qd ORDER BY xgsj desc, fwmc ASC";
+        return getCompareResultMapList(sql, "md5", "all".equals(all));
     }
 }

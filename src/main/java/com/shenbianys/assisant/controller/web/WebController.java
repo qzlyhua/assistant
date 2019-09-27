@@ -100,4 +100,16 @@ public class WebController {
     public String xtcs(Model model) {
         return "admin/xtcs";
     }
+
+
+    /**
+     * 服务路由
+     *
+     * @param model
+     * @return
+     */
+    @RequestMapping(value = {"/fwly"})
+    public String fwly(Model model) {
+        return "admin/fwly";
+    }
 }
