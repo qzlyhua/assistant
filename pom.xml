@@ -10,9 +10,9 @@
     </parent>
     <groupId>com.shenbianys</groupId>
     <artifactId>assistant</artifactId>
-    <version>0.1.0</version>
-    <name>sbys-assisant</name>
-    <description>比较不同环境的配置</description>
+    <version>0.1.2</version>
+    <name>sbys-assistant</name>
+    <description>身边医生升级助手</description>
 
     <properties>
         <java.version>1.8</java.version>
@@ -44,10 +44,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
             <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.ehcache</groupId>
-            <artifactId>ehcache</artifactId>
         </dependency>
         <dependency>
             <groupId>com.alibaba</groupId>
@@ -85,6 +81,11 @@
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjweaver</artifactId>
             <version>1.9.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>1.3.2</version>
         </dependency>
     </dependencies>
 

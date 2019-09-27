@@ -2,17 +2,14 @@ package com.shenbianys.assisant.config.security.dingding;
 
 import com.shenbianys.assisant.config.properties.DingDingLoginProperties;
 import com.shenbianys.assisant.util.DingDingUtils;
-import com.shenbianys.assisant.util.EhcacheUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.CacheManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.util.Set;
 
 /**
@@ -28,9 +25,6 @@ public class DingLoginAuthenticationProvider implements AuthenticationProvider {
 
     @Autowired
     DingDingLoginProperties dingDingLoginProperties;
-
-    @Resource
-    private CacheManager cacheManager;
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
@@ -54,7 +48,7 @@ public class DingLoginAuthenticationProvider implements AuthenticationProvider {
             if (dingDingLoginProperties.getAdminOpenid().equals(openid)) {
                 return true;
             } else {
-                Set<String> users = EhcacheUtils.getCacheUser(cacheManager);
+                Set<String> users = DingDingUtils.getUsers(dingDingLoginProperties);
                 for (String s : users) {
                     if (s.equals(openid)) {
                         return true;
@@ -66,7 +60,7 @@ public class DingLoginAuthenticationProvider implements AuthenticationProvider {
             String openid = DingDingUtils.getOpenIdByCode(dingDingLoginProperties, code);
             log.info("新增钉钉用户！openid：{}", openid);
             // 添加openid
-            EhcacheUtils.addCacheUser(cacheManager, openid);
+            DingDingUtils.addUser(dingDingLoginProperties, openid);
             return true;
         } else {
             return false;

@@ -1,16 +1,22 @@
 package com.shenbianys.assisant.util;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.shenbianys.assisant.config.properties.DingDingLoginProperties;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 import org.springframework.http.*;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author Yang Hua
@@ -126,6 +132,58 @@ public class DingDingUtils {
         private void setToken(String token) {
             setGetTime(new Date());
             this.token = token;
+        }
+    }
+
+    /**
+     * 新增钉钉用户到文件内
+     */
+    public static void addUser(DingDingLoginProperties dingDingLoginProperties, String openid) {
+        try {
+            File file = new File(dingDingLoginProperties.getUserFilePath());
+            if (file.exists()) {
+                String t = FileUtils.readFileToString(file);
+                JSONArray array = JSONArray.parseArray(t);
+                JSONObject o = new JSONObject();
+                o.put("openid", openid);
+                array.add(o);
+                FileUtils.writeStringToFile(file, array.toJSONString(), "UTF-8");
+            } else {
+                JSONArray array = new JSONArray();
+                JSONObject o = new JSONObject();
+                o.put("openid", openid);
+                array.add(o);
+                FileUtils.writeStringToFile(file, array.toJSONString(), "UTF-8");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    /**
+     * 从文件内读取钉钉用户
+     *
+     * @return
+     */
+    public static Set<String> getUsers(DingDingLoginProperties dingDingLoginProperties) {
+        try {
+            File file = new File(dingDingLoginProperties.getUserFilePath());
+            if (file.exists()) {
+                Set<String> set = new HashSet<>();
+                String t = FileUtils.readFileToString(file);
+                JSONArray array = JSONArray.parseArray(t);
+                for (int i = 0; i < array.size(); i++) {
+                    JSONObject jsonObject = (JSONObject) array.get(i);
+                    set.add(jsonObject.getString("openid"));
+                }
+                return set;
+            } else {
+                return new HashSet<>();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new HashSet<>();
         }
     }
 }

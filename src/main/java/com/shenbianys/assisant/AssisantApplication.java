@@ -11,7 +11,6 @@ import org.springframework.scheduling.annotation.EnableAsync;
  * @author Yang Hua
  */
 @SpringBootApplication(exclude = {MongoAutoConfiguration.class, MongoDataAutoConfiguration.class})
-@EnableCaching
 @EnableAsync
 public class AssisantApplication {
     public static void main(String[] args) {

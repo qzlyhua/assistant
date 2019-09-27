@@ -15,4 +15,5 @@ public class DingDingLoginProperties {
     private String appSecret;
     private String callback;
     private String adminOpenid;
+    private String userFilePath;
 }
