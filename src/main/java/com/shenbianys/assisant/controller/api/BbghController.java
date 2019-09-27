@@ -9,6 +9,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
+/**
+ * @author Yang Hua
+ */
 @Controller
 @RequestMapping("/api")
 public class BbghController extends BaseController {

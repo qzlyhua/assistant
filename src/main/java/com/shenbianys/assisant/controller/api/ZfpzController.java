@@ -9,6 +9,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
+/**
+ * 转发配置数据比较（xt_zfpz表）
+ *
+ * @author Yang Hua
+ */
 @Controller
 @RequestMapping("/api")
 public class ZfpzController extends BaseController {

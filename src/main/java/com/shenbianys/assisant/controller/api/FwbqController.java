@@ -9,6 +9,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
+/**
+ * 服务标签比较（fw_bq表）
+ *
+ * @author Yang Hua
+ */
 @Controller
 @RequestMapping("/api")
 public class FwbqController extends BaseController {

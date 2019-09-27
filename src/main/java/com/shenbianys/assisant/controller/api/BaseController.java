@@ -1,5 +1,6 @@
 package com.shenbianys.assisant.controller.api;
 
+import com.shenbianys.assisant.async.AsyncTask;
 import com.shenbianys.assisant.service.MongoService;
 import com.shenbianys.assisant.service.impl.MysqlServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 /**
+ * 基础Controller-提供通用方法
+ *
  * @author Yang Hua
  */
 @Controller

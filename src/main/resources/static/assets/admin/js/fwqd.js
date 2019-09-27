@@ -54,7 +54,7 @@ var IndexPage = function() {
 
 	var sync = function(fwmc, env, id){
 		if ("dev" == env){
-			alert("开发环境不支持从其他环境复制服务！");
+			toastr.error("开发环境不支持从其他环境复制服务！");
 			return ;
 		}
 		if (confirm("是否确认在" + env + "环境服务清单增加" + fwmc + "服务？") == true){
@@ -67,9 +67,9 @@ var IndexPage = function() {
 			    	console.log(data);
 			    	if ("success" == data.result) {
 			    		$("#" + id).html(ok);
-						alert(data.message);
+						toastr.success(data.message);
 					} else {
-			    		alert(data.message);
+						toastr.error(data.message);
 						console.error(data.message);
 					}
 			    }

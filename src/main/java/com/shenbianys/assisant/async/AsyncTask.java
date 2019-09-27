@@ -1,4 +1,4 @@
-package com.shenbianys.assisant.controller.api;
+package com.shenbianys.assisant.async;
 
 import com.shenbianys.assisant.service.impl.MysqlServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
