@@ -9,8 +9,8 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.shenbianys</groupId>
-    <artifactId>assisant</artifactId>
-    <version>0.0.1</version>
+    <artifactId>assistant</artifactId>
+    <version>0.1.0</version>
     <name>sbys-assisant</name>
     <description>比较不同环境的配置</description>
 

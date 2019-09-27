@@ -21,7 +21,7 @@ public class AsyncTask {
     private MysqlServiceImpl mysqlService;
 
     @Async
-    public Future<List<Map<String, Object>>> getList(String env, String sql) throws InterruptedException {
+    public Future<List<Map<String, Object>>> getList(String env, String sql) {
         List<Map<String, Object>> list = mysqlService.queryForList(env, sql);
         return new AsyncResult<>(list);
     }
