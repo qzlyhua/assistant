@@ -16,6 +16,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 /**
  * 服务清单比较（fw_qd表）
@@ -149,7 +150,7 @@ public class FwqdCompareController extends BaseController {
 
     @RequestMapping("/fwqd/{all}")
     @ResponseBody
-    public List<Map<String, Object>> getFwqdInfo(@PathVariable String all) throws Exception {
+    public List<Map<String, Object>> getFwqdInfo(@PathVariable String all) throws ExecutionException, InterruptedException {
         String sql = "SELECT UPPER(MD5(CONCAT(fwbh, ';', fwmc, ';', dbbh, ';', bbh))) as md5," +
                 " fwbh, fwmc, CONCAT(dbbh, '-', bbh) as bbh, fwsm, DATE_FORMAT(xgsj, '%Y-%m-%d %T') as xgsj" +
                 " FROM fw_qd ORDER BY xgsj desc, fwmc ASC";

@@ -10,6 +10,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.Set;
@@ -101,7 +102,6 @@ public class WebController {
         return "admin/xtcs";
     }
 
-
     /**
      * 服务路由
      *
@@ -111,6 +111,20 @@ public class WebController {
     @RequestMapping(value = {"/fwly"})
     public String fwly(Model model) {
         return "admin/fwly";
+    }
+
+    /**
+     * 服务路由比较
+     * fwly/dev_0/dev_001001007011
+     *
+     * @param model
+     * @return
+     */
+    @RequestMapping(value = {"/fwly/{a}/{b}"})
+    public String fwlyCompare(Model model, @PathVariable String a, @PathVariable String b) {
+        model.addAttribute("a", a);
+        model.addAttribute("b", b);
+        return "admin/fwlyCompare";
     }
 
     /**

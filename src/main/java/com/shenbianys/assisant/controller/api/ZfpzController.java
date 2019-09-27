@@ -7,13 +7,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 @Controller
 @RequestMapping("/api")
 public class ZfpzController extends BaseController {
     @RequestMapping("/zfpz/{all}")
     @ResponseBody
-    public List<Map<String, Object>> getGnsqInfo(@PathVariable String all) {
+    public List<Map<String, Object>> getGnsqInfo(@PathVariable String all) throws ExecutionException, InterruptedException {
         String sql = "select path, ms from xt_zfpz order by path";
         return getCompareResultMapList(sql, "path", "all".equals(all));
     }

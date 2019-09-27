@@ -61,7 +61,7 @@ var IndexPage = function() {
 			///fwqd/add/{sourceEnv}/{fwmc}/{targetEnv}
 			var ok = "<a style='color: rgb(80 210 210)' class=\"icon style1 fa-check\"></a>";
 			$.ajax({
-			    url: '/fwqd/add/dev/' + fwmc + '/' + env,
+			    url: '/api/fwqd/add/dev/' + fwmc + '/' + env,
 			    type: 'POST',
 			    success: function(data) {
 			    	console.log(data);

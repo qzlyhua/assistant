@@ -30,7 +30,19 @@ var FwlyPage = function() {
 	};
 
 	var compare = function () {
-
+		var check = $("input:checkbox:checked").length;
+		if (check == 2){
+			var url = "/fwly/";
+			$("input:checkbox:checked").each(function(){
+				url += $(this).attr("id");
+				url += "/";
+			});
+			window.location.href = url.substr(0, url.length - 1);
+		} else if (check > 2){
+			alert("仅支持比较两个用户域！");
+		} else if (check < 2){
+			alert("请选中两个需要比较的用户域！");
+		}
 	};
 
 	var clear = function () {

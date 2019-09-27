@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 /**
  * 系统参数比较（xt_ywcs表）
@@ -20,7 +21,7 @@ import java.util.Map;
 public class XtcsCompareController extends BaseController {
     @RequestMapping("/xtcs/{all}")
     @ResponseBody
-    public List<Map<String, Object>> getGnsqInfo(@PathVariable String all) {
+    public List<Map<String, Object>> getGnsqInfo(@PathVariable String all) throws ExecutionException, InterruptedException {
         String sql = "SELECT appcode,csmc,csms,DATE_FORMAT(xgsj, '%Y-%m-%d %T') as xgsj" +
                 " from xt_ywcs where jgbh = '001' order by xgsj desc";
         return getCompareResultMapList(sql, "appcode", "all".equals(all));

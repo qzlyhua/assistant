@@ -25,18 +25,26 @@ public class BaseController {
     private MongoService mongoService;
 
     @Autowired
-    private AsyncTask asyncTask;
+    protected AsyncTask asyncTask;
 
     protected List<Map<String, Object>> queryForList(String env, String sql) {
         return mysqlService.queryForList(env, sql);
     }
 
+    /**
+     * 异步查询各环境数据
+     *
+     * @param sql
+     * @return
+     * @throws ExecutionException
+     * @throws InterruptedException
+     */
     protected Map<String, List<Map<String, Object>>> queryForListFromAll(String sql) throws ExecutionException, InterruptedException {
         Map<String, List<Map<String, Object>>> res = new HashMap<>(4);
-        Future<List<Map<String, Object>>> dev =  asyncTask.getList("dev", sql);
-        Future<List<Map<String, Object>>> test =  asyncTask.getList("test", sql);
-        Future<List<Map<String, Object>>> testtjd =  asyncTask.getList("testtjd", sql);
-        Future<List<Map<String, Object>>> pro =  asyncTask.getList("pro", sql);
+        Future<List<Map<String, Object>>> dev = asyncTask.getList("dev", sql);
+        Future<List<Map<String, Object>>> test = asyncTask.getList("test", sql);
+        Future<List<Map<String, Object>>> testtjd = asyncTask.getList("testtjd", sql);
+        Future<List<Map<String, Object>>> pro = asyncTask.getList("pro", sql);
         res.put("dev", dev.get());
         res.put("test", test.get());
         res.put("testtjd", testtjd.get());
@@ -72,21 +80,17 @@ public class BaseController {
      * @param key
      * @return
      */
-    protected List<Map<String, Object>> getCompareResultMapList(String sql, String key, boolean showAll) {
-        // 各环境查询结果list
-        List<Map<String, Object>> listDev = queryForList("dev", sql);
-        List<Map<String, Object>> listTest = queryForList("test", sql);
-        List<Map<String, Object>> listTesttjd = queryForList("testtjd", sql);
-        List<Map<String, Object>> listPro = queryForList("pro", sql);
+    protected List<Map<String, Object>> getCompareResultMapList(String sql, String key, boolean showAll) throws ExecutionException, InterruptedException {
+        Map<String, List<Map<String, Object>>> mapOfResult = queryForListFromAll(sql);
         // 排序用列表
-        List<String> orderList = new ArrayList<>(listDev.size());
+        List<String> orderList = new ArrayList<>(mapOfResult.get("dev").size());
 
         // 所有数据的索引map
-        Map<String, Map<String, Object>> map = new HashMap<>(listDev.size());
-        addListToMap(orderList, key, map, listDev, "dev");
-        addListToMap(orderList, key, map, listTest, "test");
-        addListToMap(orderList, key, map, listTesttjd, "testtjd");
-        addListToMap(orderList, key, map, listPro, "pro");
+        Map<String, Map<String, Object>> map = new HashMap<>(mapOfResult.get("dev").size());
+        addListToMap(orderList, key, map, mapOfResult.get("dev"), "dev");
+        addListToMap(orderList, key, map, mapOfResult.get("test"), "test");
+        addListToMap(orderList, key, map, mapOfResult.get("testtjd"), "testtjd");
+        addListToMap(orderList, key, map, mapOfResult.get("pro"), "pro");
 
         // 处理结果集
         List<Map<String, Object>> resList = new ArrayList<>(orderList.size());
@@ -104,7 +108,7 @@ public class BaseController {
         return resList;
     }
 
-    private void addListToMap(List<String> orderList, String key, Map<String, Map<String, Object>> map, List<Map<String, Object>> list, String env) {
+    public void addListToMap(List<String> orderList, String key, Map<String, Map<String, Object>> map, List<Map<String, Object>> list, String env) {
         for (int i = 0; i < list.size(); i++) {
             Map<String, Object> m = list.get(i);
             String k = String.valueOf(m.get(key));
