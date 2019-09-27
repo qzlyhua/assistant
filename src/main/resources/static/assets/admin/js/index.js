@@ -1,7 +1,7 @@
 var IndexPage = function() {
 	var init = function(){
 		$("#data-table").html("");
-		var url = "/xtgl";
+		var url = "/api/xtgl";
 		$.ajax({
 			url: url,
 			method: 'GET',

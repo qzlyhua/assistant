@@ -12,7 +12,7 @@ var YwlyPage = function() {
 
 	var init = function(type){
 		$("#data-table").html("");
-		var url = type == "all" ? "/ywly/all": "/ywly/different";
+		var url = type == "all" ? "/api/ywly/all": "/api/ywly/different";
 		$.ajax({
 			url: url,
 			method: 'GET',

@@ -13,6 +13,7 @@ import java.util.*;
  * @author Yang Hua
  */
 @Controller
+@RequestMapping("/api")
 public class FwlyCompareController extends BaseController {
     @RequestMapping("/ly/{env}/{yhyA}/{yhyB}")
     @ResponseBody

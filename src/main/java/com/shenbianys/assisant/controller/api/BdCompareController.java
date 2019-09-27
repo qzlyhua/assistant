@@ -14,6 +14,7 @@ import java.util.Map;
  * @author Yang Hua
  */
 @Controller
+@RequestMapping("/api")
 public class BdCompareController extends BaseController {
     @RequestMapping("/bd/{all}")
     @ResponseBody

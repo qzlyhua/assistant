@@ -24,6 +24,7 @@ import java.util.Map;
  */
 @Controller
 @Slf4j
+@RequestMapping("/api")
 public class FwqdCompareController extends BaseController {
     @RequestMapping("/fwqd/{envA}/{envB}")
     @ResponseBody

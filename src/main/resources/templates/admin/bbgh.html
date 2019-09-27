@@ -7,16 +7,17 @@
 		<nav th:replace="admin/fragments/nav :: nav"></nav>
 		<div id="main" style="min-height: 600px">
 			<div class="inner">
-				<h2>服务路由</h2>
+				<h2>版本规划</h2>
 				<div class="table-wrapper">
 					<table>
 						<thead>
 							<tr>
-								<th style="text-align:center"></th>
-								<th style="text-align:center">环境标识</th>
-								<th style="text-align:center">用户域编号</th>
-								<th style="text-align:center">用户域名称</th>
-								<th style="text-align:center">路由数量</th>
+								<th style="text-align:center">#</th>
+								<th style="text-align:center">版本名称</th>
+								<th style="text-align:center">开发</th>
+								<th style="text-align:center">测试</th>
+								<th style="text-align:center">突击队</th>
+								<th style="text-align:center">生产</th>
 							</tr>
 						</thead>
 						<tbody id="data-table">
@@ -24,8 +25,7 @@
 					</table>
 				</div>
 				<ul class="actions">
-					<li><a id="btnClear" href="javascript:FwlyPage.clear();" class="button">取消选中</a></li>
-					<li><a id="btnRefresh" href="javascript:FwlyPage.compare();" class="button">配置比较</a></li>
+					<li><a id="btnRefresh" href="javascript:BbghPage.refresh();" class="button">隐藏相同</a></li>
 				</ul>
 			</div>
 		</div>
@@ -35,6 +35,6 @@
 	<script th:src="@{/assets/common/js/skel.min.js}"></script>
 	<script th:src="@{/assets/admin/js/main.js}"></script>
 	<script th:src="@{/assets/admin/js/util.js}"></script>
-	<script th:src="@{/assets/admin/js/fwly.js}"></script>
+	<script th:src="@{/assets/admin/js/bbgh.js}"></script>
 </body>
 </html>

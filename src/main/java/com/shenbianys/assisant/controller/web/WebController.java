@@ -112,4 +112,48 @@ public class WebController {
     public String fwly(Model model) {
         return "admin/fwly";
     }
+
+    /**
+     * 版本规划
+     *
+     * @param model
+     * @return
+     */
+    @RequestMapping(value = {"/bbgh"})
+    public String bbgh(Model model) {
+        return "admin/bbgh";
+    }
+
+    /**
+     * 服务标签
+     *
+     * @param model
+     * @return
+     */
+    @RequestMapping(value = {"/fwbq"})
+    public String fwbq(Model model) {
+        return "admin/fwbq";
+    }
+
+    /**
+     * 第三方系统字典
+     *
+     * @param model
+     * @return
+     */
+    @RequestMapping(value = {"/dsfxtzd"})
+    public String dsfxtzd(Model model) {
+        return "admin/dsfxtzd";
+    }
+
+    /**
+     * 转发配置
+     *
+     * @param model
+     * @return
+     */
+    @RequestMapping(value = {"/zfpz"})
+    public String zfpz(Model model) {
+        return "admin/zfpz";
+    }
 }

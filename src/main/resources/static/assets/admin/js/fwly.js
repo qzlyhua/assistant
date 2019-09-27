@@ -1,13 +1,14 @@
 var FwlyPage = function() {
 	var init = function(){
 		$("#data-table").html("");
-		var url = "/ly";
+		var url = "/api/ly";
 		$.ajax({
 			url: url,
 			method: 'GET',
 			success: function(res) {
 				$.each(res, function(idx, obj) {
-					var html = "<tr id=\"tr-" + idx + "\">";
+					var id = "tr-" + idx;
+					var html = "<tr id=\"" + id + "\">";
 					html += "<td style=\"text-align:center\">" + obj.cbx + "</td>";
 					html += "<td style=\"text-align:center\">" + obj.envmc +  "</td>";
 					html += "<td style=\"text-align:center\">" + obj.yhybh +  "</td>";
@@ -15,6 +16,11 @@ var FwlyPage = function() {
 					html += "<td style=\"text-align:center\">" + obj.count +  "</td>";
 					html += "</tr>";
 					$("#data-table").append(html);
+
+					$("#" + id).click(function(){
+						let checkBox = $(this).find("input");
+						checkBox.prop("checked") ? checkBox.prop("checked", false) : checkBox.prop("checked", true);
+					});
 				});
 			},
 			error:function(result) {
@@ -25,7 +31,11 @@ var FwlyPage = function() {
 
 	var compare = function () {
 
-	}
+	};
+
+	var clear = function () {
+		$("input").prop("checked", false);
+	};
 
 	return {
 		init : function(){
@@ -33,6 +43,9 @@ var FwlyPage = function() {
 		},
 		compare : function () {
 			compare();
+		},
+		clear : function () {
+			clear();
 		}
 	}
 }();

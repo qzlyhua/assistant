@@ -1,4 +1,4 @@
-var IndexPage = function() {
+var DsfxtzdPage = function() {
 	var refresh = function(){
 		var current = $("#btnRefresh").text();
 		if("隐藏相同" == current) {
@@ -12,7 +12,7 @@ var IndexPage = function() {
 
 	var init = function(type){
 		$("#data-table").html("");
-		var url = type == "all" ? "/api/fwqd/all": "/api/fwqd/different";
+		var url = type == "all" ? "/api/dsfxtzd/all": "/api/dsfxtzd/different";
 		$.ajax({
 			url: url,
 			method: 'GET',
@@ -20,13 +20,12 @@ var IndexPage = function() {
 				$.each(res, function(idx, obj) {
 					var html = "<tr id=\"tr-" + idx + "\">";
 					html += "<td style=\"text-align:center\">" + (idx+1) + "</td>";
-					html += "<td title='" + obj.fwsm + "' style=\"text-align:center\">" + obj.fwmc + "</td>";
-					html += "<td style=\"text-align:center\">" + obj.fwbh +  "</td>";
-					html += "<td title='" + obj.xgsj + "'style=\"text-align:center\">" + obj.bbh + "</td>";
-					html += "<td id = '" + idx + "-dev" + "' style=\"text-align:center\">" + genBtn('dev', obj.dev, obj.fwmc, idx+'-dev') + "</td>";
-					html += "<td id = '" + idx + "-test" + "' style=\"text-align:center\">" + genBtn('test', obj.test, obj.fwmc, idx+'-test') + "</td>";
-					html += "<td id = '" + idx + "-testtjd" + "' style=\"text-align:center\">" + genBtn('testtjd', obj.testtjd, obj.fwmc, idx+'-testtjd') + "</td>";
-					html += "<td id = '" + idx + "-pro" + "' style=\"text-align:center\">" + genBtn('pro', obj.pro, obj.fwmc, idx+'-pro') + "</td>";
+					html += "<td style=\"text-align:center\">" + obj.xtbs + "</td>";
+					html += "<td style=\"text-align:center\">" + obj.xtmc + "</td>";
+					html += "<td id = '" + idx + "-dev" + "' style=\"text-align:center\">" + genBtn('dev', obj.dev, obj.dm, idx+'-dev') + "</td>";
+					html += "<td id = '" + idx + "-test" + "' style=\"text-align:center\">" + genBtn('test', obj.test, obj.dm, idx+'-test') + "</td>";
+					html += "<td id = '" + idx + "-testtjd" + "' style=\"text-align:center\">" + genBtn('testtjd', obj.testtjd, obj.dm, idx+'-testtjd') + "</td>";
+					html += "<td id = '" + idx + "-pro" + "' style=\"text-align:center\">" + genBtn('pro', obj.pro, obj.dm, idx+'-pro') + "</td>";
 					html += "</tr>";
 
 					$("#data-table").append(html);
@@ -44,15 +43,15 @@ var IndexPage = function() {
 		});
 	};
 
-	var genBtn = function(env, type, fwmc, id){
+	var genBtn = function(env, type, dm, id){
 		if(type == "1") {
 			return "<a style='color: rgb(80 210 210)' class=\"icon style1 fa-check\"></a>";
 		} else {
-			return "<a style='color: rgb(242 132 158)' href=\"javascript:IndexPage.sync('" + fwmc + "', '" + env + "', '" + id + "')\" class=\"icon style1 clsAdd fa-close\"></a>";
+			return "<a style='color: rgb(242 132 158)' href=\"javascript:IndexPage.sync('" + dm + "', '" + env + "', '" + id + "')\" class=\"icon style1 clsAdd fa-close\"></a>";
 		}
 	};
 
-	var sync = function(fwmc, env, id){
+	var sync = function(dm, env, id){
 		if ("dev" == env){
 			alert("开发环境不支持从其他环境复制服务！");
 			return ;
@@ -61,7 +60,7 @@ var IndexPage = function() {
 			///fwqd/add/{sourceEnv}/{fwmc}/{targetEnv}
 			var ok = "<a style='color: rgb(80 210 210)' class=\"icon style1 fa-check\"></a>";
 			$.ajax({
-			    url: '/fwqd/add/dev/' + fwmc + '/' + env,
+			    url: '/fwqd/add/dev/' + dm + '/' + env,
 			    type: 'POST',
 			    success: function(data) {
 			    	console.log(data);
@@ -92,5 +91,5 @@ var IndexPage = function() {
 }();
 
 jQuery(document).ready(function() {
-	IndexPage.init("all");
+	DsfxtzdPage.init("all");
 });

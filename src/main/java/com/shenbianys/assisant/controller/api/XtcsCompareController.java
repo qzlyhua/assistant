@@ -16,6 +16,7 @@ import java.util.Map;
  */
 @Controller
 @Slf4j
+@RequestMapping("/api")
 public class XtcsCompareController extends BaseController {
     @RequestMapping("/xtcs/{all}")
     @ResponseBody

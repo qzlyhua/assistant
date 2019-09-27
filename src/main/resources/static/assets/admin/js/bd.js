@@ -12,7 +12,7 @@ var BdPage = function() {
 
 	var init = function(type){
 		$("#data-table").html("");
-		var url = type == "all" ? "/bd/all": "/bd/different";
+		var url = type == "all" ? "/api/bd/all": "/api/bd/different";
 		$.ajax({
 			url: url,
 			method: 'GET',

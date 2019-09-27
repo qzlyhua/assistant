@@ -12,7 +12,7 @@ var XtcsPage = function() {
 
 	var init = function(type){
 		$("#data-table").html("");
-		var url = type == "all" ? "/xtcs/all": "/xtcs/different";
+		var url = type == "all" ? "/api/xtcs/all": "/api/xtcs/different";
 		$.ajax({
 			url: url,
 			method: 'GET',

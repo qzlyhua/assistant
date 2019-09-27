@@ -12,7 +12,7 @@ var GnsqPage = function() {
 
 	var init = function(type){
 		$("#data-table").html("");
-		var url = type == "all" ? "/gnsq/all": "/gnsq/different";
+		var url = type == "all" ? "/api/gnsq/all": "/api/gnsq/different";
 		$.ajax({
 			url: url,
 			method: 'GET',
