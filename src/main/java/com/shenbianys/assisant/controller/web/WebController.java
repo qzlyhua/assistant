@@ -68,17 +68,6 @@ public class WebController {
     }
 
     /**
-     * 服务清单
-     *
-     * @param model
-     * @return
-     */
-    @RequestMapping(value = {"/fwqd"})
-    public String fwqd(Model model) {
-        return "admin/fwqd";
-    }
-
-    /**
      * 功能授权
      *
      * @param model
@@ -86,7 +75,15 @@ public class WebController {
      */
     @RequestMapping(value = {"/gnsq"})
     public String gnsq(Model model) {
-        return "admin/gnsq";
+        String codes = "idx,dm,mc,lx,dev,test,testtjd,pro";
+        String[] ths = {"#", "代码", "名称", "类型", "开发", "测试", "突击队", "生产"};
+        model.addAttribute("projectName", "功能授权");
+        model.addAttribute("tableThs", ths);
+        model.addAttribute("tableTdCodes", codes);
+        model.addAttribute("urlAll", "/api/gnsq/all");
+        model.addAttribute("urlDifferent", "/api/gnsq/different");
+        model.addAttribute("syncUrl", "/api/gnsq/sync");
+        return "admin/compare";
     }
 
     /**
@@ -97,7 +94,15 @@ public class WebController {
      */
     @RequestMapping(value = {"/bd"})
     public String bd(Model model) {
-        return "admin/bd";
+        String codes = "idx,bdbh,bdmc,yylx,dev,test,testtjd,pro";
+        String[] ths = {"#", "表单编号", "表单名称", "应用类型", "开发", "测试", "突击队", "生产"};
+        model.addAttribute("projectName", "表单列表");
+        model.addAttribute("tableThs", ths);
+        model.addAttribute("tableTdCodes", codes);
+        model.addAttribute("urlAll", "/api/bd/all");
+        model.addAttribute("urlDifferent", "/api/bd/different");
+        model.addAttribute("syncUrl", "/api/bd/sync");
+        return "admin/compare";
     }
 
     /**
@@ -108,7 +113,112 @@ public class WebController {
      */
     @RequestMapping(value = {"/xtcs"})
     public String xtcs(Model model) {
-        return "admin/xtcs";
+        String codes = "idx,appcode,csmc,dev,test,testtjd,pro";
+        String[] ths = {"#", "参数代码", "参数名称", "开发", "测试", "突击队", "生产"};
+        model.addAttribute("projectName", "系统参数");
+        model.addAttribute("tableThs", ths);
+        model.addAttribute("tableTdCodes", codes);
+        model.addAttribute("urlAll", "/api/xtcs/all");
+        model.addAttribute("urlDifferent", "/api/xtcs/different");
+        model.addAttribute("syncUrl", "");
+        return "admin/compare";
+    }
+
+    /**
+     * 服务清单
+     *
+     * @param model
+     * @return
+     */
+    @RequestMapping(value = {"/fwqd"})
+    public String fwqd(Model model) {
+        String codes = "idx,fwmc,fwbh,bbh,dev,test,testtjd,pro";
+        String titles = "fwmc:fwsm,bbh:xgsj";
+        String[] ths = {"#", "服务名称", "服务编号", "版本号", "开发", "测试", "突击队", "生产"};
+        model.addAttribute("projectName", "服务清单");
+        model.addAttribute("tableThs", ths);
+        model.addAttribute("tableTdCodes", codes);
+        model.addAttribute("titles", titles);
+        model.addAttribute("urlAll", "/api/fwqd/all");
+        model.addAttribute("urlDifferent", "/api/fwqd/different");
+        model.addAttribute("syncUrl", "/api/fwqd/sync");
+        return "admin/compare";
+    }
+
+    /**
+     * 版本规划
+     *
+     * @param model
+     * @return
+     */
+    @RequestMapping(value = {"/bbgh"})
+    public String bbgh(Model model) {
+        String codes = "idx,bbmc,dev,test,testtjd,pro";
+        String[] ths = {"#", "版本名称", "开发", "测试", "突击队", "生产"};
+        model.addAttribute("projectName", "版本规划");
+        model.addAttribute("tableThs", ths);
+        model.addAttribute("tableTdCodes", codes);
+        model.addAttribute("urlAll", "/api/bbgh/all");
+        model.addAttribute("urlDifferent", "/api/bbgh/different");
+        model.addAttribute("syncUrl", "/api/bbgh/sync");
+        return "admin/compare";
+    }
+
+    /**
+     * 服务标签
+     *
+     * @param model
+     * @return
+     */
+    @RequestMapping(value = {"/fwbq"})
+    public String fwbq(Model model) {
+        String codes = "idx,fwbqid,fwbqmc,dev,test,testtjd,pro";
+        String[] ths = {"#", "服务标签ID", "服务标签名称", "开发", "测试", "突击队", "生产"};
+        model.addAttribute("projectName", "服务标签");
+        model.addAttribute("tableThs", ths);
+        model.addAttribute("tableTdCodes", codes);
+        model.addAttribute("urlAll", "/api/fwbq/all");
+        model.addAttribute("urlDifferent", "/api/fwbq/different");
+        model.addAttribute("syncUrl", "/api/fwbq/sync");
+        return "admin/compare";
+    }
+
+    /**
+     * 第三方系统字典
+     *
+     * @param model
+     * @return
+     */
+    @RequestMapping(value = {"/dsfxtzd"})
+    public String dsfxtzd(Model model) {
+        String codes = "idx,xtbs,xtmc,dev,test,testtjd,pro";
+        String[] ths = {"#", "系统标识", "系统名称", "开发", "测试", "突击队", "生产"};
+        model.addAttribute("projectName", "系统字典");
+        model.addAttribute("tableThs", ths);
+        model.addAttribute("tableTdCodes", codes);
+        model.addAttribute("urlAll", "/api/dsfxtzd/all");
+        model.addAttribute("urlDifferent", "/api/dsfxtzd/different");
+        model.addAttribute("syncUrl", "/api/dsfxtzd/sync");
+        return "admin/compare";
+    }
+
+    /**
+     * 转发配置
+     *
+     * @param model
+     * @return
+     */
+    @RequestMapping(value = {"/zfpz"})
+    public String zfpz(Model model) {
+        String codes = "idx,path,ms,dev,test,testtjd,pro";
+        String[] ths = {"#", "转发方法", "功能描述", "开发", "测试", "突击队", "生产"};
+        model.addAttribute("projectName", "转发配置");
+        model.addAttribute("tableThs", ths);
+        model.addAttribute("tableTdCodes", codes);
+        model.addAttribute("urlAll", "/api/zfpz/all");
+        model.addAttribute("urlDifferent", "/api/zfpz/different");
+        model.addAttribute("syncUrl", "");
+        return "admin/compare";
     }
 
     /**
@@ -134,68 +244,5 @@ public class WebController {
         model.addAttribute("a", a);
         model.addAttribute("b", b);
         return "admin/fwlyCompare";
-    }
-
-    /**
-     * 版本规划
-     *
-     * @param model
-     * @return
-     */
-    @RequestMapping(value = {"/bbgh"})
-    public String bbgh(Model model) {
-        return "admin/bbgh";
-    }
-
-    /**
-     * 服务标签
-     *
-     * @param model
-     * @return
-     */
-    @RequestMapping(value = {"/fwbq"})
-    public String fwbq(Model model) {
-        return "admin/fwbq";
-    }
-
-    /**
-     * 第三方系统字典
-     *
-     * @param model
-     * @return
-     */
-    @RequestMapping(value = {"/dsfxtzd"})
-    public String dsfxtzd(Model model) {
-        return "admin/dsfxtzd";
-    }
-
-    /**
-     * 转发配置
-     *
-     * @param model
-     * @return
-     */
-    @RequestMapping(value = {"/zfpz"})
-    public String zfpz(Model model) {
-        return "admin/zfpz";
-    }
-
-    /**
-     * 通用页面-测试
-     *
-     * @param model
-     * @return
-     */
-    @RequestMapping(value = {"/compare"})
-    public String compare(Model model) {
-        String codes = "idx,yylx,ywlyjb,ywlymc,dev,test,testtjd,pro";
-        String[] ths = {"#", "应用类型", "级别", "业务领域名称", "开发", "测试", "突击队", "生产"};
-        model.addAttribute("projectName", "测试项目名称");
-        model.addAttribute("tableThs", ths);
-        model.addAttribute("tableTdCodes", codes);
-        model.addAttribute("urlAll", "/api/ywly/all");
-        model.addAttribute("urlDifferent", "/api/ywly/different");
-        model.addAttribute("syncUrl", "/api/ywly/sync");
-        return "admin/compare";
     }
 }

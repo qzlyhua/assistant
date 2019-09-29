@@ -34,16 +34,15 @@ public class ConvertUtils {
             if (map.containsKey(key)) {
                 Method writeMethod = propertyDescriptor.getWriteMethod();
                 String typeName = propertyDescriptor.getPropertyType().getTypeName();
-                boolean isInteger = map.get(key) instanceof Integer;
-                boolean isLong = map.get(key) instanceof Long;
-                boolean isDate = map.get(key) instanceof Date;
 
-                if (Integer.class.getName().equals(typeName) && !isInteger) {
+                if (Integer.class.getName().equals(typeName) && !(map.get(key) instanceof Integer)) {
                     writeMethod.invoke(obj, Integer.parseInt(String.valueOf(map.get(key))));
-                } else if (Long.class.getName().equals(typeName) && !isLong) {
+                } else if (Long.class.getName().equals(typeName) && !(map.get(key) instanceof Long)) {
                     writeMethod.invoke(obj, Long.parseLong(String.valueOf(map.get(key))));
-                } else if (Date.class.getName().equals(typeName) && !isDate) {
+                } else if (Date.class.getName().equals(typeName) && !(map.get(key) instanceof Date)) {
                     writeMethod.invoke(obj, new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").parse(String.valueOf(map.get(key))));
+                } else if (Boolean.class.getName().equals(typeName) && !(map.get(key) instanceof Boolean)) {
+                    writeMethod.invoke(obj, Boolean.parseBoolean(String.valueOf(map.get(key))));
                 } else {
                     writeMethod.invoke(obj, map.get(key));
                 }

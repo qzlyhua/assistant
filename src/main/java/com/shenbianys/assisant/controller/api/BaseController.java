@@ -1,8 +1,11 @@
 package com.shenbianys.assisant.controller.api;
 
+import com.alibaba.fastjson.JSONObject;
 import com.shenbianys.assisant.async.AsyncTask;
+import com.shenbianys.assisant.entity.FormEntity;
 import com.shenbianys.assisant.service.MongoService;
 import com.shenbianys.assisant.service.impl.MysqlServiceImpl;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Controller;
@@ -14,12 +17,15 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import static javafx.scene.input.KeyCode.T;
+
 /**
  * 基础Controller-提供通用方法
  *
  * @author Yang Hua
  */
 @Controller
+@Slf4j
 public class BaseController {
     @Autowired
     private MysqlServiceImpl mysqlService;

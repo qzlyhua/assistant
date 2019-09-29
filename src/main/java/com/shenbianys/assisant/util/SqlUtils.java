@@ -50,10 +50,15 @@ public class SqlUtils {
                 if (typeName.equals(Date.class.getName())) {
                     SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                     sValue = formatter.format(value);
+                    valuesBuffer.append("'").append(sValue).append("'").append(",");
+                } else if (typeName.equals(Boolean.class.getName())) {
+                    sValue = Boolean.parseBoolean(String.valueOf(value)) ? "1" : "0";
+                    valuesBuffer.append(sValue).append(",");
                 } else {
                     sValue = String.valueOf(value);
+                    valuesBuffer.append("'").append(sValue).append("'").append(",");
                 }
-                valuesBuffer.append("'").append(sValue).append("'").append(",");
+
             } else {
                 valuesBuffer.append("null").append(",");
             }

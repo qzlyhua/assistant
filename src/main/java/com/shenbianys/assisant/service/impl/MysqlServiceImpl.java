@@ -72,8 +72,12 @@ public class MysqlServiceImpl implements MysqlService {
     public <T> T queryForObject(String env, String sql, Class<T> clazz) throws Exception {
         JdbcTemplate jdbcTemplate = getJdbcTemplateByEnv(env);
         if (jdbcTemplate != null) {
-            Map<String, Object> map = jdbcTemplate.queryForMap(sql);
-            return ConvertUtils.mapToBean(map, clazz);
+            try{
+                Map<String, Object> map = jdbcTemplate.queryForMap(sql);
+                return ConvertUtils.mapToBean(map, clazz);
+            } catch (Exception e){
+                return null;
+            }
         } else {
             return null;
         }

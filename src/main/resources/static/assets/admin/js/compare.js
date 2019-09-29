@@ -2,6 +2,7 @@ var Page = function() {
 	var urlAll = $("#urlAll").val();
 	var urlDifferent = $("#urlDifferent").val();
 	var tableTdCodes = $("#tableTdCodes").val();
+	var titles = $("#titles").val();
 	var syncUrl  = $("#syncUrl").val();
 
 	// 切换显示全部、隐藏相同
@@ -22,6 +23,7 @@ var Page = function() {
 			success: function(res) {
 				$.each(res, function(idx, obj) {
 					$("#data-table").append("<tr id=\"tr-" + idx + "\">" + genTr(idx + 1, obj) + "</tr>");
+					titles &&  $(titles.split(",")).each(function(i, v){processTitle(v,idx + 1, obj);});
 				});
 
 				$(".claSync").mouseover(function(){
@@ -48,23 +50,31 @@ var Page = function() {
 			} else if("dev" == o || "test" == o || "testtjd" == o || "pro" == o){
 				tr += "<td style=\"text-align:center\">" + genBtn(o, data[o], data.key)  + "</td>";
 			} else {
-				tr += "<td style=\"text-align:center\">" + data[o] + "</td>";
+				tr += "<td id=\"tr-" + rowNumber + "-" + o + "\" style=\"text-align:center\">" + data[o] + "</td>";
 			}
 		});
 		return tr;
+	};
+
+	var processTitle = function(rule, rowNumber, data){
+		var t = rule.split(":")[0];
+		var v = rule.split(":")[1];
+		var id = "tr-" + rowNumber + "-" + t;
+		$("#" + id).attr("title", data[v]);
 	};
 
 	var genBtn = function(env, type, key){
 		if(type == "1") {
 			return "<span style='color: rgb(80 210 210)' class=\"icon fa-check\"></span>";
 		} else {
-			var aid = env + "_" + key;
+			var aid = (env + "_" + key).replace(/\./g, "_");
 			return "<a style='color: rgb(242 132 158)' id = \"" + aid + "\" href=\"javascript:Page.sync('" + key + "', '" + env + "', '" + aid + "')\" class=\"icon fa claSync fa-close\"></a>";
 		}
 	};
 
 	var sync = function(key, env, id){
 		if (!syncUrl){
+			toastr.clear();
 			toastr.error($("#pageH2").text() + "不支持该操作");
 			return;
 		}

@@ -26,7 +26,7 @@ public class YwlyCompareController extends BaseController {
     @RequestMapping("/ywly/{all}")
     @ResponseBody
     public List<Map<String, Object>> getGnsqInfo(@PathVariable String all) throws ExecutionException, InterruptedException {
-        String sql = "SELECT UPPER(MD5(CONCAT(yylx,ywlyjb,ywlymc))) as md5, CONCAT( yylx, '_', ywlyjb, '_', ywlymc ) AS `key`," +
+        String sql = "SELECT UPPER(MD5(CONCAT(yylx,ywlyjb,ywlymc))) AS md5, CONCAT(yylx,'_',ywlyjb,'_',ywlymc) AS `key`," +
                 " yylx, ywlyjb, ywlymc FROM `fw_ywly` order by yylx, ywlyjb, ywlymc";
         return getCompareResultMapList(sql, "md5", "all".equals(all));
     }
@@ -34,7 +34,7 @@ public class YwlyCompareController extends BaseController {
     @RequestMapping("/ywly/sync/{env}/{key}")
     @ResponseBody
     public JSONObject sync(@PathVariable String env, @PathVariable String key) throws Exception {
-        log.info("执行业务领域数据复制：查询条件 {}，目标环境 {}", env, key, env);
+        log.info("执行业务领域数据复制：查询条件 {}，目标环境 {}", key, env);
         JSONObject res = new JSONObject();
 
         String sql = "select * from fw_ywly where CONCAT( yylx, '_', ywlyjb, '_', ywlymc ) = '" + key + "' limit 1";
@@ -72,8 +72,8 @@ public class YwlyCompareController extends BaseController {
             log.info("==================================================");
 
             res.put("result", "success");
-            res.put("sqlOfYwly", insertSql);
-            res.put("ywly", entity);
+            res.put("sql", insertSql);
+            res.put("entity", entity);
             return res;
         }
     }

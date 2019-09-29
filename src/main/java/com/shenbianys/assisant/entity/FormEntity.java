@@ -10,16 +10,17 @@ import java.util.Date;
  * @author Yang Hua
  */
 @Data
-@Table("fw_ywly")
-public class BusinessAreaEntity {
+@Table("bd_bd")
+public class FormEntity {
     @Id
-    private String ywlybh;
-    private String ywlymc;
+    private String bdbh;
     private Date xgsj;
     private String xgrbh;
     private String xgrxm;
-    private Integer ywlyjb;
-    private String sjywlybh;
+    private String ywlybh;
+    private String ywlymc;
+    private String bdmc;
+    private String bddysm;
     private String yylx;
     private String ywlyqc;
     private String ywlyqc_id;
