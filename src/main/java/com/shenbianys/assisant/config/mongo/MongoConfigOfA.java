@@ -32,7 +32,8 @@ public class MongoConfigOfA {
     public MongoTemplate getMongoTemplateA() {
         ServerAddress serverAddress = new ServerAddress(host, port);
         MongoCredential e = MongoCredential.createScramSha1Credential(username, "admin", password.toCharArray());
-        SimpleMongoDbFactory simpleMongoDbFactory = new SimpleMongoDbFactory(new MongoClient(serverAddress, e, MongoClientOptions.builder().build()), database);
+        SimpleMongoDbFactory simpleMongoDbFactory = new SimpleMongoDbFactory(
+                new MongoClient(serverAddress, e, MongoClientOptions.builder().build()), database);
         return new MongoTemplate(simpleMongoDbFactory);
     }
 }

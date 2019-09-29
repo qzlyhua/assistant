@@ -31,5 +31,8 @@ var IndexPage = function() {
 }();
 
 jQuery(document).ready(function() {
+	var minHeightOfMain = document.documentElement.clientHeight-$("#header").outerHeight()-$("#footer").outerHeight();
+	$("#main").css("min-height", minHeightOfMain + 10);
 	IndexPage.init();
+	$("#loadingDiv").fadeOut(function(){$("#tableDiv").show()})
 });

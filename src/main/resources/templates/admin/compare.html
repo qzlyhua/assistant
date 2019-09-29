@@ -1,0 +1,40 @@
+<!DOCTYPE HTML>
+<html>
+<head th:replace="admin/fragments/head :: head"></head>
+<body>
+	<div id="wrapper">
+		<header id="header" th:replace="admin/fragments/header :: header"></header>
+		<nav th:replace="admin/fragments/nav :: nav"></nav>
+		<div id="main" style="min-height: 600px">
+			<div class="inner">
+				<h2 id="pageH2" th:text="${projectName}">比较项目名称</h2>
+				<div id="loadingDiv" style="height:300px;" align="center"><img th:src="@{/assets/public/img/loading.gif}"></div>
+				<div id="tableDiv" class="table-wrapper" style="min-height: 400px;display: none;">
+					<input type="hidden" id="urlAll" th:value="${urlAll}"/>
+					<input type="hidden" id="urlDifferent" th:value="${urlDifferent}"/>
+					<input type="hidden" id="tableTdCodes" th:value="${tableTdCodes}"/>
+					<input type="hidden" id="syncUrl" th:value="${syncUrl}"/>
+					<table>
+						<thead>
+							<tr>
+								<th th:each="t:${tableThs}" style="text-align:center" th:text="${t}"/></th>
+							</tr>
+						</thead>
+						<tbody id="data-table"></tbody>
+					</table>
+					<ul class="actions">
+						<li><a id="btnRefresh" href="javascript:Page.refresh();" class="button">隐藏相同</a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<footer id="footer" th:replace="admin/fragments/footer :: footer"></footer>
+	</div>
+	<script th:src="@{/assets/common/js/jquery.min.js}"></script>
+	<script th:src="@{/assets/common/js/skel.min.js}"></script>
+	<script th:src="@{/assets/admin/js/main.js}"></script>
+	<script th:src="@{/assets/admin/js/util.js}"></script>
+	<script th:src="@{/assets/common/js/toastr.min.js}"></script>
+	<script th:src="@{/assets/admin/js/compare.js}"></script>
+</body>
+</html>

@@ -30,8 +30,10 @@ public class WebController {
         model.addAttribute("isAdmin", isAdmin);
 
         if (isAdmin) {
+            // TODO 新增用户的标识应当可变
             String state = DingLoginAuthenticationProvider.ADD_PREFIX;
             String url = DingDingUtils.getUrl(dingDingLoginProperties, state);
+            // 授权新的钉钉用户，允许其扫码登录
             model.addAttribute("url", url);
         }
     }
@@ -39,12 +41,30 @@ public class WebController {
     /**
      * 首页
      *
-     * @param model
      * @return
      */
     @RequestMapping(value = {"/"})
-    public String index(Model model) {
+    public String index() {
         return "admin/index";
+    }
+
+    /**
+     * 业务领域
+     *
+     * @param model
+     * @return
+     */
+    @RequestMapping(value = {"/ywly"})
+    public String ywly(Model model) {
+        String codes = "idx,yylx,ywlyjb,ywlymc,dev,test,testtjd,pro";
+        String[] ths = {"#", "应用类型", "级别", "业务领域名称", "开发", "测试", "突击队", "生产"};
+        model.addAttribute("projectName", "业务领域");
+        model.addAttribute("tableThs", ths);
+        model.addAttribute("tableTdCodes", codes);
+        model.addAttribute("urlAll", "/api/ywly/all");
+        model.addAttribute("urlDifferent", "/api/ywly/different");
+        model.addAttribute("syncUrl", "/api/ywly/sync");
+        return "admin/compare";
     }
 
     /**
@@ -78,17 +98,6 @@ public class WebController {
     @RequestMapping(value = {"/bd"})
     public String bd(Model model) {
         return "admin/bd";
-    }
-
-    /**
-     * 业务领域
-     *
-     * @param model
-     * @return
-     */
-    @RequestMapping(value = {"/ywly"})
-    public String ywly(Model model) {
-        return "admin/ywly";
     }
 
     /**
@@ -169,5 +178,24 @@ public class WebController {
     @RequestMapping(value = {"/zfpz"})
     public String zfpz(Model model) {
         return "admin/zfpz";
+    }
+
+    /**
+     * 通用页面-测试
+     *
+     * @param model
+     * @return
+     */
+    @RequestMapping(value = {"/compare"})
+    public String compare(Model model) {
+        String codes = "idx,yylx,ywlyjb,ywlymc,dev,test,testtjd,pro";
+        String[] ths = {"#", "应用类型", "级别", "业务领域名称", "开发", "测试", "突击队", "生产"};
+        model.addAttribute("projectName", "测试项目名称");
+        model.addAttribute("tableThs", ths);
+        model.addAttribute("tableTdCodes", codes);
+        model.addAttribute("urlAll", "/api/ywly/all");
+        model.addAttribute("urlDifferent", "/api/ywly/different");
+        model.addAttribute("syncUrl", "/api/ywly/sync");
+        return "admin/compare";
     }
 }

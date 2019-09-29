@@ -7,7 +7,6 @@ import com.mongodb.ServerAddress;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
 
@@ -27,12 +26,12 @@ public class MongoConfigOfD {
     @Value("${spring.data.mongodb.pro.password}")
     String password;
 
-    @Primary
     @Bean(name = "mongoTemplateD")
     public MongoTemplate getMongoTemplateD() {
         ServerAddress serverAddress = new ServerAddress(host, port);
         MongoCredential e = MongoCredential.createScramSha1Credential(username, "admin", password.toCharArray());
-        SimpleMongoDbFactory simpleMongoDbFactory = new SimpleMongoDbFactory(new MongoClient(serverAddress, e, MongoClientOptions.builder().build()), database);
+        SimpleMongoDbFactory simpleMongoDbFactory = new SimpleMongoDbFactory(
+                new MongoClient(serverAddress, e, MongoClientOptions.builder().build()), database);
         return new MongoTemplate(simpleMongoDbFactory);
     }
 }

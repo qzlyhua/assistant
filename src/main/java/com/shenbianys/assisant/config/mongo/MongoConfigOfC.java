@@ -27,12 +27,12 @@ public class MongoConfigOfC {
     @Value("${spring.data.mongodb.testtjd.password}")
     String password;
 
-    @Primary
     @Bean(name = "mongoTemplateC")
     public MongoTemplate getMongoTemplateC() {
         ServerAddress serverAddress = new ServerAddress(host, port);
         MongoCredential e = MongoCredential.createScramSha1Credential(username, "admin", password.toCharArray());
-        SimpleMongoDbFactory simpleMongoDbFactory = new SimpleMongoDbFactory(new MongoClient(serverAddress, e, MongoClientOptions.builder().build()), database);
+        SimpleMongoDbFactory simpleMongoDbFactory = new SimpleMongoDbFactory(
+                new MongoClient(serverAddress, e, MongoClientOptions.builder().build()), database);
         return new MongoTemplate(simpleMongoDbFactory);
     }
 }

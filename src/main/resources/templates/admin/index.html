@@ -8,7 +8,10 @@
 		<div id="main" style="min-height: 600px">
 			<div class="inner">
 				<h2>配置概览</h2>
-				<div class="table-wrapper">
+				<div id="loadingDiv" style="height:300px;" align="center">
+					<img th:src="@{/assets/public/img/loading.gif}">
+				</div>
+				<div id="tableDiv" class="table-wrapper" style="min-height: 400px;display: none;">
 					<table>
 						<thead>
 						<tr>
