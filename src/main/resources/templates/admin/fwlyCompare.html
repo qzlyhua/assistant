@@ -8,7 +8,8 @@
 		<div id="main" style="min-height: 600px">
 			<div class="inner">
 				<h2>路由配置比较</h2>
-				<div class="table-wrapper">
+				<div id="loadingDiv" style="height:300px;" align="center"><img th:src="@{/assets/public/img/loading.gif}"></div>
+				<div id="tableDiv" class="table-wrapper" style="min-height: 400px;display: none;">
 					<input type="hidden" id="envA" th:value="${a}"/>
 					<input type="hidden" id="envB" th:value="${b}"/>
 					<table>
@@ -24,10 +25,10 @@
 						<tbody id="data-table">
 						</tbody>
 					</table>
+					<ul class="actions">
+						<li><a id="btnRefresh" href="javascript:FwlyComparePage.refresh();" class="button">隐藏相同</a></li>
+					</ul>
 				</div>
-				<ul class="actions">
-					<li><a id="btnRefresh" href="javascript:FwlyComparePage.refresh();" class="button">隐藏相同</a></li>
-				</ul>
 			</div>
 		</div>
 		<footer id="footer" th:replace="admin/fragments/footer :: footer"></footer>
@@ -36,9 +37,7 @@
 	<script th:src="@{/assets/common/js/skel.min.js}"></script>
 	<script th:src="@{/assets/admin/js/main.js}"></script>
 	<script th:src="@{/assets/admin/js/util.js}"></script>
+	<script th:src="@{/assets/common/js/toastr.min.js}"></script>
 	<script th:src="@{/assets/admin/js/fwlyCompare.js}"></script>
-	<script>
-
-	</script>
 </body>
 </html>

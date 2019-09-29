@@ -1,14 +1,24 @@
 package com.shenbianys.assisant.controller.api;
 
+import com.alibaba.fastjson.JSONObject;
+import com.shenbianys.assisant.entity.ServicePublishEntity;
+import com.shenbianys.assisant.entity.ServiceRoutingConfigEntity;
+import com.shenbianys.assisant.util.IdUtils;
+import com.shenbianys.assisant.util.SqlUtils;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -18,16 +28,20 @@ import java.util.concurrent.Future;
  * @author Yang Hua
  */
 @Controller
+@Slf4j
 @RequestMapping("/api")
 public class FwlyCompareController extends BaseController {
+    @Autowired
+    RestTemplate restTemplate;
+
     /**
      * 服务-路由配置-总览
      *
      * @return
      */
-    @RequestMapping("/ly")
+    @RequestMapping("/lypz")
     @ResponseBody
-    public List<Map<String, String>> ly() throws ExecutionException, InterruptedException {
+    public List<Map<String, String>> lypz() throws ExecutionException, InterruptedException {
         String sql = "select idx.jgbh, ly.jgmc as jgmc, count(ly.lybh) as count from " +
                 "(select distinct jgbh from fw_ly order by jgbh) idx left join fw_ly ly " +
                 "on idx.jgbh = ly.jgbh group by idx.jgbh";
@@ -125,5 +139,157 @@ public class FwlyCompareController extends BaseController {
         } else {
             return "";
         }
+    }
+
+    /**
+     * 向目标环境的目标用户域创建指定名称的路由配置
+     */
+    @RequestMapping("/lypz/sync/{from}/{to}/{fwmc}")
+    @ResponseBody
+    public JSONObject sync(@PathVariable String from, @PathVariable String to, @PathVariable String fwmc) throws Exception {
+        log.info("自动配置路由：参考 {} 环境，自动发布 {} 服务到 {} 环境", from, fwmc, to);
+        JSONObject res = new JSONObject();
+
+        String envFrom = from.split("_")[0];
+        String yhyFrom = from.split("_")[1];
+        String envTo = to.split("_")[0];
+        String yhyTo = to.split("_")[1];
+
+        // 校验源数据-服务发布
+        String sqlOfFwfbFromCount = "select count(*) as c from fw_fb where fwmc = '" + fwmc + "' and jgbh = '" + yhyFrom + "'";
+        Map<String, Object> mapOfFwfbFrom = queryForMap(envFrom, sqlOfFwfbFromCount);
+        if (Integer.valueOf(mapOfFwfbFrom.get("c").toString()) < 1) {
+            res.put("result", "error");
+            res.put("message", "源服务发布不存在");
+            return res;
+        }
+
+        // 校验源数据-服务路由
+        String sqlOfFwlyFromCount = "select count(*) as c from fw_ly where fwmc = '" + fwmc + "' and jgbh = '" + yhyFrom + "'";
+        Map<String, Object> mapOfFwlyFrom = queryForMap(envFrom, sqlOfFwlyFromCount);
+        if (Integer.valueOf(mapOfFwlyFrom.get("c").toString()) < 1) {
+            res.put("result", "error");
+            res.put("message", "源服务路由不存在");
+            return res;
+        }
+
+        // 校验目标数据-服务路由
+        String sqlOfFwlyToCount = "select count(*) as c from fw_ly where fwmc = '" + fwmc + "' and jgbh = '" + yhyTo + "'";
+        Map<String, Object> mapOfFwlyTo = queryForMap(envTo, sqlOfFwlyToCount);
+        if (Integer.valueOf(mapOfFwlyTo.get("c").toString()) > 0) {
+            res.put("result", "error");
+            res.put("message", "目标服务路由已存在");
+            return res;
+        }
+
+        // 源服务路由数据
+        String sqlOfFwlyFrom = "select * from fw_ly where fwmc = '" + fwmc + "' and jgbh = '" + yhyFrom + "'";
+        ServiceRoutingConfigEntity fwlyFrom = queryForObject(envFrom, sqlOfFwlyFrom, ServiceRoutingConfigEntity.class);
+
+        // 目标第三方系统数据
+        String sqlOfDsfxtTo = "select id, xtbs, xtmc, xtdz, jgbh, jgmc from xt_dsfxt where jgbh = '" + yhyTo + "'";
+        List<Map<String, Object>> dsfxtMapList = queryForList(envTo, sqlOfDsfxtTo);
+
+        // 校验第三方系统是否存在
+        boolean dsfxtExists = false;
+        Map<String, String> dsfxtInfo = new HashMap<>();
+        for (int i = 0; i < dsfxtMapList.size(); i++) {
+            Map<String, Object> dsfxt = dsfxtMapList.get(i);
+            if (fwlyFrom.getXtmc().equals(dsfxt.get("xtmc"))) {
+                dsfxtInfo.put("xtbh", (String) dsfxt.get("id"));
+                dsfxtInfo.put("xtbs", (String) dsfxt.get("xtbs"));
+                dsfxtInfo.put("xtmc", (String) dsfxt.get("xtmc"));
+                dsfxtInfo.put("ip", (String) dsfxt.get("xtdz"));
+                dsfxtInfo.put("jgbh", (String) dsfxt.get("jgbh"));
+                dsfxtInfo.put("jgmc", (String) dsfxt.get("jgmc"));
+                dsfxtExists = true;
+                break;
+            }
+        }
+
+        if (!dsfxtExists) {
+            res.put("result", "error");
+            res.put("message", "第三方系统未配置");
+            return res;
+        }
+
+        log.info("目标环境第三方系统配置：{}", dsfxtInfo);
+
+        // 校验目标数据-服务发布
+        String sqlOfFwfbToCount = "select count(*) as c from fw_fb where fwmc = '" + fwmc + "' and jgbh = '" + yhyTo + "'";
+        Map<String, Object> mapOfFwfbTo = queryForMap(envTo, sqlOfFwfbToCount);
+        int fwfbToCount = Integer.valueOf(mapOfFwfbTo.get("c").toString());
+
+        // 创建目标环境的服务发布
+        if (fwfbToCount == 0) {
+            String sqlOfFwfbFrom = "select * from fw_fb where fwmc = '" + fwmc + "' and jgbh = '" + yhyFrom + "'";
+            ServicePublishEntity fwfbFrom = queryForObject(envFrom, sqlOfFwfbFrom, ServicePublishEntity.class);
+
+            fwfbFrom.setFwfbbh(IdUtils.generator());
+            fwfbFrom.setJgbh(dsfxtInfo.get("jgbh"));
+            fwfbFrom.setJgmc(dsfxtInfo.get("jgmc"));
+            fwfbFrom.setXgsj(new Date());
+            fwfbFrom.setXgrbh("-1");
+            fwfbFrom.setXgrbh("robot");
+
+            String sqlOfInsertFwfb = SqlUtils.generatorInsertSql(fwfbFrom);
+            log.info("执行服务发布数据插入：{}", sqlOfInsertFwfb);
+            update(envTo, sqlOfInsertFwfb);
+
+            String sqlOfUpdateFwqd = "update fw_qd set fwzt = '已使用' where fwmc = '" + fwmc + "'";
+            log.info("执行服务清单数据修改：{}", sqlOfUpdateFwqd);
+            update(envTo, sqlOfUpdateFwqd);
+        }
+
+        fwlyFrom.setLybh(IdUtils.generator());
+        fwlyFrom.setCjsj(new Date());
+        fwlyFrom.setCjrbh("-1");
+        fwlyFrom.setCjrxm("robot");
+        fwlyFrom.setIp(dsfxtInfo.get("ip"));
+        fwlyFrom.setJgbh(dsfxtInfo.get("jgbh"));
+        fwlyFrom.setJgmc(dsfxtInfo.get("jgmc"));
+        fwlyFrom.setXtbh(dsfxtInfo.get("xtbh"));
+
+        String sqlOfInsertFwly = SqlUtils.generatorInsertSql(fwlyFrom);
+        log.info("执行服务路由数据插入：{}", sqlOfInsertFwly);
+        update(envTo, sqlOfInsertFwly);
+
+        String url = getSsywUrl(envTo) + "/serviceRouting/sendToRedis?orgCode=" + yhyTo + "&serviceName=" + fwmc;
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Robot YWRtaW46d2FkYXRh");
+
+        log.info("调用实施运维接口：{}", url);
+        ResponseEntity<JSONObject> responseEntity = restTemplate.exchange(url, HttpMethod.GET,
+                new HttpEntity<>(new LinkedMultiValueMap<>(), headers), JSONObject.class, new HashMap<>());
+        log.info("调用实施运维接口响应：{}", responseEntity.getBody());
+
+        if (200 == responseEntity.getBody().getIntValue("code")) {
+            res.put("result", "success");
+            return res;
+        } else {
+            res.put("result", "error");
+            res.put("message", "路由刷新失败");
+            return res;
+        }
+    }
+
+    /**
+     * 各环境实施运维接口基地址
+     *
+     * @param env
+     * @return
+     */
+    private String getSsywUrl(String env) {
+        if ("dev".equals(env)) {
+            return "http://dev.ssyw.arounddoctor.com/ssyw";
+        } else if ("test".equals(env)) {
+            return "http://test.ssyw.arounddoctor.com/ssyw/api";
+        } else if ("testtjd".equals(env)) {
+            return "http://test.tjdssyw.arounddoctor.com/ssyw/api";
+        } else if ("pro".equals(env)) {
+            return "http://ssyw.arounddoctor.com/ssyw/api";
+        }
+        return "";
     }
 }

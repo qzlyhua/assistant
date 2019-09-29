@@ -120,7 +120,7 @@ public class WebController {
         model.addAttribute("tableTdCodes", codes);
         model.addAttribute("urlAll", "/api/xtcs/all");
         model.addAttribute("urlDifferent", "/api/xtcs/different");
-        model.addAttribute("syncUrl", "");
+        model.addAttribute("syncUrl", "/api/xtcs/sync");
         return "admin/compare";
     }
 
@@ -224,11 +224,10 @@ public class WebController {
     /**
      * 服务路由
      *
-     * @param model
      * @return
      */
     @RequestMapping(value = {"/fwly"})
-    public String fwly(Model model) {
+    public String fwly() {
         return "admin/fwly";
     }
 
@@ -241,8 +240,8 @@ public class WebController {
      */
     @RequestMapping(value = {"/fwly/{a}/{b}"})
     public String fwlyCompare(Model model, @PathVariable String a, @PathVariable String b) {
-        model.addAttribute("a", a);
-        model.addAttribute("b", b);
+        model.addAttribute("envA", a);
+        model.addAttribute("envB", b);
         return "admin/fwlyCompare";
     }
 }

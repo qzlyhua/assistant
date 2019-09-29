@@ -1,9 +1,9 @@
 var FwlyPage = function() {
 	var init = function(){
+		toastr.clear();
 		$("#data-table").html("");
-		var url = "/api/ly";
 		$.ajax({
-			url: url,
+			url: "/api/lypz",
 			method: 'GET',
 			success: function(res) {
 				$.each(res, function(idx, obj) {
@@ -16,6 +16,7 @@ var FwlyPage = function() {
 					html += "<td style=\"text-align:center\">" + obj.count +  "</td>";
 					html += "</tr>";
 					$("#data-table").append(html);
+					$("#loadingDiv").fadeOut(function(){$("#tableDiv").show()});
 
 					$("#" + id).click(function(){
 						let checkBox = $(this).find("input");
@@ -23,15 +24,23 @@ var FwlyPage = function() {
 
 						var check = $("input:checkbox:checked").length;
 						if (check == 2){
+							toastr.clear();
 							toastr.success("点【配置比较】查看结果");
+							return;
 						} else if (check > 2){
+							toastr.clear();
 							toastr.warning("只能选择两个用户域");
+							return;
 						}
 					});
 				});
+
+				toastr.info("选两个用户域进行比较");
 			},
-			error:function(result) {
-			    console.error(result);
+			error:function(res) {
+			    console.error(res);
+				toastr.clear();
+				toastr.error(res.status + ":接口调用出错");
 			}
 		});
 	};
@@ -46,31 +55,24 @@ var FwlyPage = function() {
 			});
 			window.location.href = url.substr(0, url.length - 1);
 		} else if (check > 2){
+			toastr.clear();
 			toastr.error("只能选择两个用户域");
 		} else if (check < 2){
+			toastr.clear();
 			toastr.error("请选择两个用户域");
 		}
 	};
 
-	var clear = function () {
-		$("input").prop("checked", false);
-	};
-
 	return {
-		init : function(){
-	        init();
-		},
-		compare : function () {
-			compare();
-		},
-		clear : function () {
-			clear();
-		}
+		init : function(){init();},
+		compare : function () {compare();},
+		clear : function () {$("input").prop("checked", false);}
 	}
 }();
 
 jQuery(document).ready(function() {
-	FwlyPage.init();
+	var minHeightOfMain = document.documentElement.clientHeight-$("#header").outerHeight()-$("#footer").outerHeight();
+	$("#main").css("min-height", minHeightOfMain + 10);
 	toastr.options = {positionClass: "toast-top-center"};
-	toastr.info("选两个用户域进行比较");
+	FwlyPage.init();
 });

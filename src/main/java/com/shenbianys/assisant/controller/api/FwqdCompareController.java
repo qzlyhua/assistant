@@ -46,7 +46,7 @@ public class FwqdCompareController extends BaseController {
      */
     @RequestMapping("/fwqd/sync/{env}/{key}")
     @ResponseBody
-    public JSONObject add(@PathVariable String env, @PathVariable String key) throws Exception {
+    public JSONObject sync(@PathVariable String env, @PathVariable String key) throws Exception {
         log.info("执行服务清单数据复制：查询条件 {}，目标环境 {}", key, env);
         JSONObject res = new JSONObject();
 

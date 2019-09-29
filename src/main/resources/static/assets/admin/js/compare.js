@@ -89,6 +89,7 @@ var Page = function() {
 		var last = $a.attr("lastClickTime") ? $a.attr("lastClickTime") : 0;
 
 		if(now - last < 3){
+			toastr.clear();
 			$a.removeClass("fa-plus claSync").addClass("fa-circle-o-notch fa-spin");
 			$.ajax({
 				url: syncUrl + '/' + env + '/' + key,

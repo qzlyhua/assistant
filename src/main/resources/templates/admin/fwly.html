@@ -8,7 +8,8 @@
 		<div id="main" style="min-height: 600px">
 			<div class="inner">
 				<h2>服务路由</h2>
-				<div class="table-wrapper">
+				<div id="loadingDiv" style="height:300px;" align="center"><img th:src="@{/assets/public/img/loading.gif}"></div>
+				<div id="tableDiv" class="table-wrapper" style="min-height: 400px;display: none;">
 					<table>
 						<thead>
 							<tr>
@@ -22,11 +23,11 @@
 						<tbody id="data-table">
 						</tbody>
 					</table>
+					<ul class="actions">
+						<li><a id="btnRefresh" href="javascript:FwlyPage.compare();" class="button">配置比较</a></li>
+						<li><a id="btnClear" href="javascript:FwlyPage.clear();" class="button">取消选中</a></li>
+					</ul>
 				</div>
-				<ul class="actions">
-					<li><a id="btnRefresh" href="javascript:FwlyPage.compare();" class="button">配置比较</a></li>
-					<li><a id="btnClear" href="javascript:FwlyPage.clear();" class="button">取消选中</a></li>
-				</ul>
 			</div>
 		</div>
 		<footer id="footer" th:replace="admin/fragments/footer :: footer"></footer>

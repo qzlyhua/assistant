@@ -1,94 +1,114 @@
 var FwlyComparePage = function () {
+    var envA = $("#envA").val();
+    var envB = $("#envB").val();
+
+    // 切换显示全部、隐藏相同
     var refresh = function () {
-        var u = $("#envA").val() + "/" + $("#envB").val();
-        var current = $("#btnRefresh").text();
-        if ("隐藏相同" == current) {
-            $("#btnRefresh").text("显示全部");
-            init(u + "/different");
-        } else {
-            $("#btnRefresh").text("隐藏相同");
-            init(u + "/all");
-        }
+        $("html,body").animate({scrollTop: 0}, 100);
+        $("#tableDiv").hide();
+        $("#loadingDiv").show();
+        $("#data-table").html("");
+        $("#btnRefresh").text("隐藏相同" == $("#btnRefresh").text() ? "显示全部" : "隐藏相同");
+        init();
     };
 
-    var init = function (u) {
+    var init = function () {
         $("#data-table").html("");
-        var url = "/api/lypz/" + u;
+        var u = "/api/lypz/" + envA + "/" + envB + "/";
         $.ajax({
-            url: url,
+            url: "隐藏相同" == $("#btnRefresh").text() ? u + "all" : u + "different",
             method: 'GET',
             success: function (res) {
-            	$("#thEnvA").text(res.envA);
-				$("#thEnvB").text(res.envB);
+                $("#thEnvA").attr("title", res.envA);
+                $("#thEnvB").attr("title", res.envB);
                 $.each(res.result, function (idx, obj) {
-                	var fwmcShow = obj.fwdz ? obj.xtmc + "/" + obj.fwdz + "/" + obj.dsffwmc : obj.xtmc + "/" + obj.dsffwmc;
-					var id = "tr-" + idx;
+                    var fwmcShow = obj.fwdz ? obj.xtmc + "/" + obj.fwdz + "/" + obj.dsffwmc : obj.xtmc + "/" + obj.dsffwmc;
+                    var id = "tr-" + idx;
                     var html = "<tr id=\"" + id + "\">";
                     html += "<td style=\"text-align:center\">" + (idx + 1) + "</td>";
                     html += "<td style=\"text-align:center\">" + obj.fwmc + "</td>";
                     html += "<td style=\"text-align:center\">" + fwmcShow + "</td>";
-                    html += "<td id = '" + idx + "-a" + "' style=\"text-align:center\">" + genBtn('a', obj.envA, obj.fwmc, idx + '-a') + "</td>";
-                    html += "<td id = '" + idx + "-b" + "' style=\"text-align:center\">" + genBtn('b', obj.envB, obj.fwmc, idx + '-b') + "</td>";
+                    html += "<td id = 'td-" + idx + "-a" + "' style=\"text-align:center\">" + genBtn(envA, obj.envA, obj.fwmc, idx + '-a') + "</td>";
+                    html += "<td id = 'td-" + idx + "-b" + "' style=\"text-align:center\">" + genBtn(envB, obj.envB, obj.fwmc, idx + '-b') + "</td>";
                     html += "</tr>";
                     $("#data-table").append(html);
-
-                    $("#" + id).click(function () {
-                        let checkBox = $(this).find("input");
-                        checkBox.prop("checked") ? checkBox.prop("checked", false) : checkBox.prop("checked", true);
-                    });
                 });
+
+                $(".claSync").mouseover(function(){
+                    $(this).removeClass("fa-close").addClass("fa-plus");
+                }).mouseleave(function(){
+                    $(this).removeClass("fa-plus").addClass("fa-close");
+                });
+
+                $("#loadingDiv").fadeOut(function(){$("#tableDiv").show()});
+                res.length == 0 && toastr.info("暂无数据");
             },
             error: function (result) {
+                toastr.error("数据获取失败");
                 console.error(result);
             }
         });
     };
 
-    var genBtn = function (env, type, dm, id) {
+    var genBtn = function (env, type, fwmc, id) {
         if (type == "1") {
-            return "<a style='color: rgb(80 210 210)' class=\"icon style1 fa-check\"></a>";
+            return "<span style='color: rgb(80 210 210)' class=\"icon fa-check\"></span>";
         } else {
-            return "<a style='color: rgb(242 132 158)' href=\"javascript:FwlyComparePage.sync('" + dm + "', '" + env + "', '" + id + "')\" class=\"icon style1 clsAdd fa-close\"></a>";
+            var from = envA == env ? envB : envA;
+            var to = envA == env ? envA : envB;
+            var btn = "<a style='color: rgb(242 132 158)' id='" + id + "' class=\"icon claSync fa fa-close\"" +
+                "href=\"javascript:FwlyComparePage.sync('" + from + "','" + to + "','" + fwmc + "','" + id + "')\"></a>";
+            return btn;
         }
     };
 
-    var compare = function () {
-        var check = $("input:checkbox:checked").length;
-        if (check == 2) {
-            var url = "/fwly/";
-            $("input:checkbox:checked").each(function () {
-                url += $(this).attr("id");
-                url += "/";
+    var sync = function (from, to, fwmc, id) {
+        var $a = $("#" + id);
+        var now = parseInt(new Date().getTime()/1000);
+        var last = $a.attr("lastClickTime") ? $a.attr("lastClickTime") : 0;
+
+        if(now - last < 3){
+            toastr.clear();
+            $a.removeClass("fa-plus claSync").addClass("fa-circle-o-notch fa-spin");
+            $.ajax({
+                url: "/api/lypz/sync/" + from + "/" + to + "/" + fwmc,
+                type: 'GET',
+                success: function(data) {
+                    if ("success" == data.result) {
+                        $a.parent().html("<span style='color: rgb(80 210 210)' class=\"icon fa-check\"></span>");
+                        toastr.clear();
+                        toastr.success("操作成功");
+                    } else {
+                        $a.removeClass("fa-circle-o-notch fa-spin").addClass("claSync fa-close");
+                        toastr.clear();
+                        toastr.error(data.message);
+                    }
+                },
+                error:function(res){
+                    console.error(res);
+                    $a.removeClass("fa-circle-o-notch fa-spin").addClass("claSync fa-close");
+                    toastr.clear();
+                    toastr.error(res.status + ":接口调用出错");
+                }
             });
-            window.location.href = url.substr(0, url.length - 1);
-        } else if (check > 2) {
-            alert("仅支持比较两个用户域！");
-        } else if (check < 2) {
-            alert("请选中两个需要比较的用户域！");
+            return true;
+        } else {
+            $a.attr("lastClickTime", now);
+            toastr.info("请再次点击确认该操作");
+            return;
         }
-    };
-
-    var clear = function () {
-        $("input").prop("checked", false);
     };
 
     return {
-        init: function (url) {
-            init(url);
-        },
-		refresh: function(){
-        	refresh();
-		},
-        compare: function () {
-            compare();
-        },
-        clear: function () {
-            clear();
-        }
+        init: function () {init();},
+        refresh: function () {refresh();},
+        sync: function (from, to, fwmc, id) {sync(from, to, fwmc, id);}
     }
 }();
 
 jQuery(document).ready(function () {
-    var u = $("#envA").val() + "/" + $("#envB").val();
-    FwlyComparePage.init(u + "/all");
+    var minHeightOfMain = document.documentElement.clientHeight - $("#header").outerHeight() - $("#footer").outerHeight();
+    $("#main").css("min-height", minHeightOfMain + 10);
+    toastr.options = {positionClass: "toast-top-center"};
+    FwlyComparePage.init();
 });
