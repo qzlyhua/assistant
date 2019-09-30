@@ -18,8 +18,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 public class ResponseResultHandlerAdvice implements ResponseBodyAdvice {
     @Override
     public boolean supports(MethodParameter returnType, Class converterType) {
-        log.info("returnType : " + returnType);
-        log.info("converterType : " + converterType);
         return true;
     }
 

@@ -51,6 +51,7 @@ public class XtcsCompareController extends BaseController {
 
         // 修改数据后执行插入操作
         entity.setXgsj(new Date());
+        entity.setCsid(IdUtils.generator());
         int res = update(env, entity);
 
         // 查询所有需要新增参数的其他用户域

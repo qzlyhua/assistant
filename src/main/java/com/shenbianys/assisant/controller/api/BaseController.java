@@ -102,13 +102,13 @@ public class BaseController {
      * @return
      */
     protected int update(String env, String sql) {
-        log.info("执行数据库操作：{}", sql);
+        log.info("向 {} 环境执行数据库操作：{}", env, sql);
         return mysqlService.update(env, sql);
     }
 
     protected int update(String env, Object entity) throws IntrospectionException, IllegalAccessException, ParseException, InvocationTargetException {
         String insertSql = SqlUtils.generatorInsertSql(entity);
-        log.info("执行插入操作：{}", insertSql);
+        log.info("向 {} 环境执行插入操作：{}", env, insertSql);
         return mysqlService.update(env, insertSql);
     }
 

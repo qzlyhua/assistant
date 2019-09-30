@@ -19,30 +19,35 @@ var FwlyComparePage = function () {
             url: "隐藏相同" == $("#btnRefresh").text() ? u + "all" : u + "different",
             method: 'GET',
             success: function (result) {
-                var res = result.data;
-                $("#thEnvA").attr("title", res.envA);
-                $("#thEnvB").attr("title", res.envB);
-                $.each(res.result, function (idx, obj) {
-                    var fwmcShow = obj.fwdz ? obj.xtmc + "/" + obj.fwdz + "/" + obj.dsffwmc : obj.xtmc + "/" + obj.dsffwmc;
-                    var id = "tr-" + idx;
-                    var html = "<tr id=\"" + id + "\">";
-                    html += "<td style=\"text-align:center\">" + (idx + 1) + "</td>";
-                    html += "<td style=\"text-align:center\">" + obj.fwmc + "</td>";
-                    html += "<td style=\"text-align:center\">" + fwmcShow + "</td>";
-                    html += "<td id = 'td-" + idx + "-a" + "' style=\"text-align:center\">" + genBtn(envA, obj.envA, obj.fwmc, idx + '-a') + "</td>";
-                    html += "<td id = 'td-" + idx + "-b" + "' style=\"text-align:center\">" + genBtn(envB, obj.envB, obj.fwmc, idx + '-b') + "</td>";
-                    html += "</tr>";
-                    $("#data-table").append(html);
-                });
+                if (result.code == 200) {
+                    var res = result.data;
+                    $("#thEnvA").attr("title", res.envA);
+                    $("#thEnvB").attr("title", res.envB);
+                    $.each(res.result, function (idx, obj) {
+                        var fwmcShow = obj.fwdz ? obj.xtmc + "/" + obj.fwdz + "/" + obj.dsffwmc : obj.xtmc + "/" + obj.dsffwmc;
+                        var id = "tr-" + idx;
+                        var html = "<tr id=\"" + id + "\">";
+                        html += "<td style=\"text-align:center\">" + (idx + 1) + "</td>";
+                        html += "<td style=\"text-align:center\">" + obj.fwmc + "</td>";
+                        html += "<td style=\"text-align:center\">" + fwmcShow + "</td>";
+                        html += "<td id = 'td-" + idx + "-a" + "' style=\"text-align:center\">" + genBtn(envA, obj.envA, obj.fwmc, idx + '-a') + "</td>";
+                        html += "<td id = 'td-" + idx + "-b" + "' style=\"text-align:center\">" + genBtn(envB, obj.envB, obj.fwmc, idx + '-b') + "</td>";
+                        html += "</tr>";
+                        $("#data-table").append(html);
+                    });
 
-                $(".claSync").mouseover(function(){
-                    $(this).removeClass("fa-close").addClass("fa-plus");
-                }).mouseleave(function(){
-                    $(this).removeClass("fa-plus").addClass("fa-close");
-                });
+                    $(".claSync").mouseover(function(){
+                        $(this).removeClass("fa-close").addClass("fa-plus");
+                    }).mouseleave(function(){
+                        $(this).removeClass("fa-plus").addClass("fa-close");
+                    });
 
-                $("#loadingDiv").fadeOut(function(){$("#tableDiv").show()});
-                res.length == 0 && toastr.info("暂无数据");
+                    $("#loadingDiv").fadeOut(function(){$("#tableDiv").show()});
+                    res.length == 0 && toastr.info("暂无数据");
+                } else {
+                    toastr.clear();
+                    toastr.error(result.message);
+                }
             },
             error: function (result) {
                 console.error(result);

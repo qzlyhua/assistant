@@ -6,36 +6,40 @@ var FwlyPage = function() {
 			url: "/api/lypz",
 			method: 'GET',
 			success: function(result) {
-				$.each(result.data, function(idx, obj) {
-					var id = "tr-" + idx;
-					var html = "<tr id=\"" + id + "\">";
-					html += "<td style=\"text-align:center\">" + obj.cbx + "</td>";
-					html += "<td style=\"text-align:center\">" + obj.envmc +  "</td>";
-					html += "<td style=\"text-align:center\">" + obj.yhybh +  "</td>";
-					html += "<td style=\"text-align:center\">" + obj.yhymc +  "</td>";
-					html += "<td style=\"text-align:center\">" + obj.count +  "</td>";
-					html += "</tr>";
-					$("#data-table").append(html);
-					$("#loadingDiv").fadeOut(function(){$("#tableDiv").show()});
+				if (result.code == 200){
+					$.each(result.data, function(idx, obj) {
+						var id = "tr-" + idx;
+						var html = "<tr id=\"" + id + "\">";
+						html += "<td style=\"text-align:center\">" + obj.cbx + "</td>";
+						html += "<td style=\"text-align:center\">" + obj.envmc +  "</td>";
+						html += "<td style=\"text-align:center\">" + obj.yhybh +  "</td>";
+						html += "<td style=\"text-align:center\">" + obj.yhymc +  "</td>";
+						html += "<td style=\"text-align:center\">" + obj.count +  "</td>";
+						html += "</tr>";
+						$("#data-table").append(html);
+						$("#loadingDiv").fadeOut(function(){$("#tableDiv").show()});
 
-					$("#" + id).click(function(){
-						let checkBox = $(this).find("input");
-						checkBox.prop("checked") ? checkBox.prop("checked", false) : checkBox.prop("checked", true);
+						$("#" + id).click(function(){
+							let checkBox = $(this).find("input");
+							checkBox.prop("checked") ? checkBox.prop("checked", false) : checkBox.prop("checked", true);
 
-						var check = $("input:checkbox:checked").length;
-						if (check == 2){
-							toastr.clear();
-							toastr.success("点【配置比较】查看结果");
-							return;
-						} else if (check > 2){
-							toastr.clear();
-							toastr.warning("只能选择两个用户域");
-							return;
-						}
+							var check = $("input:checkbox:checked").length;
+							if (check == 2){
+								toastr.clear();
+								toastr.success("点【配置比较】查看结果");
+								return;
+							} else if (check > 2){
+								toastr.clear();
+								toastr.warning("只能选择两个用户域");
+								return;
+							}
+						});
 					});
-				});
-
-				toastr.info("选两个用户域进行比较");
+					toastr.info("选两个用户域进行比较");
+				} else {
+					toastr.clear();
+					toastr.error(result.message);
+				}
 			},
 			error:function(result) {
 			    console.error(result);
