@@ -1,21 +1,21 @@
 package com.shenbianys.assisant.controller.api;
 
 import com.alibaba.fastjson.JSONObject;
+import com.shenbianys.assisant.controller.api.response.StandardResponse;
 import com.shenbianys.assisant.entity.ServicePublishEntity;
 import com.shenbianys.assisant.entity.ServiceRoutingConfigEntity;
 import com.shenbianys.assisant.util.IdUtils;
-import com.shenbianys.assisant.util.SqlUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
+import org.springframework.util.Assert;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
@@ -27,7 +27,8 @@ import java.util.concurrent.Future;
  *
  * @author Yang Hua
  */
-@Controller
+@RestController
+@StandardResponse
 @Slf4j
 @RequestMapping("/api")
 public class FwlyCompareController extends BaseController {
@@ -40,7 +41,6 @@ public class FwlyCompareController extends BaseController {
      * @return
      */
     @RequestMapping("/lypz")
-    @ResponseBody
     public List<Map<String, String>> lypz() throws ExecutionException, InterruptedException {
         String sql = "select idx.jgbh, ly.jgmc as jgmc, count(ly.lybh) as count from " +
                 "(select distinct jgbh from fw_ly order by jgbh) idx left join fw_ly ly " +
@@ -78,7 +78,6 @@ public class FwlyCompareController extends BaseController {
      * @return
      */
     @RequestMapping("/lypz/{a}/{b}/{all}")
-    @ResponseBody
     public Map<String, Object> lypzCompare(@PathVariable String a, @PathVariable String b,
                                            @PathVariable String all) throws ExecutionException, InterruptedException {
         String envA = a.split("_")[0];
@@ -145,10 +144,8 @@ public class FwlyCompareController extends BaseController {
      * 向目标环境的目标用户域创建指定名称的路由配置
      */
     @RequestMapping("/lypz/sync/{from}/{to}/{fwmc}")
-    @ResponseBody
-    public JSONObject sync(@PathVariable String from, @PathVariable String to, @PathVariable String fwmc) throws Exception {
+    public int sync(@PathVariable String from, @PathVariable String to, @PathVariable String fwmc) throws Exception {
         log.info("自动配置路由：参考 {} 环境，自动发布 {} 服务到 {} 环境", from, fwmc, to);
-        JSONObject res = new JSONObject();
 
         String envFrom = from.split("_")[0];
         String yhyFrom = from.split("_")[1];
@@ -157,30 +154,18 @@ public class FwlyCompareController extends BaseController {
 
         // 校验源数据-服务发布
         String sqlOfFwfbFromCount = "select count(*) as c from fw_fb where fwmc = '" + fwmc + "' and jgbh = '" + yhyFrom + "'";
-        Map<String, Object> mapOfFwfbFrom = queryForMap(envFrom, sqlOfFwfbFromCount);
-        if (Integer.valueOf(mapOfFwfbFrom.get("c").toString()) < 1) {
-            res.put("result", "error");
-            res.put("message", "源服务发布不存在");
-            return res;
-        }
+        int countOfFwfbFrom = count(envFrom, sqlOfFwfbFromCount);
+        Assert.isTrue(countOfFwfbFrom > 0, "源服务发布不存在");
 
         // 校验源数据-服务路由
         String sqlOfFwlyFromCount = "select count(*) as c from fw_ly where fwmc = '" + fwmc + "' and jgbh = '" + yhyFrom + "'";
-        Map<String, Object> mapOfFwlyFrom = queryForMap(envFrom, sqlOfFwlyFromCount);
-        if (Integer.valueOf(mapOfFwlyFrom.get("c").toString()) < 1) {
-            res.put("result", "error");
-            res.put("message", "源服务路由不存在");
-            return res;
-        }
+        int countOfFwlyFrom = count(envFrom, sqlOfFwlyFromCount);
+        Assert.isTrue(countOfFwlyFrom > 0, "源服务路由不存在");
 
         // 校验目标数据-服务路由
         String sqlOfFwlyToCount = "select count(*) as c from fw_ly where fwmc = '" + fwmc + "' and jgbh = '" + yhyTo + "'";
-        Map<String, Object> mapOfFwlyTo = queryForMap(envTo, sqlOfFwlyToCount);
-        if (Integer.valueOf(mapOfFwlyTo.get("c").toString()) > 0) {
-            res.put("result", "error");
-            res.put("message", "目标服务路由已存在");
-            return res;
-        }
+        int countOfFwlyTo = count(envTo, sqlOfFwlyToCount);
+        Assert.isTrue(countOfFwlyTo == 0, "目标服务路由已存在");
 
         // 源服务路由数据
         String sqlOfFwlyFrom = "select * from fw_ly where fwmc = '" + fwmc + "' and jgbh = '" + yhyFrom + "'";
@@ -191,7 +176,6 @@ public class FwlyCompareController extends BaseController {
         List<Map<String, Object>> dsfxtMapList = queryForList(envTo, sqlOfDsfxtTo);
 
         // 校验第三方系统是否存在
-        boolean dsfxtExists = false;
         Map<String, String> dsfxtInfo = new HashMap<>();
         for (int i = 0; i < dsfxtMapList.size(); i++) {
             Map<String, Object> dsfxt = dsfxtMapList.get(i);
@@ -202,23 +186,17 @@ public class FwlyCompareController extends BaseController {
                 dsfxtInfo.put("ip", (String) dsfxt.get("xtdz"));
                 dsfxtInfo.put("jgbh", (String) dsfxt.get("jgbh"));
                 dsfxtInfo.put("jgmc", (String) dsfxt.get("jgmc"));
-                dsfxtExists = true;
+
                 break;
             }
         }
 
-        if (!dsfxtExists) {
-            res.put("result", "error");
-            res.put("message", "第三方系统未配置");
-            return res;
-        }
-
+        Assert.notEmpty(dsfxtInfo, "第三方系统未配置");
         log.info("目标环境第三方系统配置：{}", dsfxtInfo);
 
         // 校验目标数据-服务发布
         String sqlOfFwfbToCount = "select count(*) as c from fw_fb where fwmc = '" + fwmc + "' and jgbh = '" + yhyTo + "'";
-        Map<String, Object> mapOfFwfbTo = queryForMap(envTo, sqlOfFwfbToCount);
-        int fwfbToCount = Integer.valueOf(mapOfFwfbTo.get("c").toString());
+        int fwfbToCount = count(envTo, sqlOfFwfbToCount);
 
         // 创建目标环境的服务发布
         if (fwfbToCount == 0) {
@@ -232,12 +210,9 @@ public class FwlyCompareController extends BaseController {
             fwfbFrom.setXgrbh("-1");
             fwfbFrom.setXgrbh("robot");
 
-            String sqlOfInsertFwfb = SqlUtils.generatorInsertSql(fwfbFrom);
-            log.info("执行服务发布数据插入：{}", sqlOfInsertFwfb);
-            update(envTo, sqlOfInsertFwfb);
+            update(envTo, fwfbFrom);
 
             String sqlOfUpdateFwqd = "update fw_qd set fwzt = '已使用' where fwmc = '" + fwmc + "'";
-            log.info("执行服务清单数据修改：{}", sqlOfUpdateFwqd);
             update(envTo, sqlOfUpdateFwqd);
         }
 
@@ -250,27 +225,26 @@ public class FwlyCompareController extends BaseController {
         fwlyFrom.setJgmc(dsfxtInfo.get("jgmc"));
         fwlyFrom.setXtbh(dsfxtInfo.get("xtbh"));
 
-        String sqlOfInsertFwly = SqlUtils.generatorInsertSql(fwlyFrom);
-        log.info("执行服务路由数据插入：{}", sqlOfInsertFwly);
-        update(envTo, sqlOfInsertFwly);
+        update(envTo, fwlyFrom);
 
+        // 调用实施运维接口刷新Redis路由数据
         String url = getSsywUrl(envTo) + "/serviceRouting/sendToRedis?orgCode=" + yhyTo + "&serviceName=" + fwmc;
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Robot YWRtaW46d2FkYXRh");
 
         log.info("调用实施运维接口：{}", url);
-        ResponseEntity<JSONObject> responseEntity = restTemplate.exchange(url, HttpMethod.GET,
-                new HttpEntity<>(new LinkedMultiValueMap<>(), headers), JSONObject.class, new HashMap<>());
-        log.info("调用实施运维接口响应：{}", responseEntity.getBody());
-
-        if (200 == responseEntity.getBody().getIntValue("code")) {
-            res.put("result", "success");
-            return res;
-        } else {
-            res.put("result", "error");
-            res.put("message", "路由刷新失败");
-            return res;
+        try {
+            ResponseEntity<JSONObject> responseEntity = restTemplate.exchange(url, HttpMethod.GET,
+                    new HttpEntity<>(new LinkedMultiValueMap<>(), headers), JSONObject.class, new HashMap<>(0));
+            log.info("调用实施运维接口响应：{}", responseEntity.getBody());
+            if (200 == responseEntity.getBody().getIntValue("code")) {
+                return 1;
+            } else {
+                throw new RuntimeException("路由刷新失败");
+            }
+        } catch (Exception e) {
+            throw e;
         }
     }
 

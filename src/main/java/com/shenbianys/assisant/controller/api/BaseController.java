@@ -1,23 +1,24 @@
 package com.shenbianys.assisant.controller.api;
 
-import com.alibaba.fastjson.JSONObject;
 import com.shenbianys.assisant.async.AsyncTask;
-import com.shenbianys.assisant.entity.FormEntity;
 import com.shenbianys.assisant.service.MongoService;
 import com.shenbianys.assisant.service.impl.MysqlServiceImpl;
+import com.shenbianys.assisant.util.SqlUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.Assert;
 
+import java.beans.IntrospectionException;
+import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-
-import static javafx.scene.input.KeyCode.T;
 
 /**
  * 基础Controller-提供通用方法
@@ -36,12 +37,19 @@ public class BaseController {
     @Autowired
     protected AsyncTask asyncTask;
 
+    /**
+     * MySQL 的查询列表方法
+     *
+     * @param env
+     * @param sql
+     * @return
+     */
     protected List<Map<String, Object>> queryForList(String env, String sql) {
         return mysqlService.queryForList(env, sql);
     }
 
     /**
-     * 异步查询各环境数据
+     * 异步查询各环境数据，queryForList的异步调用
      *
      * @param sql
      * @return
@@ -61,29 +69,78 @@ public class BaseController {
         return res;
     }
 
+    /**
+     * MySQL 的单条记录查询方法
+     *
+     * @param env
+     * @param sql
+     * @return
+     */
     protected Map<String, Object> queryForMap(String env, String sql) {
         return mysqlService.queryForMap(env, sql);
     }
 
+    /**
+     * MySQL 的单条记录查询方法 - 对Map的进一步封装，自动转成目标类
+     *
+     * @param env
+     * @param sql
+     * @param clazz
+     * @param <T>
+     * @return
+     * @throws Exception
+     */
     protected <T> T queryForObject(String env, String sql, Class<T> clazz) throws Exception {
         return mysqlService.queryForObject(env, sql, clazz);
     }
 
+    /**
+     * MySQL 的 UPDATE 或 INSERT 方法
+     *
+     * @param env
+     * @param sql
+     * @return
+     */
     protected int update(String env, String sql) {
+        log.info("执行数据库操作：{}", sql);
         return mysqlService.update(env, sql);
     }
 
+    protected int update(String env, Object entity) throws IntrospectionException, IllegalAccessException, ParseException, InvocationTargetException {
+        String insertSql = SqlUtils.generatorInsertSql(entity);
+        log.info("执行插入操作：{}", insertSql);
+        return mysqlService.update(env, insertSql);
+    }
+
+    /**
+     * MongoDB 的查询方法
+     *
+     * @param env
+     * @param query
+     * @param entityClass
+     * @param collectionName
+     * @param <T>
+     * @return
+     */
     protected <T> List<T> find(String env, Query query, Class<T> entityClass, String collectionName) {
         return mongoService.find(env, query, entityClass, collectionName);
     }
 
+    /**
+     * MongoDB 的插入方法
+     *
+     * @param env
+     * @param objectToSave
+     * @param collectionName
+     * @param <T>
+     * @return
+     */
     protected <T> T insert(String env, T objectToSave, String collectionName) {
         return mongoService.insert(env, objectToSave, collectionName);
     }
 
-
     /**
-     * 根据SQL语句查询各个环境的结果，并返回比较后结果
+     * 根据SQL语句查询各个环境的结果，并返回比较后结果List
      *
      * @param sql
      * @param key
@@ -105,19 +162,24 @@ public class BaseController {
         List<Map<String, Object>> resList = new ArrayList<>(orderList.size());
         for (int i = 0; i < orderList.size(); i++) {
             Map<String, Object> dto = map.get(orderList.get(i));
-            if (showAll) {
+            if (showAll || !dto.containsKey("dev") || !dto.containsKey("test")
+                    || !dto.containsKey("testtjd") || !dto.containsKey("pro")) {
                 resList.add(dto);
-            } else {
-                if (!dto.containsKey("dev") || !dto.containsKey("test")
-                        || !dto.containsKey("testtjd") || !dto.containsKey("pro")) {
-                    resList.add(dto);
-                }
             }
         }
         return resList;
     }
 
-    public void addListToMap(List<String> orderList, String key, Map<String, Map<String, Object>> map, List<Map<String, Object>> list, String env) {
+    /**
+     * 根据指定的key，将列表内的数据添加到MAP集合。同时建立排序列表，用于最终排序展示
+     *
+     * @param orderList
+     * @param key
+     * @param map
+     * @param list
+     * @param env
+     */
+    protected void addListToMap(List<String> orderList, String key, Map<String, Map<String, Object>> map, List<Map<String, Object>> list, String env) {
         for (int i = 0; i < list.size(); i++) {
             Map<String, Object> m = list.get(i);
             String k = String.valueOf(m.get(key));
@@ -130,5 +192,27 @@ public class BaseController {
                 orderList.add(k);
             }
         }
+    }
+
+    protected int count(String env, String sql) {
+        Assert.hasText(sql, "SQL 语句不能为空！");
+        Assert.isTrue(sql.toLowerCase().contains("count") && sql.toLowerCase().contains("as c from"), "SQL 不合法");
+        Map<String, Object> map = queryForMap(env, sql);
+        return map == null ? 0 : Integer.valueOf(map.get("c").toString());
+    }
+
+    protected <T> T selectByKeyFromDev(String tableName, String condition, String key, Class<T> clazz) throws Exception {
+        StringBuffer sql = new StringBuffer();
+        sql.append("select * from ").append(tableName);
+        sql.append(" where ").append(condition).append(" = '").append(key).append("' limit 1");
+        return queryForObject("dev", sql.toString(), clazz);
+    }
+
+    protected int countByKey(String env, String tableName, String condition, String key) {
+        StringBuffer sql = new StringBuffer();
+        sql.append("select count(*) as c from ").append(tableName);
+        sql.append(" where ").append(condition).append(" = '").append(key);
+        Map<String, Object> map = queryForMap(env, sql.toString());
+        return map == null ? 0 : Integer.valueOf(map.get("c").toString());
     }
 }

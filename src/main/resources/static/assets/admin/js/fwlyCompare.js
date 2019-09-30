@@ -18,7 +18,8 @@ var FwlyComparePage = function () {
         $.ajax({
             url: "隐藏相同" == $("#btnRefresh").text() ? u + "all" : u + "different",
             method: 'GET',
-            success: function (res) {
+            success: function (result) {
+                var res = result.data;
                 $("#thEnvA").attr("title", res.envA);
                 $("#thEnvB").attr("title", res.envB);
                 $.each(res.result, function (idx, obj) {
@@ -44,8 +45,9 @@ var FwlyComparePage = function () {
                 res.length == 0 && toastr.info("暂无数据");
             },
             error: function (result) {
-                toastr.error("数据获取失败");
                 console.error(result);
+                toastr.clear();
+                toastr.error(result.status + ":接口调用出错");
             }
         });
     };
@@ -73,22 +75,22 @@ var FwlyComparePage = function () {
             $.ajax({
                 url: "/api/lypz/sync/" + from + "/" + to + "/" + fwmc,
                 type: 'GET',
-                success: function(data) {
-                    if ("success" == data.result) {
+                success: function(result) {
+                    if (result.code == 200) {
                         $a.parent().html("<span style='color: rgb(80 210 210)' class=\"icon fa-check\"></span>");
                         toastr.clear();
                         toastr.success("操作成功");
                     } else {
                         $a.removeClass("fa-circle-o-notch fa-spin").addClass("claSync fa-close");
                         toastr.clear();
-                        toastr.error(data.message);
+                        toastr.error(result.message);
                     }
                 },
-                error:function(res){
-                    console.error(res);
+                error:function(result){
+                    console.error(result);
                     $a.removeClass("fa-circle-o-notch fa-spin").addClass("claSync fa-close");
                     toastr.clear();
-                    toastr.error(res.status + ":接口调用出错");
+                    toastr.error(result.status + ":接口调用出错");
                 }
             });
             return true;

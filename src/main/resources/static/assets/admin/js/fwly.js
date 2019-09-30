@@ -5,8 +5,8 @@ var FwlyPage = function() {
 		$.ajax({
 			url: "/api/lypz",
 			method: 'GET',
-			success: function(res) {
-				$.each(res, function(idx, obj) {
+			success: function(result) {
+				$.each(result.data, function(idx, obj) {
 					var id = "tr-" + idx;
 					var html = "<tr id=\"" + id + "\">";
 					html += "<td style=\"text-align:center\">" + obj.cbx + "</td>";
@@ -37,10 +37,10 @@ var FwlyPage = function() {
 
 				toastr.info("选两个用户域进行比较");
 			},
-			error:function(res) {
-			    console.error(res);
+			error:function(result) {
+			    console.error(result);
 				toastr.clear();
-				toastr.error(res.status + ":接口调用出错");
+				toastr.error(result.status + ":接口调用出错");
 			}
 		});
 	};

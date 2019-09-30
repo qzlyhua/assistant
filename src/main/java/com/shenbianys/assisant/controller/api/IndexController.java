@@ -1,8 +1,8 @@
 package com.shenbianys.assisant.controller.api;
 
-import org.springframework.stereotype.Controller;
+import com.shenbianys.assisant.controller.api.response.StandardResponse;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,7 +15,8 @@ import java.util.concurrent.ExecutionException;
  *
  * @author Yang Hua
  */
-@Controller
+@RestController
+@StandardResponse
 @RequestMapping("/api")
 public class IndexController extends BaseController {
 
@@ -25,7 +26,6 @@ public class IndexController extends BaseController {
      * @return
      */
     @RequestMapping("/xtgl")
-    @ResponseBody
     public List<Map<String, String>> xtgl() throws ExecutionException, InterruptedException {
         StringBuffer sql = new StringBuffer();
         sql.append("SELECT '业务领域' as xmmc, count(ywly.ywlybh) as count FROM fw_ywly ywly");
@@ -48,14 +48,14 @@ public class IndexController extends BaseController {
         Map<String, String> fwqd = genMap("服务清单", "fwqd");
         Map<String, String> bbgh = genMap("版本规划", "bbgh");
         Map<String, String> fwbq = genMap("服务标签", "fwbq");
-        Map<String, String> dsfxtzd = genMap("系统字典", "dsfxtzd");
+        Map<String, String> xtzd = genMap("系统字典", "dsfxtzd");
         Map<String, String> zfpz = genMap("转发配置", "zfpz");
         Map<String, String> fwly = genMap("服务路由", "fwly");
 
-        doFor("dev", resListMap.get("dev"), ywly, gnsq, bdlb, xtcs, fwqd, bbgh, fwbq, dsfxtzd, zfpz, fwly);
-        doFor("test", resListMap.get("test"), ywly, gnsq, bdlb, xtcs, fwqd, bbgh, fwbq, dsfxtzd, zfpz, fwly);
-        doFor("testtjd", resListMap.get("testtjd"), ywly, gnsq, bdlb, xtcs, fwqd, bbgh, fwbq, dsfxtzd, zfpz, fwly);
-        doFor("pro", resListMap.get("pro"), ywly, gnsq, bdlb, xtcs, fwqd, bbgh, fwbq, dsfxtzd, zfpz, fwly);
+        doFor("dev", resListMap.get("dev"), ywly, gnsq, bdlb, xtcs, fwqd, bbgh, fwbq, xtzd, zfpz, fwly);
+        doFor("test", resListMap.get("test"), ywly, gnsq, bdlb, xtcs, fwqd, bbgh, fwbq, xtzd, zfpz, fwly);
+        doFor("testtjd", resListMap.get("testtjd"), ywly, gnsq, bdlb, xtcs, fwqd, bbgh, fwbq, xtzd, zfpz, fwly);
+        doFor("pro", resListMap.get("pro"), ywly, gnsq, bdlb, xtcs, fwqd, bbgh, fwbq, xtzd, zfpz, fwly);
 
         List<Map<String, String>> res = new ArrayList<>(5);
         res.add(ywly);
@@ -65,7 +65,7 @@ public class IndexController extends BaseController {
         res.add(fwqd);
         res.add(bbgh);
         res.add(fwbq);
-        res.add(dsfxtzd);
+        res.add(xtzd);
         res.add(zfpz);
         res.add(fwly);
 

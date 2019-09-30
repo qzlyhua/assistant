@@ -6,6 +6,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 
 /**
+ * RestTemplate builder
+ *
  * @author Yang Hua
  */
 @Configuration

@@ -1,6 +1,7 @@
 package com.shenbianys.assisant.config.security.dingding;
 
 import com.shenbianys.assisant.config.properties.DingDingLoginProperties;
+import com.shenbianys.assisant.config.security.SecurityConfig;
 import com.shenbianys.assisant.util.DingDingUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,8 +9,12 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
 /**

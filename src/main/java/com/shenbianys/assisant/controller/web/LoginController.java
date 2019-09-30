@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.util.UUID;
 
 /**
+ * 登录Controller、错误页面Controller
+ *
  * @author Yang Hua
  */
 @Controller

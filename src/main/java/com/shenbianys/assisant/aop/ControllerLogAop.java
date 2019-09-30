@@ -48,7 +48,7 @@ public class ControllerLogAop {
         startTime.set(System.currentTimeMillis());
         HttpServletRequest request = sra.getRequest();
         log.info("============================================================");
-        log.info("{} [{}] : {} ", request.getRemoteAddr(), request.getMethod(), request.getRequestURL().toString());
+        log.info("{} : {} [FROM : {}]", request.getMethod(), request.getRequestURL().toString(), request.getRemoteAddr());
         log.info("ARGS :{} ", Arrays.toString(joinPoint.getArgs()));
     }
 

@@ -69,13 +69,13 @@ public class MysqlServiceImpl implements MysqlService {
     }
 
     @Override
-    public <T> T queryForObject(String env, String sql, Class<T> clazz) throws Exception {
+    public <T> T queryForObject(String env, String sql, Class<T> clazz) {
         JdbcTemplate jdbcTemplate = getJdbcTemplateByEnv(env);
         if (jdbcTemplate != null) {
-            try{
+            try {
                 Map<String, Object> map = jdbcTemplate.queryForMap(sql);
                 return ConvertUtils.mapToBean(map, clazz);
-            } catch (Exception e){
+            } catch (Exception e) {
                 return null;
             }
         } else {
@@ -87,7 +87,11 @@ public class MysqlServiceImpl implements MysqlService {
     public Map<String, Object> queryForMap(String env, String sql) {
         JdbcTemplate jdbcTemplate = getJdbcTemplateByEnv(env);
         if (jdbcTemplate != null) {
-            return jdbcTemplate.queryForMap(sql);
+            try {
+                return jdbcTemplate.queryForMap(sql);
+            } catch (Exception e) {
+                return null;
+            }
         } else {
             return null;
         }

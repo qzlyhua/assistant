@@ -1,8 +1,5 @@
 var Page = function() {
-	var urlAll = $("#urlAll").val();
-	var urlDifferent = $("#urlDifferent").val();
-	var tableTdCodes = $("#tableTdCodes").val();
-	var titles = $("#titles").val();
+	// 数据同步接口地址
 	var syncUrl  = $("#syncUrl").val();
 
 	// 切换显示全部、隐藏相同
@@ -15,36 +12,44 @@ var Page = function() {
 		init();
 	};
 
+	// 加载数据方法
 	var init = function(){
 		toastr.clear();
 		$.ajax({
-			url:  "隐藏相同" == $("#btnRefresh").text() ? urlAll : urlDifferent,
+			url:  "隐藏相同" == $("#btnRefresh").text() ? $("#urlAll").val() : $("#urlDifferent").val(),
 			method: 'GET',
-			success: function(res) {
-				$.each(res, function(idx, obj) {
-					$("#data-table").append("<tr id=\"tr-" + idx + "\">" + genTr(idx + 1, obj) + "</tr>");
-					titles &&  $(titles.split(",")).each(function(i, v){processTitle(v,idx + 1, obj);});
-				});
+			success: function(result) {
+				if (result.code == 200) {
+					var titles = $("#titles").val();
+					$.each(result.data, function(idx, obj) {
+						$("#data-table").append("<tr id=\"tr-" + idx + "\">" + genTr(idx + 1, obj) + "</tr>");
+						titles && $(titles.split(",")).each(function(i, v){processTitle(v,idx + 1, obj);});
+					});
 
-				$(".claSync").mouseover(function(){
-					$(this).removeClass("fa-close").addClass("fa-plus");
-				}).mouseleave(function(){
-					$(this).removeClass("fa-plus").addClass("fa-close");
-				});
+					$(".claSync").mouseover(function(){
+						$(this).removeClass("fa-close").addClass("fa-plus");
+					}).mouseleave(function(){
+						$(this).removeClass("fa-plus").addClass("fa-close");
+					});
 
-				$("#loadingDiv").fadeOut(function(){$("#tableDiv").show()});
-				res.length == 0 && toastr.info("暂无数据");
+					$("#loadingDiv").fadeOut(function(){$("#tableDiv").show()});
+					result.data.length == 0 && toastr.info("暂无数据");
+				} else {
+					toastr.clear();
+					toastr.error(result.message);
+				}
 			},
 			error:function(result) {
-				toastr.error("数据获取失败");
-			    console.error(result);
+				console.error(result);
+				toastr.clear();
+				toastr.error(result.status + ":接口调用出错");
 			}
 		});
 	};
 
 	var genTr = function(rowNumber, data){
 		var tr = "";
-		$(tableTdCodes.split(",")).each(function(i, o){
+		$($("#tableTdCodes").val().split(",")).each(function(i, o){
 			if ("idx" == o) {
 				tr += "<td style=\"text-align:center\">" + rowNumber + "</td>";
 			} else if("dev" == o || "test" == o || "testtjd" == o || "pro" == o){
@@ -68,7 +73,8 @@ var Page = function() {
 			return "<span style='color: rgb(80 210 210)' class=\"icon fa-check\"></span>";
 		} else {
 			var aid = (env + "_" + key).replace(/\./g, "_");
-			return "<a style='color: rgb(242 132 158)' id = \"" + aid + "\" href=\"javascript:Page.sync('" + key + "', '" + env + "', '" + aid + "')\" class=\"icon fa claSync fa-close\"></a>";
+			return "<a style='color: rgb(242 132 158)' id = \"" + aid + "\" href=\"javascript:Page.sync('"
+				+ key + "', '" + env + "', '" + aid + "')\" class=\"icon fa claSync fa-close\"></a>";
 		}
 	};
 
@@ -94,15 +100,15 @@ var Page = function() {
 			$.ajax({
 				url: syncUrl + '/' + env + '/' + key,
 				type: 'GET',
-				success: function(data) {
-					if ("success" == data.result) {
+				success: function(result) {
+					if (result.code == 200) {
 						$a.parent().html("<span style='color: rgb(80 210 210)' class=\"icon fa-check\"></span>");
 						toastr.clear();
 						toastr.success("操作成功");
 					} else {
 						$a.removeClass("fa-circle-o-notch fa-spin").addClass("claSync fa-close");
 						toastr.clear();
-						toastr.error(data.message);
+						toastr.error(result.message);
 					}
 				},
 				error:function(res){
