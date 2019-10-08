@@ -51,7 +51,7 @@ public class ExceptionHandlerAdvice {
      * @return 统一响应体
      */
     @ExceptionHandler(AppException.class)
-    public ResponseResult handleBaseException(AppException e) {
+    public ResponseResult handleAppException(AppException e) {
         log.error(e.getMessage(), e);
         ResponseCode code = e.getCode();
         return new ResponseResult(code.getCode(), code.getMessage(), null);

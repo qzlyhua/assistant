@@ -1,6 +1,8 @@
 package com.shenbianys.assisant.controller.api;
 
 import com.alibaba.fastjson.JSONObject;
+import com.shenbianys.assisant.controller.api.response.AppException;
+import com.shenbianys.assisant.controller.api.response.ResponseCode;
 import com.shenbianys.assisant.controller.api.response.StandardResponse;
 import com.shenbianys.assisant.entity.ServicePublishEntity;
 import com.shenbianys.assisant.entity.ServiceRoutingConfigEntity;
@@ -241,10 +243,10 @@ public class FwlyCompareController extends BaseController {
             if (200 == responseEntity.getBody().getIntValue("code")) {
                 return 1;
             } else {
-                throw new RuntimeException("路由刷新失败");
+                throw new AppException(ResponseCode.RPC_ERROR);
             }
         } catch (Exception e) {
-            throw e;
+            throw new AppException(e, ResponseCode.RPC_ERROR);
         }
     }
 

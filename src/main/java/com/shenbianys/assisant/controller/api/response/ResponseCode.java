@@ -13,14 +13,19 @@ public enum ResponseCode {
     SUCCESS(200, "success"),
 
     /**
-     * 资源不存在的状态码
+     * 数据校验错误状态码
      */
     RESOURCES_CHECK_ERROR(10001, "数据校验错误"),
 
     /**
      * 所有无法识别的异常默认的返回状态码
      */
-    SERVICE_ERROR(500, "业务处理异常");
+    SERVICE_ERROR(500, "业务处理异常"),
+
+    /**
+     * 远程接口调用失败
+     */
+    RPC_ERROR(10500,"远程接口调用失败");
 
     /**
      * 状态码

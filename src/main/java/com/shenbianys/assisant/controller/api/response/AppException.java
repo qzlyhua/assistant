@@ -4,7 +4,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * 应用异常类
+ * 自定义应用异常类
  *
  * @author Yang Hua
  */
