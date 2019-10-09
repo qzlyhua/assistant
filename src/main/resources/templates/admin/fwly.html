@@ -27,6 +27,26 @@
 						<li><a id="btnRefresh" href="javascript:FwlyPage.compare();" class="button">配置比较</a></li>
 						<li><a id="btnClear" href="javascript:FwlyPage.clear();" class="button">取消选中</a></li>
 					</ul>
+
+					<div>
+						<svg width="0" height="0">
+							<defs>
+								<filter id="goo">
+									<feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur"></feGaussianBlur>
+									<feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -9" result="goo"></feColorMatrix>
+									<feComposite in="SourceGraphic" in2="goo" operator="atop"></feComposite>
+								</filter>
+							</defs>
+						</svg>
+						<div class="aside-nav bounceInUp animated" id="aside-nav">
+							<label class="aside-menu">捷径</label>
+							<a href="/" class="menu-item menu-first">首页</a>
+							<a href="javascript:FwlyPage.compare();" class="menu-item menu-second">比较</a>
+							<a href="javascript:FwlyPage.clear();" class="menu-item menu-third">清空</a>
+							<!--<a href="javascript:alert('开发中');" class="menu-item menu-fourth">诊断</a>-->
+							<!--<a href="javascript:alert('开发中');" class="menu-item menu-line menu-fourth">换行菜单</a>-->
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -35,6 +55,7 @@
 	<script th:src="@{/assets/common/js/jquery.min.js}"></script>
 	<script th:src="@{/assets/common/js/skel.min.js}"></script>
 	<script th:src="@{/assets/common/js/toastr.min.js}"></script>
+	<script th:src="@{/assets/common/js/asidenav.js}"></script>
 	<script th:src="@{/assets/admin/js/main.js}"></script>
 	<script th:src="@{/assets/admin/js/util.js}"></script>
 	<script th:src="@{/assets/admin/js/fwly.js}"></script>

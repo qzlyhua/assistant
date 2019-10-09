@@ -28,6 +28,25 @@
 					<ul class="actions">
 						<li><a id="btnRefresh" href="javascript:FwlyComparePage.refresh();" class="button">隐藏相同</a></li>
 					</ul>
+
+                    <div>
+                        <svg width="0" height="0">
+                            <defs>
+                                <filter id="goo">
+                                    <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur"></feGaussianBlur>
+                                    <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -9" result="goo"></feColorMatrix>
+                                    <feComposite in="SourceGraphic" in2="goo" operator="atop"></feComposite>
+                                </filter>
+                            </defs>
+                        </svg>
+                        <div class="aside-nav bounceInUp animated" id="aside-nav">
+                            <label class="aside-menu">捷径</label>
+                            <a href="/fwly" class="menu-item menu-first">返回</a>
+                            <a href="javascript:FwlyComparePage.refresh();" class="menu-item menu-second">刷新</a>
+                            <!--<a href="javascript:alert('开发中');" class="menu-item menu-fourth">诊断</a>-->
+                            <!--<a href="javascript:alert('开发中');" class="menu-item menu-line menu-fourth">换行菜单</a>-->
+                        </div>
+                    </div>
 				</div>
 			</div>
 		</div>
