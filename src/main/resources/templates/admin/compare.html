@@ -8,7 +8,7 @@
 		<div id="main" style="min-height: 600px">
 			<div class="inner">
 				<h2 id="pageH2" th:text="${projectName}">比较项目名称</h2>
-				<div id="loadingDiv" style="height:300px;" align="center"><img th:src="@{/assets/public/img/loading.gif}"></div>
+				<div th:replace="admin/fragments/loading :: loading"></div>
 				<div id="tableDiv" class="table-wrapper" style="min-height: 400px;display: none;">
 					<input type="hidden" id="urlAll" th:value="${urlAll}"/>
 					<input type="hidden" id="urlDifferent" th:value="${urlDifferent}"/>
