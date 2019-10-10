@@ -13,6 +13,7 @@ import org.springframework.web.client.RestTemplate;
 import java.io.File;
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
@@ -142,18 +143,18 @@ public class DingDingUtils {
         try {
             File file = new File(dingDingLoginProperties.getUserFilePath());
             if (file.exists()) {
-                String t = FileUtils.readFileToString(file);
+                String t = FileUtils.readFileToString(file, Charset.defaultCharset());
                 JSONArray array = JSONArray.parseArray(t);
                 JSONObject o = new JSONObject();
                 o.put("openid", openid);
                 array.add(o);
-                FileUtils.writeStringToFile(file, array.toJSONString(), "UTF-8");
+                FileUtils.writeStringToFile(file, array.toJSONString(), Charset.defaultCharset());
             } else {
                 JSONArray array = new JSONArray();
                 JSONObject o = new JSONObject();
                 o.put("openid", openid);
                 array.add(o);
-                FileUtils.writeStringToFile(file, array.toJSONString(), "UTF-8");
+                FileUtils.writeStringToFile(file, array.toJSONString(), Charset.defaultCharset());
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -171,7 +172,7 @@ public class DingDingUtils {
             File file = new File(dingDingLoginProperties.getUserFilePath());
             if (file.exists()) {
                 Set<String> set = new HashSet<>();
-                String t = FileUtils.readFileToString(file);
+                String t = FileUtils.readFileToString(file, Charset.defaultCharset());
                 JSONArray array = JSONArray.parseArray(t);
                 for (int i = 0; i < array.size(); i++) {
                     JSONObject jsonObject = (JSONObject) array.get(i);
