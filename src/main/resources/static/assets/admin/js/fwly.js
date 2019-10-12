@@ -38,7 +38,7 @@ var FwlyPage = function() {
 					toastr.info("选两个用户域进行比较");
 				} else {
 					toastr.clear();
-					toastr.error(result.message);
+					result.message && toastr.error(result.message);
 				}
 			},
 			error:function(result) {

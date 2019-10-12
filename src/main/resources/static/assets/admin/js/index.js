@@ -20,7 +20,7 @@ var IndexPage = function () {
                     $("#loadingDiv").fadeOut(function(){$("#tableDiv").show()});
                 } else {
                     toastr.clear();
-                    toastr.error(result.message);
+                    result.message && toastr.error(result.message);
                 }
             },
             error: function (result) {

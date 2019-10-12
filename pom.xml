@@ -12,7 +12,7 @@
     <artifactId>assistant</artifactId>
     <version>1.0.0</version>
     <name>sbys-assistant</name>
-    <description>身边医生升级助手</description>
+    <description>身边医生云平台配置助手</description>
     <properties>
         <java.version>1.8</java.version>
     </properties>
@@ -79,6 +79,10 @@
             <artifactId>commons-io</artifactId>
             <version>2.6</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -90,8 +94,12 @@
                     <fork>true</fork>
                 </configuration>
             </plugin>
-
+            <plugin>
+                <groupId>pl.project13.maven</groupId>
+                <artifactId>git-commit-id-plugin</artifactId>
+            </plugin>
         </plugins>
+        <!--suppress UnresolvedMavenProperty -->
+        <finalName>${project.name}-${project.version}-${git.commit.id.abbrev}</finalName>
     </build>
-
 </project>

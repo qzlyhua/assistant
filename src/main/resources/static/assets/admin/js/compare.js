@@ -112,7 +112,7 @@ var Page = function () {
                     } else {
                         $a.removeClass("fa-circle-o-notch fa-spin").addClass("claSync fa-close");
                         toastr.clear();
-                        toastr.error(result.message);
+                        result.message && toastr.error(result.message);
                     }
                 },
                 error: function (res) {
