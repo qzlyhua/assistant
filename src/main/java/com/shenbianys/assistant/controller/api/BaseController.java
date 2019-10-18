@@ -127,6 +127,18 @@ public class BaseController {
     }
 
     /**
+     * MongoDB 的 count 方法
+     *
+     * @param env
+     * @param query
+     * @param collectionName
+     * @return
+     */
+    protected long count(String env, Query query, String collectionName) {
+        return mongoService.count(env, query, collectionName);
+    }
+
+    /**
      * MongoDB 的插入方法
      *
      * @param env
@@ -194,7 +206,7 @@ public class BaseController {
         }
     }
 
-    protected int count(String env, String sql) {
+    protected int countBySql(String env, String sql) {
         Assert.hasText(sql, "SQL 语句不能为空！");
         Assert.isTrue(sql.toLowerCase().contains("count") && sql.toLowerCase().contains("as c from"), "SQL 不合法");
         Map<String, Object> map = queryForMap(env, sql);

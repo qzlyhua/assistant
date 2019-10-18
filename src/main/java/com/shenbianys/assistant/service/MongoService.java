@@ -10,5 +10,7 @@ import java.util.List;
 public interface MongoService {
     <T> List<T> find(String env, Query query, Class<T> entityClass, String collectionName);
 
+    long count(String env, Query query, String collectionName);
+
     <T> T insert(String env, T objectToSave, String collectionName);
 }

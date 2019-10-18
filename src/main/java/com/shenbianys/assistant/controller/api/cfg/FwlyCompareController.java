@@ -1,9 +1,10 @@
-package com.shenbianys.assistant.controller.api;
+package com.shenbianys.assistant.controller.api.cfg;
 
 import com.alibaba.fastjson.JSONObject;
-import com.shenbianys.assistant.controller.api.response.AppException;
-import com.shenbianys.assistant.controller.api.response.ResponseCode;
-import com.shenbianys.assistant.controller.api.response.StandardResponse;
+import com.shenbianys.assistant.controller.api.BaseController;
+import com.shenbianys.assistant.annotation.response.AppException;
+import com.shenbianys.assistant.annotation.response.ResponseCode;
+import com.shenbianys.assistant.annotation.response.StandardResponse;
 import com.shenbianys.assistant.entity.ServicePublishEntity;
 import com.shenbianys.assistant.entity.ServiceRoutingConfigEntity;
 import com.shenbianys.assistant.util.IdUtils;
@@ -156,17 +157,17 @@ public class FwlyCompareController extends BaseController {
 
         // 校验源数据-服务发布
         String sqlOfFwfbFromCount = "select count(*) as c from fw_fb where fwmc = '" + fwmc + "' and jgbh = '" + yhyFrom + "'";
-        int countOfFwfbFrom = count(envFrom, sqlOfFwfbFromCount);
+        int countOfFwfbFrom = countBySql(envFrom, sqlOfFwfbFromCount);
         Assert.isTrue(countOfFwfbFrom > 0, "源服务发布不存在");
 
         // 校验源数据-服务路由
         String sqlOfFwlyFromCount = "select count(*) as c from fw_ly where fwmc = '" + fwmc + "' and jgbh = '" + yhyFrom + "'";
-        int countOfFwlyFrom = count(envFrom, sqlOfFwlyFromCount);
+        int countOfFwlyFrom = countBySql(envFrom, sqlOfFwlyFromCount);
         Assert.isTrue(countOfFwlyFrom > 0, "源服务路由不存在");
 
         // 校验目标数据-服务路由
         String sqlOfFwlyToCount = "select count(*) as c from fw_ly where fwmc = '" + fwmc + "' and jgbh = '" + yhyTo + "'";
-        int countOfFwlyTo = count(envTo, sqlOfFwlyToCount);
+        int countOfFwlyTo = countBySql(envTo, sqlOfFwlyToCount);
         Assert.isTrue(countOfFwlyTo == 0, "目标服务路由已存在");
 
         // 源服务路由数据
@@ -198,7 +199,7 @@ public class FwlyCompareController extends BaseController {
 
         // 校验目标数据-服务发布
         String sqlOfFwfbToCount = "select count(*) as c from fw_fb where fwmc = '" + fwmc + "' and jgbh = '" + yhyTo + "'";
-        int fwfbToCount = count(envTo, sqlOfFwfbToCount);
+        int fwfbToCount = countBySql(envTo, sqlOfFwfbToCount);
 
         // 创建目标环境的服务发布
         if (fwfbToCount == 0) {

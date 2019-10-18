@@ -1,0 +1,27 @@
+<!DOCTYPE HTML>
+<html>
+<head th:replace="admin/fragments/head :: head"></head>
+<body>
+	<div id="wrapper">
+		<header id="header" th:replace="admin/fragments/header :: header"></header>
+		<nav th:replace="admin/fragments/nav :: nav"></nav>
+		<div id="main" style="min-height: 600px">
+			<div class="inner">
+				<h2>服务调用统计</h2>
+				<div th:replace="admin/fragments/loading :: loading"></div>
+				<div id="chartDiv" style="width:100%; min-height: 5000px; display: none;">
+					<div id="eCharts" style="height:10000px;"></div>
+				</div>
+			</div>
+		</div>
+		<footer id="footer" th:replace="admin/fragments/footer :: footer"></footer>
+	</div>
+	<script th:src="@{/assets/common/js/jquery.min.js}"></script>
+	<script th:src="@{/assets/common/js/echarts.min.js}"></script>
+	<script th:src="@{/assets/common/js/skel.min.js}"></script>
+	<script th:src="@{/assets/common/js/toastr.min.js}"></script>
+	<script th:src="@{/assets/admin/js/main.js}"></script>
+	<script th:src="@{/assets/admin/js/util.js}"></script>
+	<script th:src="@{/assets/admin/js/log.js}"></script>
+</body>
+</html>

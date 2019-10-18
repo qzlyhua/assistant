@@ -1,6 +1,7 @@
-package com.shenbianys.assistant.controller.api;
+package com.shenbianys.assistant.controller.api.cfg;
 
-import com.shenbianys.assistant.controller.api.response.StandardResponse;
+import com.shenbianys.assistant.controller.api.BaseController;
+import com.shenbianys.assistant.annotation.response.StandardResponse;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 

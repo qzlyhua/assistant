@@ -53,6 +53,16 @@ public class MongoServiceImpl implements MongoService {
     }
 
     @Override
+    public long count(String env, Query query, String collectionName) {
+        MongoTemplate mongoTemplate = getMongoTemplateByEnv(env);
+        if (mongoTemplate != null) {
+            return mongoTemplate.count(query, collectionName);
+        } else {
+            return 0;
+        }
+    }
+
+    @Override
     public <T> T insert(String env, T objectToSave, String collectionName) {
         MongoTemplate mongoTemplate = getMongoTemplateByEnv(env);
         if (mongoTemplate != null) {

@@ -1,4 +1,4 @@
-package com.shenbianys.assistant.controller.api.response;
+package com.shenbianys.assistant.annotation.response;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ControllerAdvice;

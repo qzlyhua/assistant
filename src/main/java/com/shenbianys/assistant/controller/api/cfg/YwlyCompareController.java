@@ -1,6 +1,7 @@
-package com.shenbianys.assistant.controller.api;
+package com.shenbianys.assistant.controller.api.cfg;
 
-import com.shenbianys.assistant.controller.api.response.StandardResponse;
+import com.shenbianys.assistant.controller.api.BaseController;
+import com.shenbianys.assistant.annotation.response.StandardResponse;
 import com.shenbianys.assistant.entity.BusinessAreaEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.Assert;
@@ -48,7 +49,7 @@ public class YwlyCompareController extends BaseController {
         // 校验上级业务领域数据
         if (entity.getSjywlybh() != null) {
             String countBySjywlybh = "select count(*) as c from fw_ywly where ywlybh = '" + entity.getSjywlybh() + "'";
-            int countBySjywlybhResult = count(env, countBySjywlybh);
+            int countBySjywlybhResult = countBySql(env, countBySjywlybh);
             Assert.isTrue(countBySjywlybhResult > 0, "上级业务领域不存在");
         }
 

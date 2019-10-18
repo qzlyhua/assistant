@@ -1,4 +1,4 @@
-package com.shenbianys.assistant.controller.api.response;
+package com.shenbianys.assistant.annotation.response;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

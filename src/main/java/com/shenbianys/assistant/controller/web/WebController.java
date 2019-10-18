@@ -246,4 +246,12 @@ public class WebController {
         model.addAttribute("envB", b);
         return "admin/fwlyCompare";
     }
+
+    /**
+     * 服务调用情况查看
+     */
+    @RequestMapping(value = {"/log"})
+    public String log() {
+        return "admin/log";
+    }
 }

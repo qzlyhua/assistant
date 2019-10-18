@@ -1,7 +1,8 @@
-package com.shenbianys.assistant.controller.api;
+package com.shenbianys.assistant.controller.api.cfg;
 
 import com.alibaba.fastjson.JSONObject;
-import com.shenbianys.assistant.controller.api.response.StandardResponse;
+import com.shenbianys.assistant.controller.api.BaseController;
+import com.shenbianys.assistant.annotation.response.StandardResponse;
 import com.shenbianys.assistant.entity.ServiceCheckEntity;
 import com.shenbianys.assistant.entity.ServiceListEntity;
 import lombok.extern.slf4j.Slf4j;

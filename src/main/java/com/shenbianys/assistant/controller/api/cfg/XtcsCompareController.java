@@ -1,6 +1,7 @@
-package com.shenbianys.assistant.controller.api;
+package com.shenbianys.assistant.controller.api.cfg;
 
-import com.shenbianys.assistant.controller.api.response.StandardResponse;
+import com.shenbianys.assistant.controller.api.BaseController;
+import com.shenbianys.assistant.annotation.response.StandardResponse;
 import com.shenbianys.assistant.entity.SystemParamConfig;
 import com.shenbianys.assistant.util.IdUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -46,7 +47,7 @@ public class XtcsCompareController extends BaseController {
         // 校验目标环境是否重复
         String countByAppcode = "select count(*) as c from xt_ywcs where jgbh = '001' and " + SQL_KEY_CONDITION
                 + " = '" + key + "'";
-        int count = count(env, countByAppcode);
+        int count = countBySql(env, countByAppcode);
         Assert.isTrue(count == 0, "目标已存在相同数据");
 
         // 修改数据后执行插入操作
@@ -64,7 +65,7 @@ public class XtcsCompareController extends BaseController {
             // 校验目标环境是否重复
             String countByAppcodeAndJgbh = "select count(*) as c from xt_ywcs where jgbh = '" + jgbh
                     + "' and " + SQL_KEY_CONDITION + " = '" + key + "'";
-            if (count(env, countByAppcodeAndJgbh) == 0) {
+            if (countBySql(env, countByAppcodeAndJgbh) == 0) {
                 entity.setJgbh(jgbh);
                 entity.setJgmc(jgmc);
                 entity.setCsid(IdUtils.generator());
