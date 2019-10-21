@@ -66,21 +66,19 @@ public class LogStatisticsTask {
             }
 
             long times = countByYhybhAndFwmc(env, tjdxxx[0], tjdxxx[1], day);
-            log.info("{}\t用户域：{}({})，{} 方法调用次数：{}", processing, tjdxxx[0], tjdxxx[2], tjdxxx[1], times);
+            log.info("{}\t用户域：{}({})，{} 调用：{} 次", processing, tjdxxx[0], tjdxxx[2], tjdxxx[1], times);
 
-            if (times > 0) {
-                FwdytjEntity fwdytjEntity = new FwdytjEntity();
-                fwdytjEntity.setDycs(times);
-                fwdytjEntity.setFwmc(tjdxxx[1]);
-                fwdytjEntity.setYhybh(tjdxxx[0]);
-                fwdytjEntity.setYhymc(tjdxxx[2]);
-                fwdytjEntity.setTjsj(day);
+            FwdytjEntity fwdytjEntity = new FwdytjEntity();
+            fwdytjEntity.setDycs(times);
+            fwdytjEntity.setFwmc(tjdxxx[1]);
+            fwdytjEntity.setYhybh(tjdxxx[0]);
+            fwdytjEntity.setYhymc(tjdxxx[2]);
+            fwdytjEntity.setTjsj(day);
 
-                fwdytjEntitiesToInsert.add(fwdytjEntity);
+            fwdytjEntitiesToInsert.add(fwdytjEntity);
 
-                if (fwdytjEntitiesToInsert.size() == 100) {
-                    saveAndClear("dev", fwdytjEntitiesToInsert);
-                }
+            if (fwdytjEntitiesToInsert.size() == 100) {
+                saveAndClear("dev", fwdytjEntitiesToInsert);
             }
         }
 
@@ -102,6 +100,7 @@ public class LogStatisticsTask {
         Criteria criteria = Criteria.where("serviceName").is(serviceName)
                 .and("orgCode").is(yhybh)
                 .and("requestTime").gte(d1).lt(d2);
+
         Long times = mongoService.count(env, Query.query(criteria), "RequestLog_" + dbName);
         return times;
     }
