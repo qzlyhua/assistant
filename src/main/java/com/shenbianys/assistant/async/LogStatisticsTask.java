@@ -87,7 +87,7 @@ public class LogStatisticsTask {
             saveAndClear("dev", fwdytjEntitiesToInsert);
         }
 
-        System.out.println(aggregate);
+        log.info("日志统计操作完成");
     }
 
     private int saveAndClear(String env, List<FwdytjEntity> fwdytjEntities) throws IllegalAccessException, IntrospectionException, InvocationTargetException {
