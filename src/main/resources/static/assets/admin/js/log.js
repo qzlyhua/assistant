@@ -3,7 +3,7 @@ var LogPage = function () {
         var myChart = echarts.init(document.getElementById('eCharts'));
 
         $.ajax({
-            url: "/api/timesByYhymcAndFwmc/2019-10-17",
+            url: "/api/timesByYhymcAndFwmc",
             method: 'GET',
             success: function (result) {
                 console.log(result);
@@ -59,7 +59,7 @@ var LogPage = function () {
 jQuery(document).ready(function () {
     var minHeightOfMain = document.documentElement.clientHeight - $("#header").outerHeight() - $("#footer").outerHeight();
     $("#main").css("min-height", minHeightOfMain + 10);
-    $("#eCharts").css("width", $("#chartDiv").width());
+    $("#eCharts").css("width", $("#chartDiv").width() - 260 - 130);
     toastr.options = {positionClass: "toast-top-center"};
     LogPage.init();
 });

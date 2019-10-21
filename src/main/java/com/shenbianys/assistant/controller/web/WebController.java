@@ -254,4 +254,21 @@ public class WebController {
     public String log() {
         return "admin/log";
     }
+
+    /**
+     * 服务调用情况查看
+     */
+    @RequestMapping(value = {"/times"})
+    public String times() {
+        return "admin/times";
+    }
+
+    /**
+     * 服务调用情况查看
+     */
+    @RequestMapping(value = {"/times/{fwmc}"})
+    public String timesByFwmc(Model model, @PathVariable String fwmc) {
+        model.addAttribute("fwmc", fwmc);
+        return "admin/timesByFwmc";
+    }
 }

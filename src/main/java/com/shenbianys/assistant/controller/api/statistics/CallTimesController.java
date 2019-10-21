@@ -38,18 +38,18 @@ public class CallTimesController extends BaseController {
         return env + "环境" + day + "日志统计任务触发成功";
     }
 
-    @RequestMapping("/timesByYhymcAndFwmc/{day}")
-    public Map<String, Object> callTimes(@PathVariable String day) {
+    @RequestMapping("/timesByYhymcAndFwmc")
+    public Map<String, Object> callTimes() {
         Map<String, Object> res = new HashMap<>(3);
 
-        String yhymcsSql = "select DISTINCT(yhymc) as yhymc from xt_fwdytj where yhymc != '身边医生'";
-        String fwmcsSql = "select DISTINCT(fwmc) as fwmc from xt_fwdytj";
-        String dataSql = "select concat(yhymc,'_',fwmc)as search, SUM(dycs) as dyzcs from xt_fwdytj where yhymc != '身边医生' " +
-                "and tjsj = '" + day + "' group by fwmc, yhybh order by yhybh, dyzcs desc";
+        String baseSql = "select concat(yhymc,'_',fwmc)as search, yhymc, fwmc, SUM(dycs) as dyzcs from " +
+                "xt_fwdytj where yhymc != '身边医生'  group by fwmc, yhybh order by dyzcs desc limit 300";
+        String yhymcsSql = "select DISTINCT(t.yhymc) as yhymc from (" + baseSql + ") t";
+        String fwmcsSql = "select DISTINCT(t.fwmc) as fwmc from (" + baseSql + ") t";
 
         List<Map<String, Object>> yhymcList = queryForList("dev", yhymcsSql);
         List<Map<String, Object>> fwmcList = queryForList("dev", fwmcsSql);
-        List<Map<String, Object>> dataList = queryForList("dev", dataSql);
+        List<Map<String, Object>> dataList = queryForList("dev", baseSql);
 
         // 用户域名称
         List<String> yhymcs = new ArrayList<>(yhymcList.size());
@@ -94,7 +94,7 @@ public class CallTimesController extends BaseController {
         res.put("yhymcs", yhymcs);
         res.put("fwmcs", fwmcs);
         res.put("data", series);
-        res.put("title", day + " 各服务方法调用次数");
+        res.put("title", "各服务方法调用次数");
         return res;
     }
 
@@ -107,5 +107,23 @@ public class CallTimesController extends BaseController {
             result.add(c);
         }
         return result;
+    }
+
+    @RequestMapping("/timesGroupByFwmc")
+    public List<Map<String, Object>> timesGroupByFwmc() {
+        String sql = "SELECT t.fwmc, t.dycs, concat(t.dycs / s.dycs * 100, '%') AS bfb FROM " +
+                "(SELECT fwmc, sum(dycs) AS dycs FROM xt_fwdytj where dycs != 0  GROUP BY fwmc ORDER BY dycs DESC) t, " +
+                "(SELECT sum(dycs) AS dycs FROM xt_fwdytj) s";
+        List<Map<String, Object>> res = queryForList("dev", sql);
+        return res;
+    }
+
+    @RequestMapping("/timesOfFwmcGroupByYhymc/{fwmc}")
+    public List<Map<String, Object>> timesOfFwmcGroupByYhymc(@PathVariable String fwmc) {
+        String sql = "SELECT t.yhymc, t.dycs, concat(t.dycs / s.dycs * 100, '%') AS bfb FROM " +
+                "(select yhymc, sum(dycs) as dycs from xt_fwdytj where dycs != 0 and fwmc = '" + fwmc + "' GROUP BY yhymc order by dycs desc)t, " +
+                "(SELECT sum(dycs) AS dycs FROM xt_fwdytj where fwmc = '" + fwmc + "')s";
+        List<Map<String, Object>> res = queryForList("dev", sql);
+        return res;
     }
 }
