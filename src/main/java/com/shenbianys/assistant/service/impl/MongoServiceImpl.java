@@ -30,7 +30,8 @@ public class MongoServiceImpl implements MongoService {
     @Qualifier("mongoTemplateD")
     MongoTemplate mongoTemplatePro;
 
-    private MongoTemplate getMongoTemplateByEnv(String env) {
+    @Override
+    public MongoTemplate getMongoTemplateByEnv(String env) {
         if ("test".equals(env)) {
             return mongoTemplateTest;
         } else if ("testtjd".equals(env)) {

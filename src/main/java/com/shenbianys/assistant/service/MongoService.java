@@ -1,5 +1,6 @@
 package com.shenbianys.assistant.service;
 
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 
 import java.util.List;
@@ -13,4 +14,6 @@ public interface MongoService {
     long count(String env, Query query, String collectionName);
 
     <T> T insert(String env, T objectToSave, String collectionName);
+
+    MongoTemplate getMongoTemplateByEnv(String env);
 }
