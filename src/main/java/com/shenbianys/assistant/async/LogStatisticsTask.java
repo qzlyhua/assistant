@@ -46,10 +46,10 @@ public class LogStatisticsTask {
         log.info("日志统计操作开始...");
         String yhydzb = "select DISTINCT jgbh, jgmc from fw_ly";
         List<Map<String, Object>> yhyList = mysqlService.queryForList("pro", yhydzb);
-        Map<String, String> map = new HashMap<>(yhyList.size());
+        Map<String, String> yhydzMap = new HashMap<>(yhyList.size());
         for (int i = 0; i < yhyList.size(); i++) {
             Map<String, Object> yhy = yhyList.get(i);
-            map.put(String.valueOf(yhy.get("jgbh")), String.valueOf(yhy.get("jgmc")));
+            yhydzMap.put(String.valueOf(yhy.get("jgbh")), String.valueOf(yhy.get("jgmc")));
         }
 
         MongoTemplate mongoTemplate = mongoService.getMongoTemplateByEnv(env);
@@ -68,11 +68,13 @@ public class LogStatisticsTask {
         List<FwdytjEntity> fwdytjEntitiesToInsert = new ArrayList<>(200);
         for (int i = 0; i < list.size(); i++) {
             JSONObject jsonObject = list.get(i);
+            String yhybh = jsonObject.getString("orgCode");
+            String yhymc = yhydzMap.containsKey(yhybh) ? yhydzMap.get(yhybh) : yhybh;
             FwdytjEntity fwdytjEntity = new FwdytjEntity();
             fwdytjEntity.setDycs(jsonObject.getLong("dycs"));
             fwdytjEntity.setFwmc(jsonObject.getString("serviceName"));
-            fwdytjEntity.setYhybh(jsonObject.getString("orgCode"));
-            fwdytjEntity.setYhymc(map.get(jsonObject.getString("orgCode")));
+            fwdytjEntity.setYhybh(yhybh);
+            fwdytjEntity.setYhymc(yhymc);
             fwdytjEntity.setTjsj(day);
 
             if (!StringUtils.isEmpty(fwdytjEntity.getFwmc()) && !StringUtils.isEmpty(fwdytjEntity.getYhybh())) {

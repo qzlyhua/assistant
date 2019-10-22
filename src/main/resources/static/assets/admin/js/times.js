@@ -12,6 +12,7 @@ var TimesPage = function() {
 						var html = "<tr id=\"" + id + "\">";
 						html += "<td style=\"text-align:center\">" + (idx + 1) + "</td>";
 						html += "<td style=\"text-align:center\"><a href='/times/" + obj.fwmc + "'>" + obj.fwmc +  "</a></td>";
+						html += "<td style=\"text-align:center\">" + obj.fwsm +  "</td>";
 						html += "<td style=\"text-align:center\">" + obj.dycs +  "</td>";
 						html += "<td style=\"text-align:center\">" + obj.bfb +  "</td>";
 						html += "</tr>";

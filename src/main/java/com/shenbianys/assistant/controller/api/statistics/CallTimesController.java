@@ -32,7 +32,7 @@ public class CallTimesController extends BaseController {
     @Autowired
     LogStatisticsTask logStatisticsTask;
 
-    @RequestMapping("logStatisticsTask/{env}/{day}")
+    @RequestMapping("task/{env}/{day}")
     public String doStatistics(@PathVariable String env, @PathVariable String day) throws InvocationTargetException, IntrospectionException, ParseException, IllegalAccessException {
         logStatisticsTask.doStatistics(env, day);
         return env + "环境" + day + "日志统计任务触发成功";
@@ -114,7 +114,22 @@ public class CallTimesController extends BaseController {
         String sql = "SELECT t.fwmc, t.dycs, concat(t.dycs / s.dycs * 100, '%') AS bfb FROM " +
                 "(SELECT fwmc, sum(dycs) AS dycs FROM xt_fwdytj where dycs != 0  GROUP BY fwmc ORDER BY dycs DESC) t, " +
                 "(SELECT sum(dycs) AS dycs FROM xt_fwdytj) s";
+
+        String fwmcDzb = "SELECT fwmc, fwsm FROM fw_qd order by xgsj asc";
+        List<Map<String, Object>> fwmcList = queryForList("pro", fwmcDzb);
+        Map<String, String> fwmcMap = new HashMap<>(fwmcList.size());
+        for (int i = 0; i < fwmcList.size(); i++) {
+            Map<String, Object> fw = fwmcList.get(i);
+            fwmcMap.put(String.valueOf(fw.get("fwmc")), String.valueOf(fw.get("fwsm")));
+        }
+
         List<Map<String, Object>> res = queryForList("dev", sql);
+        for (int i = 0; i < res.size(); i++) {
+            Map<String, Object> map = res.get(i);
+            String fwmc = String.valueOf(map.get("fwmc"));
+            map.put("fwsm", fwmcMap.containsKey(fwmc) ? fwmcMap.get(fwmc) : "");
+        }
+
         return res;
     }
 
