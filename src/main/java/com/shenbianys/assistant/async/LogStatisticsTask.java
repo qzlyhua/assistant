@@ -43,6 +43,7 @@ public class LogStatisticsTask {
      */
     @Async
     public void doStatistics(String env, String day) throws ParseException, IllegalAccessException, IntrospectionException, InvocationTargetException {
+        log.info("日志统计操作开始...");
         String yhydzb = "select DISTINCT jgbh, jgmc from fw_ly";
         List<Map<String, Object>> yhyList = mysqlService.queryForList("pro", yhydzb);
         Map<String, String> map = new HashMap<>(yhyList.size());
@@ -93,10 +94,24 @@ public class LogStatisticsTask {
     private int saveAndClear(String env, List<FwdytjEntity> fwdytjEntities) throws IllegalAccessException, IntrospectionException, InvocationTargetException {
         log.info("保存结果集（{} 条数据）", fwdytjEntities.size());
         String sql = SqlUtils.generatorInsertSql(fwdytjEntities) + " ON DUPLICATE KEY UPDATE dycs = VALUES(dycs)";
-        log.info("执行SQL：{}", sql);
+        log.info("待执行SQL：{}", sql);
         int res = mysqlService.update(env, sql);
         fwdytjEntities.clear();
         log.info("执行结束，Affected rows: {}", res);
         return res;
+    }
+
+    /**
+     * 清理指定环境的指定日期的日志数据
+     *
+     * @param env
+     * @param day
+     */
+    @Async
+    public void clearStatisticsData(String env, String day) {
+        String sql = "delete from xt_fwdytj where STR_TO_DATE(tjsj,'%Y-%m-%d') < STR_TO_DATE('" + day + "','%Y-%m-%d')";
+        log.info("清理早期日志数据: {}", sql);
+        int res = mysqlService.update(env, sql);
+        log.info("执行结束，Affected rows: {}", res);
     }
 }
