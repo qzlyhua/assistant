@@ -8,7 +8,7 @@ var LogPage = function () {
             success: function (result) {
                 console.log(result);
 
-                if (result.code == 200) {
+                if (result.code == "0") {
                     // 指定图表的配置项和数据
                     option = {
                         tooltip : {

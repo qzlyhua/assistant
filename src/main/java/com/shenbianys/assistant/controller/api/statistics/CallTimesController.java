@@ -38,6 +38,11 @@ public class CallTimesController extends BaseController {
         return env + "环境" + day + "日志统计任务触发成功";
     }
 
+    /**
+     * 未启用
+     *
+     * @return
+     */
     @RequestMapping("/timesByYhymcAndFwmc")
     public Map<String, Object> callTimes() {
         Map<String, Object> res = new HashMap<>(3);
@@ -90,11 +95,13 @@ public class CallTimesController extends BaseController {
             series.add(jsonObject);
         }
 
+        String days = "SELECT CONCAT('统计日期范围：', min(tjsj),' 至 ',max(tjsj)) as c FROM `xt_fwdytj`";
+        Map<String, Object> d = queryForMap("dev", days);
 
         res.put("yhymcs", yhymcs);
         res.put("fwmcs", fwmcs);
         res.put("data", series);
-        res.put("title", "各服务方法调用次数");
+        res.put("title", d.get("c"));
         return res;
     }
 
@@ -109,6 +116,11 @@ public class CallTimesController extends BaseController {
         return result;
     }
 
+    /**
+     * 接口调用数量统计 - 根据服务名称分组
+     *
+     * @return
+     */
     @RequestMapping("/timesGroupByFwmc")
     public List<Map<String, Object>> timesGroupByFwmc() {
         String sql = "SELECT t.fwmc, t.dycs, concat(t.dycs / s.dycs * 100, '%') AS bfb FROM " +
@@ -133,6 +145,11 @@ public class CallTimesController extends BaseController {
         return res;
     }
 
+    /**
+     * 接口调用数量统计 - 指定服务名称，根据用户域名称分组
+     *
+     * @return
+     */
     @RequestMapping("/timesOfFwmcGroupByYhymc/{fwmc}")
     public List<Map<String, Object>> timesOfFwmcGroupByYhymc(@PathVariable String fwmc) {
         String sql = "SELECT t.yhymc, t.dycs, concat(t.dycs / s.dycs * 100, '%') AS bfb FROM " +
@@ -140,5 +157,15 @@ public class CallTimesController extends BaseController {
                 "(SELECT sum(dycs) AS dycs FROM xt_fwdytj where fwmc = '" + fwmc + "')s";
         List<Map<String, Object>> res = queryForList("dev", sql);
         return res;
+    }
+
+    /**
+     * 获取统计数据时间范围
+     */
+    @RequestMapping("/timeRange")
+    public String timeRange() {
+        String days = "SELECT CONCAT('统计日期范围：', min(tjsj),' 至 ',max(tjsj)) as c FROM `xt_fwdytj`";
+        Map<String, Object> d = queryForMap("dev", days);
+        return String.valueOf(d.get("c"));
     }
 }

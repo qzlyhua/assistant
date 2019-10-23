@@ -1,6 +1,7 @@
 package com.shenbianys.assistant.annotation.response;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -38,10 +39,17 @@ public class ExceptionHandlerAdvice {
         return new ResponseResult(ResponseCode.SERVICE_ERROR.getCode(), ResponseCode.SERVICE_ERROR.getMessage(), null);
     }
 
+    /**
+     * 数据校验错误（Assert方法抛出的异常）
+     *
+     * @param e
+     * @return
+     */
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseResult handleIllegalArgumentException(IllegalArgumentException e) {
         log.error(e.getMessage(), e);
-        return new ResponseResult(ResponseCode.RESOURCES_CHECK_ERROR.getCode(), e.getMessage(), null);
+        return new ResponseResult(ResponseCode.ASSERT_ERROR.getCode(),
+                StringUtils.isEmpty(e.getMessage()) ? ResponseCode.ASSERT_ERROR.getMessage() : e.getMessage(), null);
     }
 
     /**
@@ -53,7 +61,7 @@ public class ExceptionHandlerAdvice {
     @ExceptionHandler(AppException.class)
     public ResponseResult handleAppException(AppException e) {
         log.error(e.getMessage(), e);
-        ResponseCode code = e.getCode();
+        ResponseCode code = e.getResponseCode();
         return new ResponseResult(code.getCode(), code.getMessage(), null);
     }
 }

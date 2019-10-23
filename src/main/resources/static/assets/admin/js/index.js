@@ -5,7 +5,7 @@ var IndexPage = function () {
             url: "/api/xtgl",
             method: 'GET',
             success: function (result) {
-                if (result.code == 200) {
+                if (result.code == "0") {
                     $.each(result.data, function (idx, obj) {
                         var html = "<tr id=\"tr-" + idx + "\">";
                         html += "<td style=\"text-align:center\">" + obj.xmmc + "</td>";

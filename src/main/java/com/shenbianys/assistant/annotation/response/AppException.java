@@ -11,14 +11,14 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = false)
 public class AppException extends RuntimeException {
-    private ResponseCode code;
+    private ResponseCode responseCode;
 
-    public AppException(ResponseCode code) {
-        this.code = code;
+    public AppException(ResponseCode responseCode) {
+        this.responseCode = responseCode;
     }
 
-    public AppException(Throwable cause, ResponseCode code) {
+    public AppException(Throwable cause, ResponseCode responseCode) {
         super(cause);
-        this.code = code;
+        this.responseCode = responseCode;
     }
 }

@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 /**
- * 统一响应体处理器
+ * 统一响应体处理器 - 返回code，message，data形式的JSON数据
  *
  * @author Yang Hua
  */
@@ -22,19 +22,19 @@ public class ResponseResultHandlerAdvice implements ResponseBodyAdvice {
     }
 
     @Override
-    public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType,
-                                  Class selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
-        // 判断响应的Content-Type为JSON格式的body，则进行统一处理
-        if (MediaType.APPLICATION_JSON.equals(selectedContentType) || MediaType.APPLICATION_JSON_UTF8.equals(selectedContentType)) {
-            // 如果响应返回的对象为统一响应体，则直接返回body
-            if (body instanceof ResponseResult) {
-                return body;
-            } else {
-                // 只有正常返回的结果才会进入这个判断流程，所以返回正常成功的状态码
-                return new ResponseResult(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMessage(), body);
+    public Object beforeBodyWrite(Object body, MethodParameter methodParameter, MediaType mediaType,
+                                  Class c, ServerHttpRequest request, ServerHttpResponse response) {
+        // 如果响应返回的对象为统一响应体，则直接返回body
+        if (body instanceof ResponseResult) {
+            return body;
+        } else {
+            ResponseResult responseResult = new ResponseResult(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMessage(), body);
+            if (MediaType.TEXT_PLAIN.equals(mediaType)) {
+                response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
+                return responseResult.toString();
             }
+
+            return responseResult;
         }
-        // 非JSON格式body直接返回即可
-        return body;
     }
 }

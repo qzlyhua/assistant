@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.shenbianys</groupId>
     <artifactId>assistant</artifactId>
-    <version>1.1.0</version>
+    <version>1.2.0</version>
     <name>sbys-assistant</name>
     <description>身边医生云平台配置助手</description>
     <properties>

@@ -19,7 +19,7 @@ var FwlyComparePage = function () {
             url: "隐藏相同" == $("#btnRefresh").text() ? u + "all" : u + "different",
             method: 'GET',
             success: function (result) {
-                if (result.code == 200) {
+                if (result.code == "0") {
                     var res = result.data;
                     $("#thEnvA").attr("title", res.envA);
                     $("#thEnvB").attr("title", res.envB);
@@ -81,7 +81,7 @@ var FwlyComparePage = function () {
                 url: "/api/lypz/sync/" + from + "/" + to + "/" + fwmc,
                 type: 'GET',
                 success: function(result) {
-                    if (result.code == 200) {
+                    if (result.code == "0") {
                         $a.parent().html("<span style='color: rgb(80 210 210)' class=\"icon fa-check\"></span>");
                         toastr.clear();
                         toastr.success("操作成功");

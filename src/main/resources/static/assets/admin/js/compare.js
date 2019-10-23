@@ -19,7 +19,7 @@ var Page = function () {
             url: "隐藏相同" == $("#btnRefresh").text() ? $("#urlAll").val() : $("#urlDifferent").val(),
             method: 'GET',
             success: function (result) {
-                if (result.code == 200) {
+                if (result.code == "0") {
                     var titles = $("#titles").val();
                     $.each(result.data, function (idx, obj) {
                         $("#data-table").append("<tr id=\"tr-" + idx + "\">" + genTr(idx + 1, obj) + "</tr>");
@@ -105,7 +105,7 @@ var Page = function () {
                 url: syncUrl + '/' + env + '/' + key,
                 type: 'GET',
                 success: function (result) {
-                    if (result.code == 200) {
+                    if (result.code == "0") {
                         $a.parent().html("<span style='color: rgb(80 210 210)' class=\"icon fa-check\"></span>");
                         toastr.clear();
                         toastr.success("操作成功");

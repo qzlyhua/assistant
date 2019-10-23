@@ -1,5 +1,6 @@
 package com.shenbianys.assistant.annotation.response;
 
+import com.alibaba.fastjson.JSONObject;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -14,7 +15,7 @@ public class ResponseResult {
     /**
      * 返回状态码
      */
-    private Integer code;
+    private String code;
     /**
      * 返回信息
      */
@@ -23,4 +24,9 @@ public class ResponseResult {
      * 数据
      */
     private Object data;
+
+    @Override
+    public String toString() {
+        return JSONObject.toJSONString(this);
+    }
 }

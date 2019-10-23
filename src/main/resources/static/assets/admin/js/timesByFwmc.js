@@ -6,7 +6,7 @@ var TimesByFwmcPage = function() {
 			url: "/api/timesOfFwmcGroupByYhymc/" + $("#fwmc").val(),
 			method: 'GET',
 			success: function(result) {
-				if (result.code == 200){
+				if (result.code == "0"){
 					$.each(result.data, function(idx, obj) {
 						var id = "tr-" + idx;
 						var html = "<tr id=\"" + id + "\">";
