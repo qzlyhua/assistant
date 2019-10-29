@@ -8,6 +8,7 @@
 		<div id="main">
 			<div class="inner">
 				<h2>医生绑定</h2>
+                <div th:replace="admin/fragments/loading :: loading"></div>
 				<form method="post" action="#" id="form">
 					<div class="row uniform">
 						<div class="12u$" >
@@ -36,7 +37,7 @@
 						</div>
 						<div class="12u$">
 							<div class="textarea-wrapper">
-								<textarea name="yhms" id="yhms" placeholder="待绑定用户用户名（逗号分割，举例：username,demo）"></textarea>
+								<textarea name="yhms" id="yhms" placeholder="待绑定用户用户名（逗号分割）"></textarea>
 							</div>
 						</div>
 					</div>

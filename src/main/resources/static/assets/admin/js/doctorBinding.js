@@ -1,5 +1,7 @@
 var DoctorBind = function () {
     var init = function () {
+        $("#loadingDiv").hide();
+
         var yhys = $.fn.getAjaxJsonData("/api/getYhys");
         $.each(yhys, function (idx, obj) {
             var opt = "<option value=\"" + obj.jgbh + "\">" + obj.jgmc + "</option>";
@@ -29,6 +31,9 @@ var DoctorBind = function () {
         var yhms = $("#yhms").val();
 
         if (yhy && dsfxt && yhms) {
+            $("#loadingDiv").show();
+            $("#doBindBtn,#form").hide();
+
             $.ajax({
                 type: "POST",
                 url: "/api/pro/bind",
@@ -64,8 +69,7 @@ var DoctorBind = function () {
                         });
 
                         $(".xlsx").hide();
-
-                        $("#doBindBtn,#form").hide();
+                        $("#loadingDiv").hide();
                         $("#tableDiv").show();
                         toastr.success("批量绑定完成");
                     } else {

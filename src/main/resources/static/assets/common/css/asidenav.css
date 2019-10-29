@@ -321,7 +321,3 @@ to {
 @media screen and (max-width:640px) {
 .aside-nav {display: none!important}
 }
-@media screen and (min-width:641px) and (max-width:1367px) {
-.aside-nav {top: 520px}
-}
-
