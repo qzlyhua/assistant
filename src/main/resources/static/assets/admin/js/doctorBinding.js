@@ -1,39 +1,41 @@
-var DoctorBind = function() {
-    var init = function(){
+var DoctorBind = function () {
+    var init = function () {
         var yhys = $.fn.getAjaxJsonData("/api/getYhys");
-        $.each(yhys, function(idx, obj) {
+        $.each(yhys, function (idx, obj) {
             var opt = "<option value=\"" + obj.jgbh + "\">" + obj.jgmc + "</option>";
             $("#yhy").append(opt)
         });
 
-        $("#yhy").change(function(){initDsfxt();});
+        $("#yhy").change(function () {
+            initDsfxt();
+        });
     };
 
-    var initDsfxt = function(){
+    var initDsfxt = function () {
         $("#dsfxt").val("").html("<option value=\"\">第三方系统</option>");
         var jgbh = $("#yhy").val();
-        if(jgbh != ""){
+        if (jgbh != "") {
             var dsfxts = $.fn.getAjaxJsonData("/api/getDsfxts/" + jgbh);
-            $.each(dsfxts, function(idx, obj) {
+            $.each(dsfxts, function (idx, obj) {
                 var opt = "<option value=\"" + obj.id + "\">" + obj.xtmc + "</option>";
                 $("#dsfxt").append(opt)
             });
         }
     }
 
-    var save = function(){
+    var save = function () {
         var yhy = $("#yhy").val();
         var dsfxt = $("#dsfxt").val();
         var yhms = $("#yhms").val();
 
-        if(yhy && dsfxt && yhms){
+        if (yhy && dsfxt && yhms) {
             $.ajax({
-                type : "POST",
-                url : "/api/pro/bind",
-                dataType : "json",
-                data : $('#form').serialize(),
-                cache : false,
-                success : function(data) {
+                type: "POST",
+                url: "/api/pro/bind",
+                dataType: "json",
+                data: $('#form').serialize(),
+                cache: false,
+                success: function (data) {
                     if ("0" == data.code) {
                         $.each(data.data, function (idx, obj) {
                             var html = "<tr id=\"tr-" + idx + "\">";
@@ -45,6 +47,23 @@ var DoctorBind = function() {
                             html += "</tr>";
                             $("#data-table").append(html);
                         });
+
+                        TableExport(document.getElementsByTagName("table"), {
+                            headers: true,
+                            footers: true,
+                            formats: ["xlsx"],
+                            filename: "医生批量绑定结果",
+                            bootstrap: false,
+                            exportButtons: true,
+                            position: "bottom",
+                            ignoreRows: null,
+                            ignoreCols: null,
+                            trimWhitespace: true,
+                            RTL: false,
+                            sheetname: "医生批量绑定结果"
+                        });
+
+                        $(".xlsx").hide();
 
                         $("#doBindBtn,#form").hide();
                         $("#tableDiv").show();
@@ -60,17 +79,22 @@ var DoctorBind = function() {
     };
 
     return {
-        save : function(){
+        save: function () {
             save();
         },
-        init : function(){
+        init: function () {
             init();
+        },
+        export: function(){
+            $(".xlsx").trigger("click");
         }
     }
 }();
 
-jQuery(document).ready(function() {
+jQuery(document).ready(function () {
     toastr.options = {positionClass: "toast-top-center"};
-    $("#submit-buttom").bind("click", function(){DoctorBind.save();});
+    $("#submit-buttom").bind("click", function () {
+        DoctorBind.save();
+    });
     DoctorBind.init();
 });

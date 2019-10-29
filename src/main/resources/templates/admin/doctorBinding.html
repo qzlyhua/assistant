@@ -63,6 +63,7 @@
 					</table>
 					<ul class="actions">
 						<li><a id="bind" href="/doctorBinding" class="button">继续绑定</a></li>
+						<li><a id="expoet" href="javascript:DoctorBind.export()" class="button">导出结果</a></li>
 					</ul>
 				</div>
 			</div>
@@ -74,6 +75,11 @@
 	<script th:src="@{/assets/common/js/toastr.min.js}"></script>
 	<script th:src="@{/assets/common/js/asidenav.js}"></script>
 	<script th:src="@{/assets/common/js/jquery.fun.js}"></script>
+	<script th:src="@{/assets/common/js/jszip.js}"></script>
+	<script th:src="@{/assets/common/js/xlsx.core.min.js}"></script>
+	<script th:src="@{/assets/common/js/xlsx.mini.min.js}"></script>
+	<script th:src="@{/assets/common/js/FileSaver.min.js}"></script>
+	<script th:src="@{/assets/common/js/tableexport.min.js}"></script>
 	<script th:src="@{/assets/admin/js/main.js}"></script>
 	<script th:src="@{/assets/admin/js/util.js}"></script>
 	<script th:src="@{/assets/admin/js/doctorBinding.js}"></script>
