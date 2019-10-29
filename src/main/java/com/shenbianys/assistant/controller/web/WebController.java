@@ -271,4 +271,12 @@ public class WebController {
         model.addAttribute("fwmc", fwmc);
         return "admin/timesByFwmc";
     }
+
+    /**
+     * 医生绑定
+     */
+    @RequestMapping(value = {"/doctorBinding"})
+    public String doctorBinding() {
+        return "admin/doctorBinding";
+    }
 }
