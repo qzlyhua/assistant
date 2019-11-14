@@ -29,10 +29,10 @@ import java.util.concurrent.Future;
 @Slf4j
 public class BaseController {
     @Autowired
-    private MysqlServiceImpl mysqlService;
+    protected MysqlServiceImpl mysqlService;
 
     @Autowired
-    private MongoService mongoService;
+    protected MongoService mongoService;
 
     @Autowired
     protected AsyncTask asyncTask;
