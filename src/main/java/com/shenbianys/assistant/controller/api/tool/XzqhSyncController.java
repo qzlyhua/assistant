@@ -19,12 +19,14 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 /**
+ * 行政区划数据获取
+ *
  * @author yangh@winning.com.cn
  */
 @Slf4j
 @RestController
 @StandardResponse
-public class BasicDataSyncController extends BaseController {
+public class XzqhSyncController extends BaseController {
     public int areaSync() throws UnsupportedEncodingException, IllegalAccessException, IntrospectionException, InvocationTargetException {
         String url = "http://222.247.54.183:8078/httpapi/services.ashx?data={data}";
         Map<String, String> param = getAreaRequestParamMap(1);
@@ -33,7 +35,6 @@ public class BasicDataSyncController extends BaseController {
         ResponseEntity<String> responseEntity = restTemplate.getForEntity(url, String.class, param);
 
         JSONArray areaList = JSON.parseObject(responseEntity.getBody()).getJSONArray("responseContent");
-        List<AreaEntity> responseData = new ArrayList<>(200);
         log.info("接口调用成功，共{}条行政区划数据", areaList.size());
 
         log.info("清空 jc_xzqh 表", areaList.size());
@@ -55,6 +56,8 @@ public class BasicDataSyncController extends BaseController {
         log.info("新增根节点：{}", china);
         mysqlService.update("dev", SqlUtils.generatorInsertSql(china));
 
+        int initialSize = 1000;
+        List<AreaEntity> responseData = new ArrayList<>(initialSize);
         for (int i = 0; i < areaList.size(); i++) {
             JSONObject jsonObject = areaList.getJSONObject(i);
 
@@ -71,7 +74,7 @@ public class BasicDataSyncController extends BaseController {
             areaEntity.setSfmj(false);
 
             responseData.add(areaEntity);
-            if (responseData.size() == 1000) {
+            if (responseData.size() == initialSize) {
                 int affect = saveAndClear(responseData);
                 log.info("正在处理：{}/{}", i + 1, areaList.size());
             }
