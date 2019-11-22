@@ -1,8 +1,8 @@
 package com.shenbianys.assistant.controller.api.cfg;
 
 import com.alibaba.fastjson.JSONObject;
-import com.shenbianys.assistant.controller.api.BaseController;
 import com.shenbianys.assistant.annotation.response.StandardResponse;
+import com.shenbianys.assistant.controller.api.BaseController;
 import com.shenbianys.assistant.entity.ServiceCheckEntity;
 import com.shenbianys.assistant.entity.ServiceListEntity;
 import lombok.extern.slf4j.Slf4j;
@@ -89,4 +89,30 @@ public class FwqdCompareController extends BaseController {
 
         return 1;
     }
+
+    @RequestMapping("/fwmscheck/{env}")
+    public String fwmscheck(@PathVariable String env) {
+        String sql = "select id, fwmc, mrmsbh from fw_qd";
+        List<Map<String, Object>> fwqds = queryForList(env, sql);
+        for (int i = 0; i < fwqds.size(); i++) {
+            Map<String, Object> fwqd = fwqds.get(i);
+            String id = (String) fwqd.get("id");
+            String mrmsbh = (String) fwqd.get("mrmsbh");
+            String fwmc = (String) fwqd.get("fwmc");
+
+            // 查询源库的服务模式数据
+            Criteria serviceListId = Criteria.where("serviceListId").is(id);
+            List<JSONObject> servicePatternList = find(env, Query.query(serviceListId), JSONObject.class, "ServicePattern");
+            String fwmsid = servicePatternList.get(0).getString("_id");
+
+            if (!mrmsbh.equals(fwmsid)) {
+                log.info("服务{}默认模式编号{}更新为{}", fwmc, mrmsbh, fwmsid);
+                String sqlUpdate = "update fw_qd set mrmsbh = '" + fwmsid + "' where id = '" + id + "'";
+                update(env, sqlUpdate);
+            }
+        }
+
+        return "OK";
+    }
+
 }
