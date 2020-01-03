@@ -53,7 +53,7 @@ public class LogStatisticsTask {
         }
 
         MongoTemplate mongoTemplate = mongoService.getMongoTemplateByEnv(env);
-        String dbName = "RequestLog_" + day.substring(0, 7).replace("-", "_");
+        String dbName = "RequestLog_" + day.substring(0, 7).replace("-", "_").replace("0", "");
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date d1 = sdf.parse(day + " 00:00:00");
         Calendar calendar = new GregorianCalendar();

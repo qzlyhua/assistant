@@ -31,7 +31,7 @@ public class ScheduledTask {
 
     @Scheduled(cron = "5 5 0 * * ?")
     public void clearTask() {
-        String day = getDay(-7);
+        String day = getDay(-31);
         logStatisticsTask.clearStatisticsData("dev", day);
     }
 
