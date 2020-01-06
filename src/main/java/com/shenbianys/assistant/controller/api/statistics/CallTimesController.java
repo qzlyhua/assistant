@@ -38,6 +38,24 @@ public class CallTimesController extends BaseController {
         return env + "环境" + day + "日志统计任务触发成功";
     }
 
+    @RequestMapping("task2/{env}/{month}")
+    public String doStatisticsByServiceName(@PathVariable String env, @PathVariable String month) throws InvocationTargetException, IntrospectionException, IllegalAccessException {
+        if ("all".equals(env)){
+            logStatisticsTask.doStatisticsByServiceName("pro", "2019_10");
+            logStatisticsTask.doStatisticsByServiceName("pro", "2019_11");
+            logStatisticsTask.doStatisticsByServiceName("pro", "2019_12");
+            logStatisticsTask.doStatisticsByServiceName("test", "2019_5");
+            logStatisticsTask.doStatisticsByServiceName("test", "2019_6");
+            logStatisticsTask.doStatisticsByServiceName("test", "2019_7");
+            logStatisticsTask.doStatisticsByServiceName("test", "2019_8");
+            logStatisticsTask.doStatisticsByServiceName("test", "2019_9");
+            return "OK";
+        } else {
+            logStatisticsTask.doStatisticsByServiceName(env, month);
+            return env + "环境" + month + "月日志统计任务触发成功";
+        }
+    }
+
     /**
      * 未启用
      *

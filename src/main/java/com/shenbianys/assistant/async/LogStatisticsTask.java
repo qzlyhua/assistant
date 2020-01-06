@@ -2,6 +2,7 @@ package com.shenbianys.assistant.async;
 
 import com.alibaba.fastjson.JSONObject;
 import com.shenbianys.assistant.entity.FwdytjEntity;
+import com.shenbianys.assistant.entity.TmpFwdytjEntity;
 import com.shenbianys.assistant.service.MongoService;
 import com.shenbianys.assistant.service.impl.MysqlServiceImpl;
 import com.shenbianys.assistant.util.SqlUtils;
@@ -34,6 +35,33 @@ public class LogStatisticsTask {
 
     @Autowired
     private MongoService mongoService;
+
+    public void doStatisticsByServiceName(String env, String month) throws IllegalAccessException, IntrospectionException, InvocationTargetException {
+        log.info("日志统计操作开始...");
+        MongoTemplate mongoTemplate = mongoService.getMongoTemplateByEnv(env);
+        String dbName = "RequestLog_" + month;
+        GroupOperation group = Aggregation.group("serviceName").count().as("dycs");
+        AggregationResults<JSONObject> aggregate = mongoTemplate.aggregate(Aggregation.newAggregation(group), dbName, JSONObject.class);
+        List<JSONObject> list = aggregate.getMappedResults();
+        List<TmpFwdytjEntity> listToInsert = new ArrayList<>(400);
+        for (int i = 0; i < list.size(); i++) {
+            JSONObject jsonObject = list.get(i);
+            TmpFwdytjEntity entity = new TmpFwdytjEntity();
+            entity.setMonth(month);
+            entity.setFwmc(jsonObject.getString("_id"));
+            entity.setDycs(jsonObject.getLong("dycs"));
+            if (StringUtils.isEmpty(entity.getFwmc()) || entity.getFwmc().contains("'")) {
+                continue;
+            } else {
+                listToInsert.add(entity);
+            }
+        }
+
+        String sql = SqlUtils.generatorInsertSql(listToInsert) + " ON DUPLICATE KEY UPDATE dycs = VALUES(dycs)";
+        log.info("待执行SQL：{}", sql);
+        int res = mysqlService.update("dev", sql);
+        log.info("统计完成：{}", res);
+    }
 
     /**
      * 统计指定环境的指定日期的日志数据
