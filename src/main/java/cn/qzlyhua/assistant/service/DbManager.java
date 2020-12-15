@@ -22,4 +22,11 @@ public interface DbManager {
      * 查询指定环境用户域的路由配置详情
      */
     List<RouteConfigDetail> getRouteConfigDetails(String env, String originCode) throws SQLException;
+
+    /**
+     * 根据网关路由查询指定环境≈用户域的路由配置
+     */
+    RouteConfigDetail getRouteConfigByCRoute(String env, String originCode, String route) throws SQLException;
+
+    int insertRouteConfig(String env, String originCode, RouteConfigDetail routeConfigDetail) throws SQLException;
 }

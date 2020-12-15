@@ -86,15 +86,14 @@ var FwlyComparePage = function () {
         if(now - last < 3){
             toastr.clear();
             $a.removeClass("fa-plus claSync").addClass("fa-circle-o-notch fa-spin");
-
             $.ajax({
-                url: "/api/route/sync/" + from + "/" + to + "/" + encodeURIComponent(fwmc) ,
+                url: "/api/route/sync/" + from + "/" + to + "?route=" + encodeURIComponent(fwmc) ,
                 type: 'GET',
                 success: function(result) {
                     if (result.code == 200) {
                         $a.parent().html("<span style='color: rgb(80 210 210)' class=\"icon fa-check\"></span>");
                         toastr.clear();
-                        toastr.success("操作成功");
+                        toastr.success("同步完成");
                     } else {
                         $a.removeClass("fa-circle-o-notch fa-spin").addClass("claSync fa-close");
                         toastr.clear();

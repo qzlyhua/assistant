@@ -12,6 +12,7 @@ public class RouteConfigDetail {
     private String route;
     private String application;
     private String service;
+    private String origin;
 
     /**
      * 返回1则代表已经配置

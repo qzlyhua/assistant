@@ -44,7 +44,6 @@ public class CorsFilter implements Filter {
                 httpServletRequest.getHeader("Origin").replace(" ", "")
                 : httpServletRequest.getHeader("Origin");
         String header = StrUtil.isNotBlank(originAddress) ? originAddress : originHeader;
-        log.info("Access-Control-Allow-Origin:{}", header);
         httpServletResponse.setHeader("Access-Control-Allow-Origin", header);
         httpServletResponse.setHeader("Access-Control-Allow-Headers", "authorization,Accept, Origin, XRequestedWith, Content-Type,Content-type, LastModified");
         httpServletResponse.setHeader("Access-Control-Allow-Methods", "GET,POST,HEAD,PUT,DELETE,OPTIONS,CONNECT");
