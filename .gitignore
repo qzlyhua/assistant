@@ -27,3 +27,4 @@ application.properties
 .idea
 target
 /.mvn/
+/assistant.iml

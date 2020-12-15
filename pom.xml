@@ -5,14 +5,14 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.2.0.RELEASE</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <version>2.3.5.RELEASE</version>
+        <relativePath/>
     </parent>
-    <groupId>com.shenbianys</groupId>
+    <groupId>cn.qzlyhua</groupId>
     <artifactId>assistant</artifactId>
-    <version>1.1.0</version>
-    <name>sbys-assistant</name>
-    <description>身边医生云平台配置助手</description>
+    <version>1.0.0</version>
+    <name>assistant</name>
+    <description>小助手</description>
     <properties>
         <java.version>1.8</java.version>
     </properties>
@@ -21,6 +21,7 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jdbc</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
@@ -31,6 +32,11 @@
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+            <version>6.0.8</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -45,16 +51,17 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
-            <version>1.2.61</version>
+            <version>1.2.62</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-            <version>2.1.7.RELEASE</version>
+            <version>2.3.3.RELEASE</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
+            <version>2.1.10.RELEASE</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -63,16 +70,17 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
+            <version>2.0.4.RELEASE</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-aop</artifactId>
-            <version>5.1.9.RELEASE</version>
+            <version>5.2.8.RELEASE</version>
         </dependency>
         <dependency>
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjweaver</artifactId>
-            <version>1.9.4</version>
+            <version>1.9.5</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
@@ -82,6 +90,28 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <!-- 集成MyBatis -->
+        <dependency>
+            <groupId>org.mybatis.spring.boot</groupId>
+            <artifactId>mybatis-spring-boot-starter</artifactId>
+            <version>2.1.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid-spring-boot-starter</artifactId>
+            <version>1.1.22</version>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.48</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>5.5.2</version>
         </dependency>
     </dependencies>
 

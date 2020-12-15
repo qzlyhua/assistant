@@ -3,7 +3,7 @@ var FwlyComparePage = function () {
     var envB = $("#envB").val();
 
     // 切换显示全部、隐藏相同
-    var refresh = function () {
+    var changeAndRefresh = function () {
         $("html,body").animate({scrollTop: 0}, 100);
         $("#tableDiv").hide();
         $("#loadingDiv").show();
@@ -12,26 +12,34 @@ var FwlyComparePage = function () {
         init();
     };
 
+    var refresh = function () {
+        $("html,body").animate({scrollTop: 0}, 100);
+        $("#tableDiv").hide();
+        $("#loadingDiv").show();
+        $("#data-table").html("");
+        init();
+    };
+
     var init = function () {
         $("#data-table").html("");
-        var u = "/api/lypz/" + envA + "/" + envB + "/";
+        var u = "/api/routeCompare/" + envA + "/" + envB + "/";
         $.ajax({
             url: "隐藏相同" == $("#btnRefresh").text() ? u + "all" : u + "different",
             method: 'GET',
-            success: function (result) {
-                if (result.code == 200) {
-                    var res = result.data;
+            success: function (data) {
+                if (data.code == 200) {
+                    var res = data.result;
                     $("#thEnvA").attr("title", res.envA);
                     $("#thEnvB").attr("title", res.envB);
                     $.each(res.result, function (idx, obj) {
-                        var fwmcShow = obj.fwdz ? obj.xtmc + "/" + obj.fwdz + "/" + obj.dsffwmc : obj.xtmc + "/" + obj.dsffwmc;
+                        var fwmcShow = obj.application + obj.service;
                         var id = "tr-" + idx;
                         var html = "<tr id=\"" + id + "\">";
                         html += "<td style=\"text-align:center\">" + (idx + 1) + "</td>";
-                        html += "<td style=\"text-align:center\">" + obj.fwmc + "</td>";
+                        html += "<td style=\"text-align:center\">" + obj.route + "</td>";
                         html += "<td style=\"text-align:center\">" + fwmcShow + "</td>";
-                        html += "<td id = 'td-" + idx + "-a" + "' style=\"text-align:center\">" + genBtn(envA, obj.envA, obj.fwmc, idx + '-a') + "</td>";
-                        html += "<td id = 'td-" + idx + "-b" + "' style=\"text-align:center\">" + genBtn(envB, obj.envB, obj.fwmc, idx + '-b') + "</td>";
+                        html += "<td id = 'td-" + idx + "-a" + "' style=\"text-align:center\">" + genBtn(envA, obj.envA, obj.route, idx + '-a') + "</td>";
+                        html += "<td id = 'td-" + idx + "-b" + "' style=\"text-align:center\">" + genBtn(envB, obj.envB, obj.route, idx + '-b') + "</td>";
                         html += "</tr>";
                         $("#data-table").append(html);
                     });
@@ -46,7 +54,7 @@ var FwlyComparePage = function () {
                     res.length == 0 && toastr.info("暂无数据");
                 } else {
                     toastr.clear();
-                    result.message && toastr.error(result.message);
+                    data.message && toastr.error(data.message);
                 }
             },
             error: function (result) {
@@ -63,6 +71,7 @@ var FwlyComparePage = function () {
         } else {
             var from = envA == env ? envB : envA;
             var to = envA == env ? envA : envB;
+
             var btn = "<a style='color: rgb(242 132 158)' id='" + id + "' class=\"icon claSync fa fa-close\"" +
                 "href=\"javascript:FwlyComparePage.sync('" + from + "','" + to + "','" + fwmc + "','" + id + "')\"></a>";
             return btn;
@@ -77,8 +86,9 @@ var FwlyComparePage = function () {
         if(now - last < 3){
             toastr.clear();
             $a.removeClass("fa-plus claSync").addClass("fa-circle-o-notch fa-spin");
+
             $.ajax({
-                url: "/api/lypz/sync/" + from + "/" + to + "/" + fwmc,
+                url: "/api/route/sync/" + from + "/" + to + "/" + encodeURIComponent(fwmc) ,
                 type: 'GET',
                 success: function(result) {
                     if (result.code == 200) {
@@ -108,6 +118,7 @@ var FwlyComparePage = function () {
 
     return {
         init: function () {init();},
+        changeAndRefresh: function () {changeAndRefresh();},
         refresh: function () {refresh();},
         sync: function (from, to, fwmc, id) {sync(from, to, fwmc, id);}
     }

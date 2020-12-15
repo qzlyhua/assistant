@@ -7,7 +7,7 @@
 		<nav th:replace="admin/fragments/nav :: nav"></nav>
 		<div id="main" style="min-height: 600px">
 			<div class="inner">
-				<h2>路由配置比较</h2>
+				<h2>服务路由配置比较</h2>
 				<div th:replace="admin/fragments/loading :: loading"></div>
 				<div id="tableDiv" class="table-wrapper" style="min-height: 400px;display: none;">
 					<input type="hidden" id="envA" th:value="${a}"/>
@@ -15,18 +15,18 @@
 					<table>
 						<thead>
 							<tr>
-								<th style="text-align:center">#</th>
-								<th style="text-align:center">服务名称</th>
-								<th style="text-align:center">第三方服务方法</th>
-								<th style="text-align:center" id="thEnvA">环境A</th>
-								<th style="text-align:center" id="thEnvB">环境B</th>
+								<th style="text-align:center; width:60px">#</th>
+								<th style="text-align:center;">网关路由</th>
+								<th style="text-align:center;">后端服务</th>
+								<th style="text-align:center; width:100px" id="thEnvA">环境A</th>
+								<th style="text-align:center; width:100px" id="thEnvB">环境B</th>
 							</tr>
 						</thead>
 						<tbody id="data-table">
 						</tbody>
 					</table>
 					<ul class="actions">
-						<li><a id="btnRefresh" href="javascript:FwlyComparePage.refresh();" class="button">隐藏相同</a></li>
+						<li><a id="btnRefresh" href="javascript:FwlyComparePage.changeAndRefresh();" class="button">显示全部</a></li>
 					</ul>
 
                     <div>
@@ -41,7 +41,7 @@
                         </svg>
                         <div class="aside-nav bounceInUp animated" id="aside-nav">
                             <label class="aside-menu"><span class="fa fa-bolt"></span></label>
-                            <a href="/fwly" class="menu-item menu-first">返回</a>
+                            <a href="/route" class="menu-item menu-first">返回</a>
                             <a href="javascript:FwlyComparePage.refresh();" class="menu-item menu-second">刷新</a>
                             <!--<a href="javascript:alert('开发中');" class="menu-item menu-fourth">诊断</a>-->
                             <!--<a href="javascript:alert('开发中');" class="menu-item menu-line menu-fourth">换行菜单</a>-->

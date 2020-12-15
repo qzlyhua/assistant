@@ -3,17 +3,17 @@ var FwlyPage = function() {
 		toastr.clear();
 		$("#data-table").html("");
 		$.ajax({
-			url: "/api/lypz",
+			url: "/api/routeConfigInfos",
 			method: 'GET',
-			success: function(result) {
-				if (result.code == 200){
-					$.each(result.data, function(idx, obj) {
+			success: function(data) {
+				if (data.code == 200){
+					$.each(data.result, function(idx, obj) {
 						var id = "tr-" + idx;
 						var html = "<tr id=\"" + id + "\">";
-						html += "<td style=\"text-align:center\">" + obj.cbx + "</td>";
-						html += "<td style=\"text-align:center\">" + obj.envmc +  "</td>";
-						html += "<td style=\"text-align:center\">" + obj.yhybh +  "</td>";
-						html += "<td style=\"text-align:center\">" + obj.yhymc +  "</td>";
+						html += "<td style=\"text-align:center\">" + obj.checkBoxHtml + "</td>";
+						html += "<td style=\"text-align:center\">" + obj.envType +  "</td>";
+						html += "<td style=\"text-align:center\">" + obj.originCode +  "</td>";
+						html += "<td style=\"text-align:center\">" + obj.originName +  "</td>";
 						html += "<td style=\"text-align:center\">" + obj.count +  "</td>";
 						html += "</tr>";
 						$("#data-table").append(html);
@@ -38,7 +38,7 @@ var FwlyPage = function() {
 					toastr.info("选两个用户域进行比较");
 				} else {
 					toastr.clear();
-					result.message && toastr.error(result.message);
+					data.message && toastr.error(data.message);
 				}
 			},
 			error:function(result) {
@@ -52,7 +52,7 @@ var FwlyPage = function() {
 	var compare = function () {
 		var check = $("input:checkbox:checked").length;
 		if (check == 2){
-			var url = "/fwly/";
+			var url = "/route/";
 			$("input:checkbox:checked").each(function(){
 				url += $(this).attr("id");
 				url += "/";

@@ -148,14 +148,14 @@
 				toastr.error("接口调用出错:" + status);
 			}
 
-			if (XMLHttpRequest.getResponseHeader("content-type").indexOf('text/html') > -1) {
-				toastr.clear();
-				toastr.error("请重新登录");
-
-				window.setTimeout(function () {
-					window.location.href = "/login"
-				}, 2000);
-			}
+			// if (XMLHttpRequest.getResponseHeader("content-type").indexOf('text/html') > -1) {
+			// 	toastr.clear();
+			// 	toastr.error("请重新登录");
+			//
+			// 	window.setTimeout(function () {
+			// 		window.location.href = "/login"
+			// 	}, 3000);
+			// }
 		}
 	});
 })(jQuery);

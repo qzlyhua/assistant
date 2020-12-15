@@ -2,17 +2,17 @@ var IndexPage = function () {
     var init = function () {
         $("#data-table").html("");
         $.ajax({
-            url: "/api/xtgl",
+            url: "/api/origins",
             method: 'GET',
-            success: function (result) {
-                if (result.code == 200) {
-                    $.each(result.data, function (idx, obj) {
-                        var html = "<tr id=\"tr-" + idx + "\">";
-                        html += "<td style=\"text-align:center\">" + obj.xmmc + "</td>";
-                        html += "<td style=\"text-align:center\">" + obj.dev + "</td>";
-                        html += "<td style=\"text-align:center\">" + obj.test + "</td>";
-                        html += "<td style=\"text-align:center\">" + obj.testtjd + "</td>";
-                        html += "<td style=\"text-align:center\">" + obj.pro + "</td>";
+            success: function (data) {
+                if (data.code == 200) {
+                    $.each(data.result, function (idx, obj) {
+                        var html = "<tr id=\"tr-" + obj.id + "\">";
+                        html += "<td style=\"text-align:center\">" + (idx + 1) + "</td>";
+                        html += "<td style=\"text-align:center\">" + obj.originCode + "</td>";
+                        html += "<td style=\"text-align:center\">" + obj.originName + "</td>";
+                        html += "<td style=\"text-align:center\">" + obj.authCode + "</td>";
+                        html += "<td style=\"text-align:center\"><a href='" + obj.address + "' target='_blank'>" + obj.address + "</a></td>";
                         html += "</tr>";
                         $("#data-table").append(html);
                     });
@@ -20,13 +20,13 @@ var IndexPage = function () {
                     $("#loadingDiv").fadeOut(function(){$("#tableDiv").show()});
                 } else {
                     toastr.clear();
-                    result.message && toastr.error(result.message);
+                    data.message && toastr.error(data.message);
                 }
             },
             error: function (result) {
                 console.error(result);
                 toastr.clear();
-                toastr.error(result.status + ":接口调用出错");
+                toastr.error(":接口调用出错：" + result.status);
             }
         });
     };
@@ -40,7 +40,7 @@ var IndexPage = function () {
 
 jQuery(document).ready(function () {
     var minHeightOfMain = document.documentElement.clientHeight - $("#header").outerHeight() - $("#footer").outerHeight();
-    $("#main").css("min-height", minHeightOfMain + 10);
+    $("#main").css("min-height", minHeightOfMain);
     toastr.options = {positionClass: "toast-top-center"};
     IndexPage.init();
 });

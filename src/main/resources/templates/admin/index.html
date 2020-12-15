@@ -7,17 +7,17 @@
 		<nav th:replace="admin/fragments/nav :: nav"></nav>
 		<div id="main" style="min-height: 600px">
 			<div class="inner">
-				<h2>配置概览</h2>
+				<h2>概览</h2>
 				<div th:replace="admin/fragments/loading :: loading"></div>
 				<div id="tableDiv" class="table-wrapper" style="min-height: 400px;display: none;">
 					<table>
 						<thead>
 						<tr>
-							<th style="text-align:center">配置项目</th>
-							<th style="text-align:center">开发环境</th>
-							<th style="text-align:center">测试环境</th>
-							<th style="text-align:center">突击队测试环境</th>
-							<th style="text-align:center">生产环境</th>
+							<th style="text-align:center">#</th>
+							<th style="text-align:center">用户域编号</th>
+							<th style="text-align:center">用户域名称</th>
+							<th style="text-align:center">授权码</th>
+							<th style="text-align:center">运维中心地址</th>
 						</tr>
 						</thead>
 						<tbody id="data-table">
