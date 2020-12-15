@@ -32,12 +32,13 @@ var FwlyComparePage = function () {
                     $("#thEnvA").attr("title", res.envA);
                     $("#thEnvB").attr("title", res.envB);
                     $.each(res.result, function (idx, obj) {
-                        var fwmcShow = obj.application + obj.service;
+                        var fwmc = obj.application + obj.service;
+                        var fwmcShow = fwmc.length > 45 ? (fwmc.substring(0, 42) + "...") : fwmc;
                         var id = "tr-" + idx;
                         var html = "<tr id=\"" + id + "\">";
                         html += "<td style=\"text-align:center\">" + (idx + 1) + "</td>";
                         html += "<td style=\"text-align:center\">" + obj.route + "</td>";
-                        html += "<td style=\"text-align:center\">" + fwmcShow + "</td>";
+                        html += "<td style=\"text-align:center\" title='" + fwmc + "'>" + fwmcShow + "</td>";
                         html += "<td id = 'td-" + idx + "-a" + "' style=\"text-align:center\">" + genBtn(envA, obj.envA, obj.route, idx + '-a') + "</td>";
                         html += "<td id = 'td-" + idx + "-b" + "' style=\"text-align:center\">" + genBtn(envB, obj.envB, obj.route, idx + '-b') + "</td>";
                         html += "</tr>";

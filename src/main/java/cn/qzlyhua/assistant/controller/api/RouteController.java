@@ -5,7 +5,6 @@ import cn.qzlyhua.assistant.controller.api.response.Response;
 import cn.qzlyhua.assistant.dto.EnvInfoDTO;
 import cn.qzlyhua.assistant.dto.RouteConfigDetail;
 import cn.qzlyhua.assistant.dto.RouteConfigInfo;
-import cn.qzlyhua.assistant.service.OriginService;
 import cn.qzlyhua.assistant.service.RouteService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,9 +29,6 @@ import java.util.Map;
 @Slf4j
 public class RouteController {
     @Resource
-    OriginService originService;
-
-    @Resource
     RouteService routeService;
 
     /**
@@ -43,7 +39,7 @@ public class RouteController {
      */
     @RequestMapping("/routeConfigInfos")
     public List<RouteConfigInfo> routeConfigs() throws SQLException {
-        return originService.getOrignsForCompare();
+        return routeService.getOrignsForCompare();
     }
 
     /**
@@ -61,7 +57,7 @@ public class RouteController {
         String envB = new EnvInfoDTO(b).getEnv();
         String originCodeB = new EnvInfoDTO(b).getOrigin();
         log.info("routeCompare：{} - {} VS {} - {}", envA, originCodeA, envB, originCodeB);
-        List<RouteConfigDetail> result = originService.getRouteConfigDetailOfAB(envA, originCodeA, envB, originCodeB, type);
+        List<RouteConfigDetail> result = routeService.getRouteConfigDetailOfAB(envA, originCodeA, envB, originCodeB, type);
         Map<String, Object> resp = new HashMap<>(3);
         resp.put("envA", a);
         resp.put("envB", b);
@@ -70,7 +66,13 @@ public class RouteController {
     }
 
     /**
-     * 路由同步：
+     * 路由同步：将路由route按from环境的配置，同步至to
+     *
+     * @param from
+     * @param to
+     * @param route
+     * @return
+     * @throws SQLException
      */
     @RequestMapping("route/sync/{from}/{to}")
     public Map<String, String> sync(@PathVariable String from, @PathVariable String to, @RequestParam String route) throws SQLException {
