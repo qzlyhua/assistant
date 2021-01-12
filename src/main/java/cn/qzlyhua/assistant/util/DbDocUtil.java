@@ -1,7 +1,5 @@
 package cn.qzlyhua.assistant.util;
 
-import cn.hutool.core.date.DatePattern;
-import cn.hutool.core.date.DateTime;
 import cn.smallbun.screw.core.Configuration;
 import cn.smallbun.screw.core.engine.EngineConfig;
 import cn.smallbun.screw.core.engine.EngineFileType;
@@ -19,21 +17,18 @@ import java.util.ArrayList;
  */
 public class DbDocUtil {
 
-    static void documentGeneration(String db, EngineFileType fileType, String version, String description) {
-        String q = "?useUnicode=true&characterEncoding=UTF-8&useSSL=false&useTimezone=true&serverTimezone=Asia/Shanghai&allowMultiQueries=true&autoReconnect=true";
-        String url = "jdbc:mysql://192.168.150.103:3306/" + db + q;
-        String user = "root";
-        String pwd = "ewell@xc";
+    public static void documentGeneration(
+            String url, String username, String password,
+            String db, String path, EngineFileType fileType, String version, String description) {
 
-        String path = "/Users/yanghua/Downloads/db_doc";
         String fileName = db.replace("standard_db_", "") + "-" + version;
 
         //数据源
         HikariConfig hikariConfig = new HikariConfig();
         hikariConfig.setDriverClassName("com.mysql.jdbc.Driver");
         hikariConfig.setJdbcUrl(url);
-        hikariConfig.setUsername(user);
-        hikariConfig.setPassword(pwd);
+        hikariConfig.setUsername(username);
+        hikariConfig.setPassword(password);
         hikariConfig.addDataSourceProperty("useInformationSchema", "true");
         hikariConfig.setMinimumIdle(2);
         hikariConfig.setMaximumPoolSize(5);
@@ -66,20 +61,5 @@ public class DbDocUtil {
 
         //执行
         new DocumentationExecute(config).execute();
-    }
-
-    public static void main(String[] args) {
-        String[] dbs = new String[]{
-                "standard_db_bos", "standard_db_cdm", "standard_db_cms", "standard_db_fds",
-                "standard_db_hcr", "standard_db_hms", "standard_db_hrm", "standard_db_hsm",
-                "standard_db_ims", "standard_db_mms", "standard_db_oms", "standard_db_pem",
-                "standard_db_phs", "standard_db_tms", "standard_db_ums"};
-
-        String v = DatePattern.PURE_DATETIME_FORMAT.format(new DateTime());
-
-        for (String db : dbs) {
-            documentGeneration(db, EngineFileType.WORD, "V1.0-" + v, "标准库-" + db.replace("standard_db_", ""));
-            documentGeneration(db, EngineFileType.HTML, "V1.0-" + v, "标准库-" + db.replace("standard_db_", ""));
-        }
     }
 }
