@@ -11,14 +11,18 @@ var DbPage = function() {
 						var id = "tr-" + idx;
 						var html = "<tr id=\"" + id + "\">";
 						var red = obj.hasUpdate == 1 ? "; color:red" : "";
-						var btn = "<a href=\"" + obj.downloadUrl + "\" class=\"icon fa fa-download\"></a>";
+
 						var deva = "<a target=\"_blank\" href=\"" + obj.htmlUrlOfDev + "\">" + obj.versionOfDev + "</a>";
 						var staa = "<a target=\"_blank\" href=\"" + obj.htmlUrlOfStandard + "\">" + obj.versionOfStandard + "</a>";
 
+						var btn = "<a href=\"" + obj.downloadUrl + "\" class=\"icon fa fa-download\" title='下载标准库文档'></a>";
+						btn += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+						btn+= "<a href=\"" + obj.compareUrl + "\" class=\"icon fa fa-random\" title='查看数据库差异'></a>";
+
 						html += "<td style=\"text-align:center\">" + (idx + 1) + "</td>";
 						html += "<td style=\"text-align:center" + red + "\">" + obj.sysName + "</td>";
-						html += "<td style=\"text-align:center\">" + staa + "</td>";
-						html += "<td style=\"text-align:center\">" + deva + "</td>";
+						html += "<td style=\"text-align:center\" title='查看标准库文档'>" + staa + "</td>";
+						html += "<td style=\"text-align:center\" title='查看开发库文档'>" + deva + "</td>";
 						html += "<td style=\"text-align:center\">" + btn +  "</td>";
 						html += "</tr>";
 						$("#data-table").append(html);

@@ -55,7 +55,7 @@ public class MySqlSchemaController {
      * @param db2
      * @return
      */
-    @RequestMapping("/db/diff/{db1}/{db2}")
+    @RequestMapping("/compare/{db1}/{db2}")
     public String getDbDocs(@PathVariable String db1, @PathVariable String db2) {
         String flag = "mysql://";
         String temp = url.substring(url.indexOf(flag) + flag.length(), url.indexOf("?"));

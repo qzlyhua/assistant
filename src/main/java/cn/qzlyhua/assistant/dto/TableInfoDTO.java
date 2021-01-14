@@ -14,4 +14,7 @@ public class TableInfoDTO {
     private String htmlUrlOfDev;
     private String htmlUrlOfStandard;
     private String downloadUrl;
+    private String schemaNameOfDev;
+    private String schemaNameOfStandard;
+    private String compareUrl;
 }

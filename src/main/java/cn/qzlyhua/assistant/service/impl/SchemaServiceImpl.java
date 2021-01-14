@@ -109,6 +109,7 @@ public class SchemaServiceImpl implements SchemaService {
         for (TableInfoDTO dto : result) {
             boolean b = DateUtil.parse(dto.getVersionOfDev()).isAfter(DateUtil.parse(dto.getVersionOfStandard()));
             dto.setHasUpdate(b ? 1 : 0);
+            dto.setCompareUrl("api/compare/" + dto.getSchemaNameOfDev() + "/" + dto.getSchemaNameOfStandard());
         }
 
         return result;
@@ -121,9 +122,11 @@ public class SchemaServiceImpl implements SchemaService {
             tableInfoDTO.setVersionOfStandard(version);
             tableInfoDTO.setDownloadUrl("api/doc/" + dbInfo.getDbSchema());
             tableInfoDTO.setHtmlUrlOfStandard("api/html/" + dbInfo.getDbSchema());
+            tableInfoDTO.setSchemaNameOfStandard(dbInfo.getDbSchema());
         } else {
             tableInfoDTO.setVersionOfDev(version);
             tableInfoDTO.setHtmlUrlOfDev("api/html/" + dbInfo.getDbSchema());
+            tableInfoDTO.setSchemaNameOfDev(dbInfo.getDbSchema());
         }
     }
 }
