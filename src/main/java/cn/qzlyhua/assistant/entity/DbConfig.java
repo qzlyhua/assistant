@@ -11,7 +11,6 @@ public class DbConfig {
     private String url;
     private String user;
     private String pwd;
-
     private String envType;
     private String dbType;
 }

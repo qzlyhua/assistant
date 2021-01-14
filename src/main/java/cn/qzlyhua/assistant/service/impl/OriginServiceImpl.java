@@ -10,7 +10,7 @@ import javax.annotation.Resource;
 import java.util.List;
 
 /**
- * 用户域
+ * 用户域管理
  *
  * @author yanghua
  */

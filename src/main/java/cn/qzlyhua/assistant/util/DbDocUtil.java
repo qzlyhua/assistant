@@ -16,8 +16,7 @@ import java.util.ArrayList;
  * @author yanghua
  */
 public class DbDocUtil {
-
-    public static void documentGeneration(
+    public static String documentGeneration(
             String url, String username, String password,
             String db, String path, EngineFileType fileType, String version, String description) {
 
@@ -61,5 +60,7 @@ public class DbDocUtil {
 
         //执行
         new DocumentationExecute(config).execute();
+
+        return path + "/" + fileName + fileType.getFileSuffix();
     }
 }

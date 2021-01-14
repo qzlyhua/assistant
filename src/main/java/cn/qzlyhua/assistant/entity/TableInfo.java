@@ -8,7 +8,7 @@ import java.util.Date;
  * @author yanghua
  */
 @Data
-public class TablesInfo {
+public class TableInfo {
     private String name;
     private Date version;
 }

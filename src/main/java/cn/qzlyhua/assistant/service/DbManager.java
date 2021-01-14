@@ -6,6 +6,8 @@ import java.sql.SQLException;
 import java.util.List;
 
 /**
+ * 数据库操作管理类
+ *
  * @author yanghua
  */
 public interface DbManager {

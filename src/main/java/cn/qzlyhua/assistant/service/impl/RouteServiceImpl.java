@@ -17,6 +17,8 @@ import java.sql.SQLException;
 import java.util.*;
 
 /**
+ * 路由配置管理
+ *
  * @author yanghua
  */
 @Service
@@ -24,7 +26,7 @@ import java.util.*;
 public class RouteServiceImpl implements RouteService {
     @Resource
     DbManager dbManager;
-    
+
     @Resource
     OriginMapper originMapper;
 
@@ -77,7 +79,7 @@ public class RouteServiceImpl implements RouteService {
         List<RouteConfigDetail> configOfA = dbManager.getRouteConfigDetails(envA, originCodeA);
         List<RouteConfigDetail> configOfB = dbManager.getRouteConfigDetails(envB, originCodeB);
 
-        // 两个域的所有已配置网管路由
+        // 两个域的所有已配置网关路由
         Set<String> routes = new HashSet<>(Math.max(configOfA.size(), configOfB.size()));
 
         Map<String, RouteConfigDetail> mapA = new HashMap<>(configOfA.size());

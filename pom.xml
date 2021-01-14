@@ -169,7 +169,7 @@
                     <!--生成文件类型-->
                     <fileType>HTML</fileType>
                     <!--打开文件输出目录-->
-                    <openOutputDir>true</openOutputDir>
+                    <openOutputDir>false</openOutputDir>
                     <!--生成模板-->
                     <produceType>freemarker</produceType>
                     <!--文档名称 为空时:将采用[数据库名称-描述-版本号]作为文档名称-->

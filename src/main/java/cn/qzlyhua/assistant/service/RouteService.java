@@ -7,6 +7,8 @@ import java.sql.SQLException;
 import java.util.List;
 
 /**
+ * 路由配置管理
+ *
  * @author yanghua
  */
 public interface RouteService {

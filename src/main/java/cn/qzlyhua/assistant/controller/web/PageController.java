@@ -79,4 +79,14 @@ public class PageController {
         model.addAttribute("envB", b);
         return "admin/fwlyCompare";
     }
+
+    /**
+     * 数据库表
+     *
+     * @return
+     */
+    @RequestMapping(value = {"/db-doc"})
+    public String dbDoc() {
+        return "admin/db-doc";
+    }
 }
