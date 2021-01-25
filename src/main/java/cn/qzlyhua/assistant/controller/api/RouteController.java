@@ -2,7 +2,6 @@ package cn.qzlyhua.assistant.controller.api;
 
 import cn.hutool.core.map.MapUtil;
 import cn.qzlyhua.assistant.controller.api.response.Response;
-import cn.qzlyhua.assistant.dto.EnvInfoDTO;
 import cn.qzlyhua.assistant.dto.RouteConfigDetail;
 import cn.qzlyhua.assistant.dto.RouteConfigInfo;
 import cn.qzlyhua.assistant.service.RouteService;
@@ -52,12 +51,8 @@ public class RouteController {
      */
     @RequestMapping("/routeCompare/{a}/{b}/{type}")
     public Map<String, Object> routeConfigsOfAB(@PathVariable String a, @PathVariable String b, @PathVariable String type) throws SQLException {
-        String envA = new EnvInfoDTO(a).getEnv();
-        String originCodeA = new EnvInfoDTO(a).getOrigin();
-        String envB = new EnvInfoDTO(b).getEnv();
-        String originCodeB = new EnvInfoDTO(b).getOrigin();
-        log.info("routeCompare：{} - {} VS {} - {}", envA, originCodeA, envB, originCodeB);
-        List<RouteConfigDetail> result = routeService.getRouteConfigDetailOfAB(envA, originCodeA, envB, originCodeB, type);
+        log.info("routeCompare：{} VS {}", a, b);
+        List<RouteConfigDetail> result = routeService.getRouteConfigDetailOfAB(a, b, type);
         Map<String, Object> resp = new HashMap<>(3);
         resp.put("envA", a);
         resp.put("envB", b);
@@ -76,9 +71,7 @@ public class RouteController {
      */
     @RequestMapping("route/sync/{from}/{to}")
     public Map<String, String> sync(@PathVariable String from, @PathVariable String to, @RequestParam String route) throws SQLException {
-        EnvInfoDTO envFrom = new EnvInfoDTO(from);
-        EnvInfoDTO envTo = new EnvInfoDTO(to);
-        routeService.syncRouteConfig(envFrom.getEnv(), envFrom.getOrigin(), envTo.getEnv(), envTo.getOrigin(), route);
+        routeService.syncRouteConfig(from, to, route);
         return MapUtil.of("sync", "OK");
     }
 }

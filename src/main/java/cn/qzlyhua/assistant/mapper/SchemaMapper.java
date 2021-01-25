@@ -1,5 +1,6 @@
 package cn.qzlyhua.assistant.mapper;
 
+import cn.qzlyhua.assistant.dto.ColumnInfoDTO;
 import cn.qzlyhua.assistant.entity.TableInfo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -31,4 +32,11 @@ public interface SchemaMapper {
             "</script>"
     })
     List<TableInfo> getTableInfos(@Param("ts") List<String> ts);
+
+    @Select("select table_schema, table_name, column_name, is_nullable, column_type, column_key, column_comment " +
+            "from information_schema.`COLUMNS` where table_schema = #{db1} and table_name not in('schame_version','WORKER_NODE', 'flyway_schema_history') " +
+            "union all " +
+            "select table_schema, table_name, column_name, is_nullable, column_type, column_key, column_comment " +
+            "from information_schema.`COLUMNS` where table_schema = #{db2} and table_name not in('schame_version','WORKER_NODE', 'flyway_schema_history')")
+    List<ColumnInfoDTO> getCloumnInfos(String db1, String db2);
 }

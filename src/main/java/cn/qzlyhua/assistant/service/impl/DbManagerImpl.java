@@ -8,6 +8,7 @@ import cn.qzlyhua.assistant.controller.api.response.ResponseCode;
 import cn.qzlyhua.assistant.dto.RouteConfigDetail;
 import cn.qzlyhua.assistant.entity.DbConfig;
 import cn.qzlyhua.assistant.mapper.DbConfigMapper;
+import cn.qzlyhua.assistant.mapper.OriginMapper;
 import cn.qzlyhua.assistant.service.DbManager;
 import com.alibaba.druid.pool.DruidDataSource;
 import org.springframework.stereotype.Service;
@@ -32,33 +33,48 @@ public class DbManagerImpl implements DbManager {
     @Resource
     DbConfigMapper dbConfigMapper;
 
+    @Resource
+    OriginMapper originMapper;
+
     @Override
-    public int selectRouteConfigCount(String env, String originCode) throws SQLException {
-        String sql = "select count(*) as c from xt_ly where zfbz = 0 and yhy = ?";
+    public int selectRouteConfigCount(String originCode) throws SQLException {
+        String env = originMapper.getEnvByOriginCode(originCode);
+        String sql = "select count(1) as c from (" +
+                "SELECT wgly,yhy FROM xt_ly WHERE zfbz=0 AND yhy='0' AND wgly NOT IN (" +
+                "SELECT wgly FROM xt_ly WHERE zfbz=0 AND yhy= ?) UNION ALL " +
+                "SELECT wgly,yhy FROM xt_ly WHERE zfbz=0 AND yhy= ? " +
+                ")t";
         Db db = getDbByConfig(env, "mysql", "oms");
-        List<Entity> list = db.query(sql, originCode);
+        List<Entity> list = db.query(sql, originCode, originCode);
         return list.get(0).getInt("c");
     }
 
     @Override
-    public List<RouteConfigDetail> getRouteConfigDetails(String env, String originCode) throws SQLException {
-        String sql = "select wgly, hddz, hdly from xt_ly where zfbz = 0 and yhy = ? order by hddz, wgly";
+    public List<RouteConfigDetail> getRouteConfigDetails(String originCode) throws SQLException {
+        String env = originMapper.getEnvByOriginCode(originCode);
+        String sql = "select wgly, hddz, hdly, yhy from (" +
+                "SELECT wgly, yhy, hddz, hdly FROM xt_ly WHERE zfbz=0 AND yhy='0' AND wgly NOT IN (" +
+                "SELECT wgly FROM xt_ly WHERE zfbz=0 AND yhy= ?) UNION ALL " +
+                "SELECT wgly, yhy, hddz, hdly FROM xt_ly WHERE zfbz=0 AND yhy= ?" +
+                ")t order by yhy, hddz, wgly";
         Db db = getDbByConfig(env, "mysql", "oms");
-        List<Entity> list = db.query(sql, originCode);
+        List<Entity> list = db.query(sql, originCode, originCode);
         List<RouteConfigDetail> result = new ArrayList<>(list.size());
         for (Entity e : list) {
             RouteConfigDetail rcd = new RouteConfigDetail();
             rcd.setRoute(e.getStr("wgly"));
             rcd.setApplication(e.getStr("hddz").replace(originCode, ""));
             rcd.setService(e.getStr("hdly"));
+            rcd.setOrigin(e.getStr("yhy"));
             result.add(rcd);
         }
         return result;
     }
 
     @Override
-    public RouteConfigDetail getRouteConfigByCRoute(String env, String originCode, String route) throws SQLException {
-        String sql = "select wgly, hddz, hdly from xt_ly where zfbz = 0 and yhy = ? and wgly = ? limit 1";
+    public RouteConfigDetail getRouteConfigByCRoute(String originCode, String route) throws SQLException {
+        String env = originMapper.getEnvByOriginCode(originCode);
+        String sql = "select wgly, hddz, hdly, yhy from xt_ly where zfbz = 0 and yhy = ? and wgly = ? limit 1";
         Db db = getDbByConfig(env, "mysql", "oms");
         List<Entity> list = db.query(sql, originCode, route);
         if (CollUtil.isEmpty(list)) {
@@ -70,21 +86,24 @@ public class DbManagerImpl implements DbManager {
         rcd.setRoute(e.getStr("wgly"));
         rcd.setApplication(e.getStr("hddz").replace(originCode, ""));
         rcd.setService(e.getStr("hdly"));
+        rcd.setOrigin(e.getStr("yhy"));
         return rcd;
     }
 
     @Override
-    public int insertRouteConfig(String env, String originCode, RouteConfigDetail routeConfigDetail) throws SQLException {
+    public int insertRouteConfig(String originCode, RouteConfigDetail routeConfigDetail) throws SQLException {
+        String env = originMapper.getEnvByOriginCode(originCode);
         Db db = getDbByConfig(env, "mysql", "oms");
+        String oriCode = routeConfigDetail.getOrigin().equals("0") ? "0" : originCode;
         Entity routeConfig = new Entity("xt_ly");
         routeConfig.set("id", getNextIdOfRouteConfig(env));
         routeConfig.set("wgly", routeConfigDetail.getRoute());
-        routeConfig.set("hddz", getApplicationName(env, originCode, routeConfigDetail.getApplication()));
         routeConfig.set("hdly", routeConfigDetail.getService());
         routeConfig.set("jqlx", 0);
         routeConfig.set("ssjgbh", null);
         routeConfig.set("ssjgmc", null);
-        routeConfig.set("yhy", originCode);
+        routeConfig.set("yhy", oriCode);
+        routeConfig.set("hddz", getApplicationName(env, oriCode, routeConfigDetail.getApplication()));
         routeConfig.set("cjrid", -2);
         routeConfig.set("cjrxm", "assistant");
         routeConfig.set("cjsj", new Date());

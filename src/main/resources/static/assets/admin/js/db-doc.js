@@ -17,7 +17,7 @@ var DbPage = function() {
 
 						var btn = "<a href=\"" + obj.downloadUrl + "\" class=\"icon fa fa-download\" title='下载标准库文档'></a>";
 						btn += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
-						btn+= "<a href=\"" + obj.compareUrl + "\" class=\"icon fa fa-random\" title='查看数据库差异'></a>";
+						btn+= "<a target=\"_blank\" href=\"" + obj.compareUrl + "\" class=\"icon fa fa-random\" title='查看数据库差异'></a>";
 
 						html += "<td style=\"text-align:center\">" + (idx + 1) + "</td>";
 						html += "<td style=\"text-align:center" + red + "\">" + obj.sysName + "</td>";
@@ -41,14 +41,8 @@ var DbPage = function() {
 		});
 	};
 
-	var downloadDoc = function () {
-		alert(1);
-	};
-
 	return {
 		init : function(){init();},
-		compare : function () {compare();},
-		clear : function () {$("input").prop("checked", false);}
 	}
 }();
 

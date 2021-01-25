@@ -14,7 +14,7 @@ import java.util.List;
 public interface RouteService {
     List<RouteConfigInfo> getOrignsForCompare() throws SQLException;
 
-    List<RouteConfigDetail> getRouteConfigDetailOfAB(String envA, String originCodeA, String envB, String originCodeB, String type) throws SQLException;
+    List<RouteConfigDetail> getRouteConfigDetailOfAB(String originCodeA, String originCodeB, String type) throws SQLException;
 
-    void syncRouteConfig(String envFrom, String originFrom, String envTo, String originTo, String route) throws SQLException;
+    void syncRouteConfig(String originFrom, String originTo, String route) throws SQLException;
 }

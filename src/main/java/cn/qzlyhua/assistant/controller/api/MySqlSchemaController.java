@@ -5,6 +5,9 @@ import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.file.FileReader;
 import cn.hutool.core.util.ZipUtil;
 import cn.qzlyhua.assistant.controller.api.response.Response;
+import cn.qzlyhua.assistant.controller.api.response.ResponseCode;
+import cn.qzlyhua.assistant.controller.api.response.ResponseData;
+import cn.qzlyhua.assistant.dto.ColumnInfoDiffDTO;
 import cn.qzlyhua.assistant.dto.TableInfoDTO;
 import cn.qzlyhua.assistant.entity.TableInfo;
 import cn.qzlyhua.assistant.service.SchemaService;
@@ -47,23 +50,6 @@ public class MySqlSchemaController {
 
     @Value("${app.db.doc.path}")
     private String basePath;
-
-    /**
-     * 比较两个数据库的区别
-     *
-     * @param db1
-     * @param db2
-     * @return
-     */
-    @RequestMapping("/compare/{db1}/{db2}")
-    public String getDbDocs(@PathVariable String db1, @PathVariable String db2) {
-        String flag = "mysql://";
-        String temp = url.substring(url.indexOf(flag) + flag.length(), url.indexOf("?"));
-        String ipAndPort = temp.substring(0, temp.indexOf("/"));
-        String sql = schemaService.getDiff(username, password, ipAndPort, db1, db2);
-        String ignore = "# WARNING: Using a password on the command line interface can be insecure.";
-        return sql.replace(ignore, "").replaceAll("\\n", " \\\r\\\n");
-    }
 
     /**
      * 获取所有数据库内配置的系统数据库更新情况
@@ -156,5 +142,33 @@ public class MySqlSchemaController {
         response.setHeader("Content-Disposition", "attachment;filename=" + FileUtil.getName(file));
         ServletOutputStream out = response.getOutputStream();
         FileReader.create(file).writeToStream(out, true);
+    }
+
+    /**
+     * 数据库字段比较
+     *
+     * @return
+     */
+    @RequestMapping("/getColumnDiffs/{db1}/{db2}")
+    public List<ColumnInfoDiffDTO> getColumnDiffs(@PathVariable String db1, @PathVariable String db2) {
+        return schemaService.getCloumnInfoDiffs(db1, db2);
+    }
+
+    /**
+     * 比较两个数据库的区别，输出SQL
+     *
+     * @param db1
+     * @param db2
+     * @return
+     */
+    @RequestMapping("/compare/{db1}/{db2}")
+    public ResponseData getDbDocs(@PathVariable String db1, @PathVariable String db2) {
+        String flag = "mysql://";
+        String temp = url.substring(url.indexOf(flag) + flag.length(), url.indexOf("?"));
+        String ipAndPort = temp.substring(0, temp.indexOf("/"));
+        String sql = schemaService.getDiff(username, password, ipAndPort, db1, db2);
+        String ignore = "# WARNING: Using a password on the command line interface can be insecure.";
+        String result = sql.replace(ignore, "").replaceAll("\\n", " \\\r\\\n");
+        return new ResponseData(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMessage(), result);
     }
 }

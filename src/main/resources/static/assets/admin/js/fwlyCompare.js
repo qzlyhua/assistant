@@ -31,14 +31,23 @@ var FwlyComparePage = function () {
                     var res = data.result;
                     $("#thEnvA").attr("title", res.envA);
                     $("#thEnvB").attr("title", res.envB);
+                    var sub = 41;
+
                     $.each(res.result, function (idx, obj) {
-                        var fwmc = obj.application + obj.service;
-                        var fwmcShow = fwmc.length > 45 ? (fwmc.substring(0, 42) + "...") : fwmc;
+                        var fwmc0 = "<b style='color:#8096e6'>" + obj.application + "</b>" + obj.service;
+                        var fwmc1 = "<b>" + obj.application + "</b>" + obj.service;
+                        var fwmc = obj.origin == "0" ? fwmc0 : fwmc1;
+                        var subLength = obj.origin == "0" ? sub + "style='color:#8096e6'>".length : sub;
+                        var fwmcTitle = obj.application + obj.service;
+                        var fwmcShow = fwmc.length > subLength ? (fwmc.substring(0, subLength - 3) + "...") : fwmc;
+
+                        var route = obj.warning == "1" ? "<span style='color: rgb(242 132 158)'>" + obj.route + "</span>" : obj.route;
+
                         var id = "tr-" + idx;
                         var html = "<tr id=\"" + id + "\">";
                         html += "<td style=\"text-align:center\">" + (idx + 1) + "</td>";
-                        html += "<td style=\"text-align:center\">" + obj.route + "</td>";
-                        html += "<td style=\"text-align:center\" title='" + fwmc + "'>" + fwmcShow + "</td>";
+                        html += "<td style=\"text-align:center\">" + route + "</td>";
+                        html += "<td style=\"text-align:center\" title='" + fwmcTitle + "'>" + fwmcShow + "</td>";
                         html += "<td id = 'td-" + idx + "-a" + "' style=\"text-align:center\">" + genBtn(envA, obj.envA, obj.route, idx + '-a') + "</td>";
                         html += "<td id = 'td-" + idx + "-b" + "' style=\"text-align:center\">" + genBtn(envB, obj.envB, obj.route, idx + '-b') + "</td>";
                         html += "</tr>";

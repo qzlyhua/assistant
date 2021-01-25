@@ -45,7 +45,7 @@ public class PageController {
             model.addAttribute("url", url);
         }
     }
-    
+
     /**
      * 首页
      *
@@ -89,4 +89,18 @@ public class PageController {
     public String dbDoc() {
         return "admin/db-doc";
     }
+
+    /**
+     * 数据库表对比
+     *
+     * @return
+     */
+    @RequestMapping(value = {"/db-doc/compare/{a}/{b}"})
+    public String dbDocCompare(Model model, @PathVariable String a, @PathVariable String b) {
+        model.addAttribute("db1", a);
+        model.addAttribute("db2", b);
+        return "admin/db-compare";
+    }
+
+
 }

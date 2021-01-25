@@ -19,4 +19,6 @@ public class RouteConfigDetail {
      */
     private String envA;
     private String envB;
+
+    private String warning;
 }
