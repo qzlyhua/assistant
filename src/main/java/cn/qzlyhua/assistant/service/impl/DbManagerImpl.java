@@ -1,6 +1,7 @@
 package cn.qzlyhua.assistant.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.db.Db;
 import cn.hutool.db.Entity;
 import cn.qzlyhua.assistant.controller.api.exception.AppException;
@@ -72,8 +73,8 @@ public class DbManagerImpl implements DbManager {
     }
 
     @Override
-    public RouteConfigDetail getRouteConfigByCRoute(String originCode, String route) throws SQLException {
-        String env = originMapper.getEnvByOriginCode(originCode);
+    public RouteConfigDetail getRouteConfigByCRoute(String env, String originCode, String route) throws SQLException {
+        env = StrUtil.isBlank(env) ? originMapper.getEnvByOriginCode(originCode) : env;
         String sql = "select wgly, hddz, hdly, yhy from xt_ly where zfbz = 0 and yhy = ? and wgly = ? limit 1";
         Db db = getDbByConfig(env, "mysql", "oms");
         List<Entity> list = db.query(sql, originCode, route);

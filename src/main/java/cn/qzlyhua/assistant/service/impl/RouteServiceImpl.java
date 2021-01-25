@@ -36,14 +36,19 @@ public class RouteServiceImpl implements RouteService {
         log.info("sync：{} - {} -> {}", route, originFrom, originTo);
 
         // 校验源环境路由配置
-        RouteConfigDetail routeConfigOfSource = dbManager.getRouteConfigByCRoute(originFrom, route);
+        String envFrom = originMapper.getEnvByOriginCode(originFrom);
+        RouteConfigDetail routeConfigOfSource = dbManager.getRouteConfigByCRoute(envFrom, originFrom, route);
         if (routeConfigOfSource == null) {
-            routeConfigOfSource = dbManager.getRouteConfigByCRoute("0", route);
+            routeConfigOfSource = dbManager.getRouteConfigByCRoute(envFrom, "0", route);
         }
         Assert.isTrue(routeConfigOfSource != null, "源域未配置该路由！");
 
         // 校验目标环境是否已经存在该路由配置
-        RouteConfigDetail routeConfigOfTarget = dbManager.getRouteConfigByCRoute(originTo, route);
+        String envTo = originMapper.getEnvByOriginCode(originTo);
+        RouteConfigDetail routeConfigOfTarget = dbManager.getRouteConfigByCRoute(envTo, originTo, route);
+        if (routeConfigOfTarget == null) {
+            routeConfigOfTarget = dbManager.getRouteConfigByCRoute(envTo, "0", route);
+        }
         Assert.isTrue(routeConfigOfTarget == null, "目标域已经配置该路由！");
 
         // 根据源环境复制配置信息至目标用户
