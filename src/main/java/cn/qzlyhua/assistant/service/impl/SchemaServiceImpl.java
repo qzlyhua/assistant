@@ -154,12 +154,12 @@ public class SchemaServiceImpl implements SchemaService {
         List<ColumnInfoDiffDTO> result = new ArrayList<>();
         for (ColumnInfoDiffDTO c : temp) {
             boolean isSameIsNull = c.getIsNullableD() != null && c.getIsNullableD().equals(c.getIsNullableS());
-            boolean isSameColTyp = c.getColumnTypeD() != null &&  c.getColumnTypeD().equals(c.getColumnTypeS());
+            boolean isSameColTyp = c.getColumnTypeD() != null && c.getColumnTypeD().equals(c.getColumnTypeS());
             boolean isSameColKey = (StrUtil.isBlank(c.getIsNullableD()) && StrUtil.isBlank(c.getIsNullableS()))
                     || StrUtil.isNotBlank(c.getIsNullableD()) && c.getColumnKeyD().equals(c.getColumnKeyS());
             if (!(isSameIsNull && isSameColTyp && isSameColKey)) {
-                c.setDShow(join(" | ", c.getColumnTypeD(), c.getIsNullableD(), c.getColumnKeyD()));
-                c.setSShow(join(" | ", c.getColumnTypeS(), c.getIsNullableS(), c.getColumnKeyS()));
+                c.setDShow(join(c.getColumnTypeD(), c.getIsNullableD(), c.getColumnKeyD()));
+                c.setSShow(join(c.getColumnTypeS(), c.getIsNullableS(), c.getColumnKeyS()));
                 result.add(c);
             }
         }
@@ -181,15 +181,15 @@ public class SchemaServiceImpl implements SchemaService {
         }
     }
 
-    private String join(CharSequence conjunction, String cType, String isNullable, String cKey) {
+    private String join(String cType, String isNullable, String cKey) {
         if (StrUtil.isBlank(cType) && StrUtil.isBlank(isNullable) && StrUtil.isBlank(cKey)) {
-            return "缺";
+            return "<span style='color: rgb(242 132 158)'>缺</span>";
         }
 
         if (StrUtil.isBlank(cKey)) {
-            return StrUtil.join(" | ", cType, isNullable);
+            return "<code>" + cType + "</code><code>" + isNullable + "</code>";
         } else {
-            return StrUtil.join(" | ", cType, isNullable, cKey);
+            return "<code>" + cType + "</code><code>" + isNullable + "</code><code>" + cKey + "</code>";
         }
     }
 }
