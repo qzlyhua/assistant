@@ -92,7 +92,7 @@ public class RouteServiceImpl implements RouteService {
         List<RouteConfigDetail> configOfB = dbManager.getRouteConfigDetails(originCodeB);
 
         // 两个域的所有已配置网关路由(包括0用户域)
-        Set<String> routes = new HashSet<>(Math.max(configOfA.size(), configOfB.size()));
+        Set<String> routes = new LinkedHashSet<>(Math.max(configOfA.size(), configOfB.size()));
 
         Map<String, RouteConfigDetail> mapA = new HashMap<>(configOfA.size());
         for (RouteConfigDetail routeConfigDetail : configOfA) {
