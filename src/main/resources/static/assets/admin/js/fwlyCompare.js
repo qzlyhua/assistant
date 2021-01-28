@@ -31,7 +31,7 @@ var FwlyComparePage = function () {
                     var res = data.result;
                     $("#thEnvA").attr("title", res.envA);
                     $("#thEnvB").attr("title", res.envB);
-                    var sub = 41;
+                    var sub = 40;
 
                     $.each(res.result, function (idx, obj) {
                         var fwmc0 = "<b style='color:#8096e6'>" + obj.application + "</b>" + obj.service;
@@ -41,7 +41,8 @@ var FwlyComparePage = function () {
                         var fwmcTitle = obj.application + obj.service;
                         var fwmcShow = fwmc.length > subLength ? (fwmc.substring(0, subLength - 3) + "...") : fwmc;
 
-                        var route = obj.warning == "1" ? "<span style='color: rgb(242 132 158)'>" + obj.route + "</span>" : obj.route;
+                        var routeShow = obj.route.length > sub + 5 ? (obj.route.substring(0, sub + 2) + "...") : obj.route;
+                        var route = obj.warning == "1" ? "<span style='color: rgb(242 132 158)'>" + routeShow + "</span>" : routeShow;
 
                         var id = "tr-" + idx;
                         var html = "<tr id=\"" + id + "\">";
