@@ -123,6 +123,11 @@
             <artifactId>screw-core</artifactId>
             <version>1.0.5</version>
         </dependency>
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>core</artifactId>
+            <version>3.3.3</version>
+        </dependency>
     </dependencies>
 
     <build>
