@@ -1,6 +1,7 @@
 package cn.qzlyhua.assistant.util;
 
 import cn.qzlyhua.assistant.config.properties.DingDingProperties;
+import cn.qzlyhua.assistant.dto.DingUser;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import lombok.Getter;
@@ -52,6 +53,11 @@ public class DingDingUtils {
      * @return
      */
     public static String getOpenIdByCode(DingDingProperties dingDingLoginProperties, String code) {
+        DingUser user = getDingUserByCode(dingDingLoginProperties, code);
+        return user == null ? "" : user.getOpenid();
+    }
+
+    public static DingUser getDingUserByCode(DingDingProperties dingDingLoginProperties, String code) {
         String token = getAccessToken(dingDingLoginProperties);
         if (token == null) {
             throw new BadCredentialsException("钉钉授权失败！");
@@ -77,9 +83,12 @@ public class DingDingUtils {
             assert dingResponse != null;
             if (0 == dingResponse.getIntValue("errcode")) {
                 JSONObject userInfo = dingResponse.getJSONObject("user_info");
+                //{"nick":"XXX","unionid":"H4DJkFGxxXXXXX","dingId":"$:LWCP_v1:$2oxxxxxxTa/H0IaZxxx==","openid":"aliPxxxxx0iE","main_org_auth_high_level":true}
                 log.info("钉钉用户信息：{}", userInfo);
-                String openid = userInfo.getString("openid");
-                return openid;
+                return DingUser.builder()
+                        .nick(userInfo.getString("nick"))
+                        .openid(userInfo.getString("openid"))
+                        .build();
             } else {
                 return null;
             }

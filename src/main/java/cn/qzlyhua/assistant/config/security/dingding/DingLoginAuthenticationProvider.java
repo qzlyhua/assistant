@@ -1,16 +1,18 @@
 package cn.qzlyhua.assistant.config.security.dingding;
 
 import cn.qzlyhua.assistant.config.properties.DingDingProperties;
+import cn.qzlyhua.assistant.dto.DingUser;
+import cn.qzlyhua.assistant.entity.User;
+import cn.qzlyhua.assistant.mapper.UserMapper;
 import cn.qzlyhua.assistant.util.DingDingUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
 
-import java.util.Set;
+import javax.annotation.Resource;
 
 /**
  * 钉钉用户认证
@@ -23,8 +25,14 @@ public class DingLoginAuthenticationProvider implements AuthenticationProvider {
     public static final String LOGIN_PREFIX = "LOGIN-";
     public static final String ADD_PREFIX = "ADD-b2d58e8f-3506-44af-90f4-c46fbabc308f";
 
-    @Autowired
-    DingDingProperties dingDingLoginProperties;
+    final DingDingProperties dingDingLoginProperties;
+
+    @Resource
+    UserMapper userMapper;
+
+    public DingLoginAuthenticationProvider(DingDingProperties dingDingLoginProperties) {
+        this.dingDingLoginProperties = dingDingLoginProperties;
+    }
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
@@ -48,19 +56,18 @@ public class DingLoginAuthenticationProvider implements AuthenticationProvider {
             if (dingDingLoginProperties.getAdminOpenid().equals(openid)) {
                 return true;
             } else {
-                Set<String> users = DingDingUtils.getUsers(dingDingLoginProperties);
-                for (String s : users) {
-                    if (s.equals(openid)) {
-                        return true;
-                    }
+                // 从数据库获取openid
+                User user = userMapper.getUserByUsername(openid);
+                if (user != null) {
+                    return true;
+                } else {
+                    return false;
                 }
-                return false;
             }
         } else if (ADD_PREFIX.equals(state)) {
-            String openid = DingDingUtils.getOpenIdByCode(dingDingLoginProperties, code);
-            log.info("新增钉钉用户！openid：{}", openid);
-            // 添加openid
-            DingDingUtils.addUser(dingDingLoginProperties, openid);
+            DingUser user = DingDingUtils.getDingUserByCode(dingDingLoginProperties, code);
+            log.info("新增钉钉用户！{}", user);
+            userMapper.insertUser(User.builder().nick(user.getNick()).username(user.getOpenid()).type("9").build());
             return true;
         } else {
             return false;

@@ -14,7 +14,8 @@ CREATE TABLE `AS_RE_ORIGIN`
 CREATE TABLE `AS_RE_USER`
 (
     `id`       int(10) NOT NULL AUTO_INCREMENT,
-    `username` varchar(10)  DEFAULT NULL,
+    `nick`     varchar(128) DEFAULT NULL,
+    `username` varchar(64)  DEFAULT NULL,
     `password` varchar(255) DEFAULT NULL,
     `type`     int(2)  NOT NULL COMMENT '1：管理员，2：普通用户，9：钉钉用户',
     PRIMARY KEY (`id`)
