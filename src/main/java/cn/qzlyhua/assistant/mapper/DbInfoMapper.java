@@ -13,4 +13,10 @@ import java.util.List;
 public interface DbInfoMapper {
     @Select("select * from AS_DB_INFO")
     List<DbInfo> getAllDbInfos();
+
+    @Select("select * from AS_DB_INFO where db_schema = #{schema}")
+    DbInfo getDbInfoBySchemaName(String schema);
+
+    @Select("select * from AS_DB_INFO where db_type = '标准库'")
+    List<DbInfo> getStandardDbInfos();
 }

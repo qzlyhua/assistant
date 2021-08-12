@@ -4,18 +4,23 @@ import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.db.Db;
+import cn.hutool.db.DbUtil;
+import cn.hutool.db.Entity;
 import cn.qzlyhua.assistant.dto.ColumnInfoDTO;
 import cn.qzlyhua.assistant.dto.ColumnInfoDiffDTO;
 import cn.qzlyhua.assistant.dto.TableInfoDTO;
 import cn.qzlyhua.assistant.entity.DbInfo;
 import cn.qzlyhua.assistant.entity.TableInfo;
 import cn.qzlyhua.assistant.mapper.DbInfoMapper;
-import cn.qzlyhua.assistant.mapper.SchemaMapper;
 import cn.qzlyhua.assistant.service.SchemaService;
+import cn.qzlyhua.assistant.util.DruidDataSourceUtils;
+import com.alibaba.druid.pool.DruidDataSource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.sql.SQLException;
 import java.util.*;
 
 /**
@@ -27,23 +32,16 @@ import java.util.*;
 @Slf4j
 public class SchemaServiceImpl implements SchemaService {
     @Resource
-    SchemaMapper schemaMapper;
-
-    @Resource
     DbInfoMapper dbInfoMapper;
 
     @Override
-    public TableInfo getStandardTable(String schema) {
-        List<TableInfo> list = schemaMapper.getStandardTables(schema);
-        return list.get(0);
+    public DbInfo getDbInfoBySchemaName(String schema) {
+        return dbInfoMapper.getDbInfoBySchemaName(schema);
     }
 
     @Override
-    public List<TableInfo> getStandardTables(String search) {
-        log.info("开始获取数据库信息：{}", search);
-        List<TableInfo> list = schemaMapper.getStandardTables(search);
-        log.info("查询结果：{}", list);
-        return list;
+    public List<DbInfo> getStandardDbs() {
+        return dbInfoMapper.getStandardDbInfos();
     }
 
     @Override
@@ -80,14 +78,13 @@ public class SchemaServiceImpl implements SchemaService {
 
         // 系统索引：数据库名称-系统名称
         Map<String, DbInfo> indexMap = new HashMap<>();
-        List<String> ts = new ArrayList<>();
         for (DbInfo d : Dbs) {
             indexMap.put(d.getDbSchema(), d);
-            ts.add(d.getDbSchema());
         }
 
         // 查询这些表的最近更新时间
-        List<TableInfo> tInfos = schemaMapper.getTableInfos(ts);
+        List<TableInfo> tInfos = new ArrayList<>(Dbs.size());
+        Dbs.forEach(e -> tInfos.add(getTableInfoByConfig(e)));
 
         // 以系统名称分组，分别处理标准库信息和开发库信息
         Map<String, TableInfoDTO> group = new HashMap<>();
@@ -132,7 +129,9 @@ public class SchemaServiceImpl implements SchemaService {
 
     @Override
     public List<ColumnInfoDiffDTO> getCloumnInfoDiffs(String db1, String db2) {
-        List<ColumnInfoDTO> columnInfoDTOSList = schemaMapper.getCloumnInfos(db1, db2);
+        List<ColumnInfoDTO> columnInfoDTOSList = getColumnInfos(dbInfoMapper.getDbInfoBySchemaName(db1));
+        List<ColumnInfoDTO> cl2 = getColumnInfos(dbInfoMapper.getDbInfoBySchemaName(db2));
+        columnInfoDTOSList.addAll(cl2);
 
         Map<String, ColumnInfoDiffDTO> indexMap = new LinkedHashMap<>(32);
         for (ColumnInfoDTO dto : columnInfoDTOSList) {
@@ -190,6 +189,54 @@ public class SchemaServiceImpl implements SchemaService {
             return "<code>" + cType + "</code><code>" + isNullable + "</code>";
         } else {
             return "<code>" + cType + "</code><code>" + isNullable + "</code><code>" + cKey + "</code>";
+        }
+    }
+
+    /**
+     * 从配置中解析地址并查询数据库基本信息
+     *
+     * @param dbInfo
+     * @return
+     */
+    @Override
+    public TableInfo getTableInfoByConfig(DbInfo dbInfo) {
+        Db db = DruidDataSourceUtils.getDb(dbInfo.getUrl(), dbInfo.getUsername(), dbInfo.getPassword());
+
+        try {
+            List<Entity> entities = db.query("SELECT TABLE_SCHEMA AS name, MAX(CREATE_TIME) AS version FROM (" +
+                    "SELECT create_time,table_schema FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA= @ts) t " +
+                    "GROUP BY TABLE_SCHEMA ORDER BY version DESC", new HashMap<String, String>(1) {{
+                put("ts", dbInfo.getDbSchema());
+            }});
+            Entity entity = entities.get(0);
+
+            DbUtil.close(db);
+            return TableInfo.builder()
+                    .name(entity.getStr("name"))
+                    .version(entity.getDate("version")).build();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private List<ColumnInfoDTO> getColumnInfos(DbInfo dbInfo) {
+        String sql = "SELECT table_schema,table_name,column_name,is_nullable,column_type,column_key,column_comment " +
+                "FROM information_schema.`COLUMNS` " +
+                "WHERE table_schema=@ts AND table_name NOT IN ('schame_version','WORKER_NODE','flyway_schema_history')";
+
+        Db db = DruidDataSourceUtils.getDb(dbInfo.getUrl(), dbInfo.getUsername(), dbInfo.getPassword());
+
+        try {
+            List<ColumnInfoDTO> columnInfoDTOS = db.query(sql, ColumnInfoDTO.class, new HashMap<String, String>(1) {{
+                put("ts", dbInfo.getDbSchema());
+            }});
+
+            DbUtil.close(db);
+            return columnInfoDTOS;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 }

@@ -9,6 +9,7 @@ import cn.qzlyhua.assistant.controller.api.response.ResponseCode;
 import cn.qzlyhua.assistant.controller.api.response.ResponseData;
 import cn.qzlyhua.assistant.dto.ColumnInfoDiffDTO;
 import cn.qzlyhua.assistant.dto.TableInfoDTO;
+import cn.qzlyhua.assistant.entity.DbInfo;
 import cn.qzlyhua.assistant.entity.TableInfo;
 import cn.qzlyhua.assistant.service.SchemaService;
 import cn.qzlyhua.assistant.util.DbDocUtil;
@@ -39,15 +40,6 @@ public class MySqlSchemaController {
     @Resource
     SchemaService schemaService;
 
-    @Value("${spring.datasource.url}")
-    private String url;
-
-    @Value("${spring.datasource.username}")
-    private String username;
-
-    @Value("${spring.datasource.password}")
-    private String password;
-
     @Value("${app.db.doc.path}")
     private String basePath;
 
@@ -70,14 +62,14 @@ public class MySqlSchemaController {
      */
     @RequestMapping("/doc/{dbSchema}")
     public void downloadDoc(@PathVariable String dbSchema, HttpServletResponse response) throws IOException {
-        TableInfo t = schemaService.getStandardTable(dbSchema);
+        DbInfo dbInfo = schemaService.getDbInfoBySchemaName(dbSchema);
+        TableInfo t = schemaService.getTableInfoByConfig(dbInfo);
         String v = DatePattern.PURE_DATETIME_FORMAT.format(t.getVersion());
         String db = t.getName();
         String des = "标准库-" + db.replace("standard_db_", "");
 
-        String myDbName = url.substring(url.lastIndexOf("/") + 1, url.indexOf("?"));
-        String dbUrl = url.replace(myDbName, dbSchema);
-        String wordFilePath = DbDocUtil.documentGeneration(dbUrl, username, password, db, basePath + "/word", EngineFileType.WORD, v, des);
+        String wordFilePath = DbDocUtil.documentGeneration(dbInfo.getUrl(), dbInfo.getUsername(), dbInfo.getPassword(), db,
+                basePath + "/word", EngineFileType.WORD, v, des);
 
         log.info("开始将文件{}写入到输出流...", wordFilePath);
         File word = new File(wordFilePath);
@@ -96,14 +88,14 @@ public class MySqlSchemaController {
      */
     @RequestMapping("/html/{dbSchema}")
     public void downloadHtml(@PathVariable String dbSchema, HttpServletResponse response) throws IOException {
-        TableInfo t = schemaService.getStandardTable(dbSchema);
+        DbInfo dbInfo = schemaService.getDbInfoBySchemaName(dbSchema);
+        TableInfo t = schemaService.getTableInfoByConfig(dbInfo);
         String v = DatePattern.PURE_DATETIME_FORMAT.format(t.getVersion());
         String db = t.getName();
         String des = db + "-" + v;
 
-        String myDbName = url.substring(url.lastIndexOf("/") + 1, url.indexOf("?"));
-        String dbUrl = url.replace(myDbName, dbSchema);
-        String htmlFilePath = DbDocUtil.documentGeneration(dbUrl, username, password, db, basePath + "/html", EngineFileType.HTML, v, des);
+        String htmlFilePath = DbDocUtil.documentGeneration(dbInfo.getUrl(), dbInfo.getUsername(), dbInfo.getPassword(), db,
+                basePath + "/html", EngineFileType.HTML, v, des);
 
         log.info("开始将文件{}写入到输出流...", htmlFilePath);
         File html = new File(htmlFilePath);
@@ -121,17 +113,17 @@ public class MySqlSchemaController {
      */
     @RequestMapping("/docs")
     public void downloadAll(HttpServletResponse response) throws IOException {
-        String myDbName = url.substring(url.lastIndexOf("/") + 1, url.indexOf("?"));
-        List<TableInfo> tables = schemaService.getStandardTables("standard_db%");
+        List<DbInfo> dbInfos = schemaService.getStandardDbs();
         FileUtil.clean(basePath);
 
-        for (TableInfo t : tables) {
+        for (DbInfo d : dbInfos) {
+            TableInfo t = schemaService.getTableInfoByConfig(d);
             String v = DatePattern.PURE_DATETIME_FORMAT.format(t.getVersion());
             String db = t.getName();
             String des = "标准库-" + db.replace("standard_db_", "");
-            String dbUrl = url.replace(myDbName, db);
-            DbDocUtil.documentGeneration(dbUrl, username, password, db, basePath + "/word", EngineFileType.WORD, v, des);
-            DbDocUtil.documentGeneration(dbUrl, username, password, db, basePath + "/html", EngineFileType.HTML, v, des);
+
+            DbDocUtil.documentGeneration(d.getUrl(), d.getUsername(), d.getPassword(), db, basePath + "/word", EngineFileType.WORD, v, des);
+            DbDocUtil.documentGeneration(d.getUrl(), d.getUsername(), d.getPassword(), db, basePath + "/html", EngineFileType.HTML, v, des);
         }
 
         log.info("开始压缩{}文件夹", basePath);
@@ -163,12 +155,14 @@ public class MySqlSchemaController {
      */
     @RequestMapping("/compare/{db1}/{db2}")
     public ResponseData getDbDocs(@PathVariable String db1, @PathVariable String db2) {
+        DbInfo dbInfo = schemaService.getDbInfoBySchemaName(db1);
+        String url = dbInfo.getUrl();
         String flag = "mysql://";
         String temp = url.substring(url.indexOf(flag) + flag.length(), url.indexOf("?"));
         String ipAndPort = temp.substring(0, temp.indexOf("/"));
-        String sql = schemaService.getDiff(username, password, ipAndPort, db1, db2);
+        String sql = schemaService.getDiff(dbInfo.getUsername(), dbInfo.getPassword(), ipAndPort, db1, db2);
         String ignore = "# WARNING: Using a password on the command line interface can be insecure.";
         String result = sql.replace(ignore, "").replaceAll("\\n", " \\\r\\\n");
-        return new ResponseData(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMessage(), result);
+        return new ResponseData(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMessage(), "");
     }
 }

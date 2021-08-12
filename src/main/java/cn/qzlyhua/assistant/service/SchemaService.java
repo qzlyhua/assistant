@@ -2,6 +2,7 @@ package cn.qzlyhua.assistant.service;
 
 import cn.qzlyhua.assistant.dto.ColumnInfoDiffDTO;
 import cn.qzlyhua.assistant.dto.TableInfoDTO;
+import cn.qzlyhua.assistant.entity.DbInfo;
 import cn.qzlyhua.assistant.entity.TableInfo;
 
 import java.util.List;
@@ -12,9 +13,11 @@ import java.util.List;
  * @author yanghua
  */
 public interface SchemaService {
-    TableInfo getStandardTable(String schema);
+    TableInfo getTableInfoByConfig(DbInfo dbInfo);
 
-    List<TableInfo> getStandardTables(String search);
+    DbInfo getDbInfoBySchemaName(String schema);
+
+    List<DbInfo> getStandardDbs();
 
     String getDiff(String user, String password, String ipAndPort, String db1, String db2);
 

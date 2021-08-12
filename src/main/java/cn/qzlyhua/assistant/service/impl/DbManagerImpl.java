@@ -11,7 +11,7 @@ import cn.qzlyhua.assistant.entity.DbConfig;
 import cn.qzlyhua.assistant.mapper.DbConfigMapper;
 import cn.qzlyhua.assistant.mapper.OriginMapper;
 import cn.qzlyhua.assistant.service.DbManager;
-import com.alibaba.druid.pool.DruidDataSource;
+import cn.qzlyhua.assistant.util.DruidDataSourceUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -137,11 +137,7 @@ public class DbManagerImpl implements DbManager {
             if (dbMap.containsKey(dbConfig.getId())) {
                 return dbMap.get(dbConfig.getId());
             } else {
-                DruidDataSource ds = new DruidDataSource();
-                ds.setUrl(dbConfig.getUrl());
-                ds.setUsername(dbConfig.getUser());
-                ds.setPassword(dbConfig.getPwd());
-                Db db = Db.use(ds);
+                Db db = DruidDataSourceUtils.getDb(dbConfig.getUrl(), dbConfig.getUser(), dbConfig.getPwd());
                 dbMap.put(dbConfig.getId(), db);
                 return db;
             }

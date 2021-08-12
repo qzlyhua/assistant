@@ -17,8 +17,8 @@ import java.util.ArrayList;
  */
 public class DbDocUtil {
     public static String documentGeneration(
-            String url, String username, String password,
-            String db, String path, EngineFileType fileType, String version, String description) {
+            String url, String username, String password, String db,
+            String path, EngineFileType fileType, String version, String description) {
 
         String fileName = db.replace("standard_db_", "") + "-" + version;
 
