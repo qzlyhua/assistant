@@ -21,4 +21,8 @@ public interface ApiCsrMapper<selectByPath> {
     int batchInsert(@Param("list") List<ApiCsr> list);
 
     ApiCsr selectOneByPath(@Param("path")String path);
+
+    List<ApiCsr> selectByVersion(@Param("version")String version);
+
+    List<ApiCsr> selectByBusinessArea(@Param("businessArea")String businessArea);
 }

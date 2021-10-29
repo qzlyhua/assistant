@@ -12,22 +12,23 @@ import com.deepoove.poi.plugin.highlight.HighlightRenderPolicy;
 import com.deepoove.poi.plugin.table.LoopRowTableRenderPolicy;
 import com.deepoove.poi.plugin.toc.TOCRenderPolicy;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * MySQL数据库操作
@@ -42,7 +43,6 @@ public class PoiController {
     @Resource
     SpecificationService specificationService;
 
-
     /**
      * SpecificationService
      * 测试POI生成word文件
@@ -51,16 +51,17 @@ public class PoiController {
      * @throws IOException
      */
     @RequestMapping("/poi/{fileName}")
-    public void poi(@PathVariable String fileName, HttpServletRequest request, HttpServletResponse response) throws IOException {
-        List<Chapter> chapters = specificationService.getSpecifications();
+    public void exportWordFile(@PathVariable String fileName, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        fileName = fileName.toUpperCase(Locale.ROOT);
+        List<Chapter> chapters = fileName.startsWith("PP") ? specificationService.getSpecificationsByVersion(fileName) :
+                specificationService.getSpecificationsByBusinessArea(fileName);
         response.setContentType("application/msword");
-        response.setHeader("Content-Disposition", "attachment;filename=" + encodeFileName(fileName, request) + ".docx");
+        response.setHeader("Content-Disposition", "attachment;filename=" + encodeFileName("传输规范-" + fileName, request) + ".docx");
         ServletOutputStream out = response.getOutputStream();
 
         Map<String, Object> map = new HashMap<>(10);
-        map.put("version", "PP013");
+        map.put("version", fileName);
         map.put("today", DateUtil.format(new Date(), DatePattern.CHINESE_DATE_PATTERN));
-        map.put("author", "杨骅");
         map.put("chapters", chapters);
         // 目录，打开word文件后会提醒生成目录
         map.put("toc", "");
@@ -80,12 +81,9 @@ public class PoiController {
         xwpfTemplate.writeAndClose(out);
     }
 
-    /**
-     * @throws IOException
-     */
-    @RequestMapping("/poi/import")
-    public void importWordFile() {
-        specificationService.importSpecificationsFromWord(null, null);
+    @PostMapping("/poi/import/{v}")
+    public void importWordFile(@PathVariable String v, MultipartFile file) throws IOException {
+        specificationService.importSpecificationsFromWord(file, v.toUpperCase(Locale.ROOT));
     }
 
     /**

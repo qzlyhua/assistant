@@ -20,4 +20,6 @@ public interface ApiCsrParamMapper {
     int batchInsert(@Param("list") List<ApiCsrParam> list);
 
     int deleteByCsrId(@Param("csrId")Integer csrId);
+
+    List<ApiCsrParam> selectByCsrIdAndParameterType(@Param("csrId")Integer csrId,@Param("parameterType")String parameterType);
 }

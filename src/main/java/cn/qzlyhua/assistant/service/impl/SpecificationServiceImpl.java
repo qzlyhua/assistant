@@ -19,12 +19,13 @@ import com.deepoove.poi.plugin.highlight.HighlightStyle;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.io.IOException;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author yanghua
@@ -39,81 +40,100 @@ public class SpecificationServiceImpl implements SpecificationService {
     ApiCsrParamMapper apiCsrParamMapper;
 
     @Override
-    public List<Chapter> getSpecifications() {
-        Chapter c1 = Chapter.builder()
-                .headWord("家庭档案")
-                .services(new ArrayList<Service>() {{
-                    add(renderService());
-                    add(renderService());
-                }}).build();
-
-        Chapter c2 = Chapter.builder()
-                .headWord("个人档案")
-                .services(new ArrayList<Service>() {{
-                    add(renderService());
-                    add(renderService());
-                }}).build();
-
-        Chapter c3 = Chapter.builder()
-                .headWord("业务领域")
-                .services(new ArrayList<Service>() {{
-                    add(renderService());
-                    add(renderService());
-                }}).build();
-
-        return new ArrayList<Chapter>() {{
-            add(c1);
-            add(c2);
-            add(c3);
-        }};
+    public List<Chapter> getSpecificationsByVersion(String version) {
+        List<ApiCsr> apiCsrs = apiCsrMapper.selectByVersion(version);
+        return getSpecifications(apiCsrs);
     }
 
+    @Override
+    public List<Chapter> getSpecificationsByBusinessArea(String areaName) {
+        List<ApiCsr> apiCsrs = apiCsrMapper.selectByBusinessArea(areaName);
+        return getSpecifications(apiCsrs);
+    }
 
     /**
-     * TODO 获取服务传输规范文档
+     * 将数据库存储数据对象转换为word模板所需数据对象
      *
+     * @param apiCsrs
      * @return
      */
-    private Service renderService() {
-        String requestJson = "{\"IDNO\":\"330624199001010123\",\"IDType\":\"1\"}";
-        String resultJson = "{\"code\":200,\"message\":\"Maskit general success\",\"result\":{\"size\":1,\"data\":{\"testCategName\":\"\",\"equipmentCode\":\"\",\"testPatResourceName\":\"体检\",\"patName\":\"舒丽英\",\"inhospIndexNo\":\"6211005177\",\"executDrIndexNo\":\"\",\"maritalStatusCode\":\"\",\"testPatResourceCode\":\"5\",\"reportDate\":\"2021-10-25 19:14:30\",\"equipmentName\":\"\",\"reportNo\":\"20211025G0225036\",\"executDrName\":\"\",\"orderNo\":\"\",\"orgName\":\"新昌县中医院\",\"proofDate\":\"2021-10-25 19:14:30\",\"applyDeptIndexNo\":\"\",\"executDate\":\"2021-10-25 16:48:12\",\"executDeptCode\":\"\",\"microbeTestFlag\":\"\",\"inhospNum\":\"\",\"applyDrIndexNo\":\"\",\"patIndexNo\":\"20211025G0225036\",\"maritalStatusName\":\"\",\"applyDrName\":\"xzh\",\"testCategCode\":\"\",\"dateBirth\":\"\",\"reportDrName\":\"陈伟军\",\"anamnesisNo\":\"6211005177\",\"miCode\":\"33D003\",\"note\":\"镜岭卫生院2\",\"updateDate\":\"\",\"proofDrCode\":\"\",\"reportDrCode\":\"\",\"executDeptIndexNo\":\"\",\"reportName\":\"新型冠状病毒RNA检测\",\"clinicDiagName\":\"\",\"sampleNo\":\"20211025G0225036\",\"executDrCode\":\"\",\"idNumber\":\"330624197701272044\",\"executDeptName\":\"检验科\",\"ethnicName\":\"\",\"applyDrCode\":\"\",\"clinicDiagCode\":\"\",\"sampleTypeName\":\"咽拭子\",\"physiSexName\":\"女\",\"orgCode\":\"\",\"recordDate\":\"\",\"proofDrName\":\"\",\"testClassCode\":\"\",\"reportDrIndexNo\":\"\",\"outhospNo\":\"\",\"proofFlag\":\"\",\"testClassName\":\"\",\"hospCode\":\"0201001\",\"sampleTypeCode\":\"LIS1045\",\"applyDeptCode\":\"\",\"electrRequisitionNo\":\"0458044600\",\"testReportUrl\":\"\",\"applyDeptName\":\"\",\"mrNo\":\"6211005177\",\"physiSexCode\":\"2\",\"orderGroupNo\":\"\",\"inhospNo\":\"\",\"outhospIndexNo\":\"6211005177\",\"visitCartNo\":\"6211005177\",\"applyDate\":\"2021-10-22 14:54:28\",\"ethnicCode\":\"\"},\"list\":[{\"note\":\"镜岭卫生院2\",\"miCode\":\"33D003\",\"updateDate\":\"\",\"testResultValue\":\"阴性\",\"equipmentCode\":\"\",\"mic\":\"\",\"microbeName\":\"\",\"testResultFlag\":\"\",\"sampleTypeName\":\"咽拭子\",\"diameter\":\"\",\"antibioticsName\":\"\",\"orgCode\":\"\",\"testResultValueUnit\":\"Copies/ml\",\"recordDate\":\"2021-10-25 16:48:13\",\"referenceRanges\":\"阴性\",\"equipmentName\":\"\",\"reportNo\":\"20211025G0225036\",\"orgName\":\"新昌县中医院\",\"hospCode\":\"0201001\",\"sampleTypeCode\":\"LIS1045\",\"testItemCode\":\"5750\",\"bacterialColonyCount\":\"\",\"invalidFlag\":\"\",\"testItemName\":\"新型冠状病毒核酸检测\",\"electrRequisitionNo\":\"0458044600\",\"smearResult\":\"\"}]}}";
+    private List<Chapter> getSpecifications(List<ApiCsr> apiCsrs) {
+        if (CollUtil.isEmpty(apiCsrs)) {
+            return new ArrayList<>();
+        }
 
+        Set<String> businessAreas = apiCsrs.stream().map(ApiCsr::getBusinessArea).collect(Collectors.toSet());
 
-        Parameter parameter1 = Parameter.builder()
-                .key("IDType")
-                .des("证件类别")
-                .type("字符串")
-                .isRequired("Y").build();
+        Map<String, List<ApiCsr>> map = new HashMap<>(businessAreas.size());
+        for (String bizAreaName : businessAreas) {
+            map.put(bizAreaName, new ArrayList<>());
+        }
 
-        Parameter parameter2 = Parameter.builder()
-                .key("IDNO")
-                .des("证件号码")
-                .type("字符串")
-                .isRequired("Y").build();
+        for (ApiCsr apiCsr : apiCsrs) {
+            map.get(apiCsr.getBusinessArea()).add(apiCsr);
+        }
 
-        Parameter parameter3 = Parameter.builder()
-                .key("id")
-                .des("记录主键")
-                .type("字符串")
-                .isRequired("Y").build();
+        List<Chapter> result = new ArrayList<>();
+        for (String bizAreaName : businessAreas) {
+            List<Service> services = new ArrayList<>();
+            List<ApiCsr> apis = map.get(bizAreaName);
+            for (ApiCsr a : apis) {
+                List<Parameter> reqParameters = new ArrayList<>();
+                List<ApiCsrParam> reqCsrParams = apiCsrParamMapper.selectByCsrIdAndParameterType(a.getId(), "req");
+                for (ApiCsrParam q : reqCsrParams) {
+                    reqParameters.add(Parameter.builder()
+                            .key(q.getKey())
+                            .des(q.getDescribe())
+                            .type(q.getType())
+                            .isRequired(q.getRequired()).build());
+                }
 
-        Service service = Service.builder()
-                .serviceName("getAbcByDefghijklMnopqrst")
-                .serviceNick("示例方法")
-                .description("根据DEF获取ABC根据DEF获取ABC根据DEF获取ABC根据DEABC根据DEF获取ABC根据DEF获取ABC")
-                .explain("该接口为示例接口，无实际作用无实际作用无实际作用无实无实际作用无实际作用无实际作作用无实际作用无实际作用无实际作用")
-                .reqParameters(new ArrayList<Parameter>() {{
-                    add(parameter1);
-                    add(parameter2);
-                }})
-//                .reqParameters(new ArrayList<>())
-                .reqExample(getHighlightRenderData(requestJson))
-                .resParameters(new ArrayList<Parameter>() {{
-                    add(parameter3);
-                }})
-//                .resParameters(new ArrayList<>())
-                .resExample(getHighlightRenderData(resultJson)).build();
-        return service;
+                List<Parameter> resParameters = new ArrayList<>();
+                List<ApiCsrParam> resCsrParams = apiCsrParamMapper.selectByCsrIdAndParameterType(a.getId(), "res");
+                for (ApiCsrParam s : resCsrParams) {
+                    resParameters.add(Parameter.builder()
+                            .key(s.getKey())
+                            .des(s.getDescribe())
+                            .type(s.getType())
+                            .isRequired(s.getRequired()).build());
+                }
+
+                Service service = Service.builder()
+                        .serviceName(a.getPath())
+                        .serviceNick(a.getName())
+                        .description(a.getDescription())
+                        .explain(a.getRemarks())
+                        .reqParameters(reqParameters)
+                        .reqExample(getHighlightRenderData(a.getReqParamsExample()))
+                        .resParameters(resParameters)
+                        .resExample(getHighlightRenderData(a.getResParamsExample())).build();
+                services.add(service);
+            }
+
+            Chapter chapter = Chapter.builder()
+                    .headWord(bizAreaName)
+                    .services(services).build();
+            result.add(chapter);
+        }
+
+        return result;
+    }
+
+    /**
+     * JSON代码块（带高亮效果）
+     *
+     * @param code
+     * @return
+     */
+    private HighlightRenderData getHighlightRenderData(String code) {
+        HighlightRenderData source = new HighlightRenderData();
+        source.setCode(StrUtil.isNotBlank(code) ? prettyJson(code) : "{\"_key\":\"_value\"}");
+        source.setLanguage("json");
+        source.setStyle(HighlightStyle.builder()
+                .withShowLine(false)
+                .withFontFamily("Consolas")
+                .withTheme("default").build());
+        return source;
     }
 
     /**
@@ -128,35 +148,35 @@ public class SpecificationServiceImpl implements SpecificationService {
             Object obj = mapper.readValue(json, Object.class);
             return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(obj);
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
             // HuTool 方案。不校验JSON格式。
             return JSONUtil.formatJsonStr(json);
         }
     }
 
-    private HighlightRenderData getHighlightRenderData(String code) {
-        HighlightRenderData source = new HighlightRenderData();
-        source.setCode(StrUtil.isNotBlank(code) ? prettyJson(code) : "{\"_key\":\"_value\"}");
-        source.setLanguage("json");
-        source.setStyle(HighlightStyle.builder()
-                .withShowLine(false)
-                .withFontFamily("Consolas")
-                .withTheme("default").build());
-        return source;
+    /**
+     * word文件导入
+     * 网络上传文件模式
+     */
+    @Override
+    public void importSpecificationsFromWord(MultipartFile file, String version) throws IOException {
+        List<TransmissionSpecification> list = WordUtil.getAnalysisResult(file, version);
+        importSpecificationsFromWordToDb(list);
     }
 
     /**
      * word文件导入
-     *
-     * @param word
-     * @param version
+     * 本地文件模式
      */
     @Override
-    public void importSpecificationsFromWord(File word, String version) {
-        String wordPath = "/Users/yanghua/Downloads/传输规范-PP012.doc";
+    public void importSpecificationsFromWord(File file, String version) throws IOException {
+        List<TransmissionSpecification> list = WordUtil.getAnalysisResult(file, version);
+        importSpecificationsFromWordToDb(list);
+    }
 
-        List<TransmissionSpecification> list = WordUtil.getAnalysisResult(wordPath, "PP012");
-
+    /**
+     * word文件导入-入库处理
+     */
+    public void importSpecificationsFromWordToDb(List<TransmissionSpecification> list) throws IOException {
         for (TransmissionSpecification e : list) {
             String path = e.getPath();
             ApiCsr tmp = apiCsrMapper.selectOneByPath(path);
