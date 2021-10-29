@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.qzlyhua.assistant.mapper.ApiCsrParamMapper">
+  <resultMap id="BaseResultMap" type="cn.qzlyhua.assistant.entity.ApiCsrParam">
+    <!--@mbg.generated-->
+    <!--@Table AS_API_CSR_PARAM-->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="csr_id" jdbcType="INTEGER" property="csrId" />
+    <result column="parameter_type" jdbcType="VARCHAR" property="parameterType" />
+    <result column="key" jdbcType="VARCHAR" property="key" />
+    <result column="type" jdbcType="VARCHAR" property="type" />
+    <result column="describe" jdbcType="VARCHAR" property="describe" />
+    <result column="required" jdbcType="VARCHAR" property="required" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, csr_id, parameter_type, `key`, `type`, `describe`, required
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    <!--@mbg.generated-->
+    select 
+    <include refid="Base_Column_List" />
+    from AS_API_CSR_PARAM
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    <!--@mbg.generated-->
+    delete from AS_API_CSR_PARAM
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="cn.qzlyhua.assistant.entity.ApiCsrParam" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into AS_API_CSR_PARAM (csr_id, parameter_type, `key`, 
+      `type`, `describe`, required
+      )
+    values (#{csrId,jdbcType=INTEGER}, #{parameterType,jdbcType=VARCHAR}, #{key,jdbcType=VARCHAR}, 
+      #{type,jdbcType=VARCHAR}, #{describe,jdbcType=VARCHAR}, #{required,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="cn.qzlyhua.assistant.entity.ApiCsrParam" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into AS_API_CSR_PARAM
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="csrId != null">
+        csr_id,
+      </if>
+      <if test="parameterType != null">
+        parameter_type,
+      </if>
+      <if test="key != null">
+        `key`,
+      </if>
+      <if test="type != null">
+        `type`,
+      </if>
+      <if test="describe != null">
+        `describe`,
+      </if>
+      <if test="required != null">
+        required,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="csrId != null">
+        #{csrId,jdbcType=INTEGER},
+      </if>
+      <if test="parameterType != null">
+        #{parameterType,jdbcType=VARCHAR},
+      </if>
+      <if test="key != null">
+        #{key,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="describe != null">
+        #{describe,jdbcType=VARCHAR},
+      </if>
+      <if test="required != null">
+        #{required,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.qzlyhua.assistant.entity.ApiCsrParam">
+    <!--@mbg.generated-->
+    update AS_API_CSR_PARAM
+    <set>
+      <if test="csrId != null">
+        csr_id = #{csrId,jdbcType=INTEGER},
+      </if>
+      <if test="parameterType != null">
+        parameter_type = #{parameterType,jdbcType=VARCHAR},
+      </if>
+      <if test="key != null">
+        `key` = #{key,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        `type` = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="describe != null">
+        `describe` = #{describe,jdbcType=VARCHAR},
+      </if>
+      <if test="required != null">
+        required = #{required,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.qzlyhua.assistant.entity.ApiCsrParam">
+    <!--@mbg.generated-->
+    update AS_API_CSR_PARAM
+    set csr_id = #{csrId,jdbcType=INTEGER},
+      parameter_type = #{parameterType,jdbcType=VARCHAR},
+      `key` = #{key,jdbcType=VARCHAR},
+      `type` = #{type,jdbcType=VARCHAR},
+      `describe` = #{describe,jdbcType=VARCHAR},
+      required = #{required,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <insert id="batchInsert" keyColumn="id" keyProperty="id" parameterType="map" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into AS_API_CSR_PARAM
+    (csr_id, parameter_type, `key`, `type`, `describe`, required)
+    values
+    <foreach collection="list" item="item" separator=",">
+      (#{item.csrId,jdbcType=INTEGER}, #{item.parameterType,jdbcType=VARCHAR}, #{item.key,jdbcType=VARCHAR}, 
+        #{item.type,jdbcType=VARCHAR}, #{item.describe,jdbcType=VARCHAR}, #{item.required,jdbcType=VARCHAR}
+        )
+    </foreach>
+  </insert>
+
+<!--auto generated by MybatisCodeHelper on 2021-10-28-->
+  <delete id="deleteByCsrId">
+    delete from AS_API_CSR_PARAM
+    where csr_id=#{csrId,jdbcType=INTEGER}
+  </delete>
+</mapper>

@@ -1,5 +1,7 @@
 package cn.qzlyhua.assistant.dto.specification;
 
+import cn.hutool.core.collection.CollUtil;
+import com.deepoove.poi.plugin.highlight.HighlightRenderData;
 import lombok.Builder;
 import lombok.Data;
 
@@ -38,15 +40,25 @@ public class Service {
      * 入参
      */
     private List<Parameter> reqParameters;
-    private String reqExample;
+    private HighlightRenderData reqExample;
+    private boolean needReq;
 
     /**
      * 出参
      */
     private List<Parameter> resParameters;
-    private String resExample;
+    private HighlightRenderData resExample;
+    private boolean needRes;
 
     public String getTitle() {
         return serviceName + "（" + serviceNick + "）";
+    }
+
+    public boolean isNeedReq() {
+        return !CollUtil.isEmpty(reqParameters);
+    }
+
+    public boolean isNeedRes() {
+        return !CollUtil.isEmpty(resParameters);
     }
 }
