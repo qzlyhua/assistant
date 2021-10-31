@@ -1,4 +1,4 @@
-package cn.qzlyhua.assistant.util;
+package cn.qzlyhua.assistant.util.word;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.lang.Assert;
@@ -94,22 +94,25 @@ public class WordUtil {
                         currentBusinessArea = paragraphText;
                     }
                     // 检测到二级标题行（方法名）需要遵循字体格式
-                    else if (PATH_LINE_SIZE == characterRun.getFontSize() && paragraphText.contains("（") && paragraphText.endsWith("）")) {
-                        // 遇到二级标题，若有历史数据，需要保存
-                        flush(result, version, currentBusinessArea, currentPath, currentName, currentDescription, currentRemarks,
-                                currentReqParams, currentReqParamsExample, currentResParams, currentResParamsExample);
+                    else if (PATH_LINE_SIZE == characterRun.getFontSize()) {
+                        paragraphText = paragraphText.replaceAll("\\(", "（").replaceAll("\\)", ")");
+                        if (paragraphText.contains("（") && paragraphText.endsWith("）")) {
+                            // 遇到二级标题，若有历史数据，需要保存
+                            flush(result, version, currentBusinessArea, currentPath, currentName, currentDescription, currentRemarks,
+                                    currentReqParams, currentReqParamsExample, currentResParams, currentResParamsExample);
 
-                        currentPath = paragraphText.split("（")[0];
-                        currentPath = currentPath.startsWith("/") ? currentPath.substring(1) : currentPath;
-                        currentName = paragraphText.split("（")[1].replace("）", "");
+                            currentPath = paragraphText.split("（")[0];
+                            currentPath = currentPath.startsWith("/") ? currentPath.substring(1) : currentPath;
+                            currentName = paragraphText.split("（")[1].replace("）", "");
 
-                        // 清空相关属性
-                        currentDescription = null;
-                        currentRemarks = null;
-                        currentReqParams = null;
-                        currentReqParamsExample = null;
-                        currentResParams = null;
-                        currentResParamsExample = null;
+                            // 清空相关属性
+                            currentDescription = null;
+                            currentRemarks = null;
+                            currentReqParams = null;
+                            currentReqParamsExample = null;
+                            currentResParams = null;
+                            currentResParamsExample = null;
+                        }
                     } else if (paragraphText.startsWith("功能：")) {
                         currentDescription = paragraphText.replace("功能：", "");
                     } else if (paragraphText.startsWith("说明：")) {

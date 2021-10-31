@@ -1,5 +1,7 @@
 package cn.qzlyhua.assistant.mapper;
 
+import cn.qzlyhua.assistant.dto.csr.GroupByBusinessArea;
+import cn.qzlyhua.assistant.dto.csr.GroupByVersion;
 import cn.qzlyhua.assistant.entity.ApiCsr;
 import org.apache.ibatis.annotations.Param;
 
@@ -25,4 +27,10 @@ public interface ApiCsrMapper<selectByPath> {
     List<ApiCsr> selectByVersion(@Param("version")String version);
 
     List<ApiCsr> selectByBusinessArea(@Param("businessArea")String businessArea);
+
+    List<ApiCsr> selectAll();
+
+    List<GroupByBusinessArea> selectAllGroupByBusinessArea();
+
+    List<GroupByVersion> selectAllGroupByVersion();
 }

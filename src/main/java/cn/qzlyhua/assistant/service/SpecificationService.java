@@ -17,5 +17,5 @@ public interface SpecificationService {
 
     void importSpecificationsFromWord(File file, String version) throws IOException;
 
-    void importSpecificationsFromWord(MultipartFile file, String version) throws IOException;
+    int importSpecificationsFromWord(MultipartFile file, String version) throws IOException;
 }

@@ -1,0 +1,42 @@
+<!DOCTYPE HTML>
+<html>
+<head th:replace="admin/fragments/head :: head"></head>
+<body>
+	<div id="wrapper">
+		<header id="header" th:replace="admin/fragments/header :: header"></header>
+		<nav th:replace="admin/fragments/nav :: nav"></nav>
+		<div id="main" style="min-height: 600px">
+			<div class="inner">
+				<h2>传输规范</h2>
+				<div th:replace="admin/fragments/loading :: loading"></div>
+				<div id="tableDiv" class="table-wrapper" style="min-height: 400px;display: none;">
+					<table>
+						<thead>
+						<tr>
+							<th style="text-align:center">#</th>
+							<th style="text-align:center">服务名称</th>
+							<th style="text-align:center">业务领域</th>
+							<th style="text-align:center">所属版本</th>
+						</tr>
+						</thead>
+						<tbody id="data-table">
+						</tbody>
+					</table>
+
+					<ul class="actions">
+						<li><a id="btnImport" href="javascript:CsrPage.importWord();" class="button">导入传输规范</a></li>
+						<li><a id="btnAdd" href="javascript:CsrPage.add();" class="button">新增传输规范</a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<footer id="footer" th:replace="admin/fragments/footer :: footer"></footer>
+	</div>
+	<script th:src="@{/assets/common/js/jquery.min.js}"></script>
+	<script th:src="@{/assets/common/js/skel.min.js}"></script>
+	<script th:src="@{/assets/common/js/toastr.min.js}"></script>
+	<script th:src="@{/assets/admin/js/main.js}"></script>
+	<script th:src="@{/assets/admin/js/util.js}"></script>
+	<script th:src="@{/assets/admin/js/csr.js}"></script>
+</body>
+</html>

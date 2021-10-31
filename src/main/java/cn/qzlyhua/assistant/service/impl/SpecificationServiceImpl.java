@@ -11,9 +11,9 @@ import cn.qzlyhua.assistant.entity.ApiCsrParam;
 import cn.qzlyhua.assistant.mapper.ApiCsrMapper;
 import cn.qzlyhua.assistant.mapper.ApiCsrParamMapper;
 import cn.qzlyhua.assistant.service.SpecificationService;
-import cn.qzlyhua.assistant.util.WordUtil;
 import cn.qzlyhua.assistant.util.word.TransmissionSpecification;
 import cn.qzlyhua.assistant.util.word.TransmissionSpecificationParam;
+import cn.qzlyhua.assistant.util.word.WordUtil;
 import com.deepoove.poi.plugin.highlight.HighlightRenderData;
 import com.deepoove.poi.plugin.highlight.HighlightStyle;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -25,7 +25,6 @@ import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @author yanghua
@@ -62,7 +61,10 @@ public class SpecificationServiceImpl implements SpecificationService {
             return new ArrayList<>();
         }
 
-        Set<String> businessAreas = apiCsrs.stream().map(ApiCsr::getBusinessArea).collect(Collectors.toSet());
+        Set<String> businessAreas = new LinkedHashSet<>();
+        for (ApiCsr apiCsr : apiCsrs) {
+            businessAreas.add(apiCsr.getBusinessArea());
+        }
 
         Map<String, List<ApiCsr>> map = new HashMap<>(businessAreas.size());
         for (String bizAreaName : businessAreas) {
@@ -102,7 +104,7 @@ public class SpecificationServiceImpl implements SpecificationService {
                         .serviceName(a.getPath())
                         .serviceNick(a.getName())
                         .description(a.getDescription())
-                        .explain(a.getRemarks())
+                        .explain(a.getRemarks() == null ? "无" : a.getRemarks())
                         .reqParameters(reqParameters)
                         .reqExample(getHighlightRenderData(a.getReqParamsExample()))
                         .resParameters(resParameters)
@@ -127,6 +129,7 @@ public class SpecificationServiceImpl implements SpecificationService {
      */
     private HighlightRenderData getHighlightRenderData(String code) {
         HighlightRenderData source = new HighlightRenderData();
+        // 不能返回空，会导致渲染时报错
         source.setCode(StrUtil.isNotBlank(code) ? prettyJson(code) : "{\"_key\":\"_value\"}");
         source.setLanguage("json");
         source.setStyle(HighlightStyle.builder()
@@ -158,9 +161,9 @@ public class SpecificationServiceImpl implements SpecificationService {
      * 网络上传文件模式
      */
     @Override
-    public void importSpecificationsFromWord(MultipartFile file, String version) throws IOException {
+    public int importSpecificationsFromWord(MultipartFile file, String version) throws IOException {
         List<TransmissionSpecification> list = WordUtil.getAnalysisResult(file, version);
-        importSpecificationsFromWordToDb(list);
+        return importSpecificationsFromWordToDb(list);
     }
 
     /**
@@ -176,7 +179,7 @@ public class SpecificationServiceImpl implements SpecificationService {
     /**
      * word文件导入-入库处理
      */
-    public void importSpecificationsFromWordToDb(List<TransmissionSpecification> list) throws IOException {
+    public int importSpecificationsFromWordToDb(List<TransmissionSpecification> list) throws IOException {
         for (TransmissionSpecification e : list) {
             String path = e.getPath();
             ApiCsr tmp = apiCsrMapper.selectOneByPath(path);
@@ -232,5 +235,6 @@ public class SpecificationServiceImpl implements SpecificationService {
                 apiCsrParamMapper.batchInsert(params);
             }
         }
+        return list.size();
     }
 }

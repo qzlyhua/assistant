@@ -102,5 +102,13 @@ public class PageController {
         return "admin/db-compare";
     }
 
-
+    /**
+     * 传输规范-概览
+     *
+     * @return
+     */
+    @RequestMapping(value = {"/csr"})
+    public String csr() {
+        return "admin/csr";
+    }
 }

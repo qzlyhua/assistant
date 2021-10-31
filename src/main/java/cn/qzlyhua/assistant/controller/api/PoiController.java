@@ -4,6 +4,7 @@ import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.resource.ResourceUtil;
 import cn.qzlyhua.assistant.controller.api.response.Response;
+import cn.qzlyhua.assistant.controller.api.response.ResponseData;
 import cn.qzlyhua.assistant.dto.specification.Chapter;
 import cn.qzlyhua.assistant.service.SpecificationService;
 import com.deepoove.poi.XWPFTemplate;
@@ -12,7 +13,7 @@ import com.deepoove.poi.plugin.highlight.HighlightRenderPolicy;
 import com.deepoove.poi.plugin.table.LoopRowTableRenderPolicy;
 import com.deepoove.poi.plugin.toc.TOCRenderPolicy;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,7 +24,6 @@ import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -81,9 +81,13 @@ public class PoiController {
         xwpfTemplate.writeAndClose(out);
     }
 
-    @PostMapping("/poi/import/{v}")
-    public void importWordFile(@PathVariable String v, MultipartFile file) throws IOException {
-        specificationService.importSpecificationsFromWord(file, v.toUpperCase(Locale.ROOT));
+    @PostMapping("/poi/import")
+    public ResponseData importWordFile(MultipartFile file) throws IOException {
+        String originalFilename = file.getOriginalFilename().toUpperCase(Locale.ROOT);
+        Assert.isTrue(originalFilename.contains("PP"), "仅支持按版本导入");
+        String version = originalFilename.substring(originalFilename.indexOf("PP"), originalFilename.lastIndexOf("."));
+        int res = specificationService.importSpecificationsFromWord(file, version);
+        return new ResponseData(200, "成功导入" + res + "条", res);
     }
 
     /**
@@ -93,15 +97,10 @@ public class PoiController {
      * @param request
      * @return
      */
-    public static String encodeFileName(String fileName, HttpServletRequest request) {
-        try {
-            fileName = URLEncoder.encode(fileName, "UTF-8");
-            String agent = request.getHeader("USER-AGENT");
-            if (agent != null && agent.contains("Mozilla")) {
-                fileName = new String(fileName.getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1);
-            }
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+    public static String encodeFileName(String fileName, HttpServletRequest request) throws UnsupportedEncodingException {
+        String agent = request.getHeader("USER-AGENT");
+        if (agent != null && agent.contains("Mozilla")) {
+            return new String(URLEncoder.encode(fileName, "UTF-8").getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1);
         }
         return fileName;
     }
