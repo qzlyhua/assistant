@@ -103,12 +103,65 @@ public class PageController {
     }
 
     /**
-     * 传输规范-概览
+     * 传输规范-概览-按版本
      *
      * @return
      */
-    @RequestMapping(value = {"/csr"})
-    public String csr() {
-        return "admin/csr";
+    @RequestMapping(value = {"/csr-statistics-byVersion"})
+    public String csrVersion() {
+        return "admin/csr/csr-statistics-version";
+    }
+
+    /**
+     * 传输规范-概览-按业务领域
+     *
+     * @return
+     */
+    @RequestMapping(value = {"/csr-statistics-byBusinessArea"})
+    public String csrBusinessArea() {
+        return "admin/csr/csr-statistics-business-area";
+    }
+
+    /**
+     * 传输规范-列表-按版本
+     *
+     * @return
+     */
+    @RequestMapping(value = {"/csrs-group-by-version/{v}"})
+    public String csrListByVersion(Model model, @PathVariable String v) {
+        model.addAttribute("version", v);
+        return "admin/csr/csrs-group-by-version";
+    }
+
+    /**
+     * 传输规范-列表-按业务领域
+     *
+     * @return
+     */
+    @RequestMapping(value = {"/csrs-group-by-business-area/{b}"})
+    public String csrListByBusinessArea(Model model, @PathVariable String b) {
+        model.addAttribute("businessArea", b);
+        return "admin/csr/csrs-group-by-business-area";
+    }
+
+    /**
+     * 传输规范-列表-ALL
+     *
+     * @return
+     */
+    @RequestMapping(value = {"/csrs-all"})
+    public String csrAll() {
+        return "admin/csr/csrs-all";
+    }
+
+    @RequestMapping(value = {"/csr-add"})
+    public String csrAdd() {
+        return "admin/csr/csr-add";
+    }
+
+    @RequestMapping(value = {"/csr-view/{id}"})
+    public String csrView(Model model, @PathVariable String id) {
+        model.addAttribute("csrId", id);
+        return "admin/csr/csr-view";
     }
 }

@@ -218,7 +218,7 @@
     <result column="total" jdbcType="INTEGER" property="total" />
     <result column="lastUpdateTime" jdbcType="TIMESTAMP" property="lastUpdateTime" />
   </resultMap>
-  <select id="selectAllGroupByVersion" resultMap="groupByVersion">
+  <select id="statisticsByVersion" resultMap="groupByVersion">
     select version, count(1) as total, max(update_time) as lastUpdateTime from AS_API_CSR GROUP BY version order by version desc
   </select>
 
@@ -227,7 +227,7 @@
     <result column="total" jdbcType="INTEGER" property="total" />
     <result column="lastUpdateTime" jdbcType="TIMESTAMP" property="lastUpdateTime" />
   </resultMap>
-  <select id="selectAllGroupByBusinessArea" resultMap="groupByBusinessArea">
+  <select id="statisticsByBusinessArea" resultMap="groupByBusinessArea">
     select business_area as businessArea, count(1) as total, max(update_time) as lastUpdateTime from AS_API_CSR GROUP BY business_area
   </select>
 </mapper>

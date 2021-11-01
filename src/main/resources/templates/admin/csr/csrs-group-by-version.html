@@ -1,0 +1,66 @@
+<!DOCTYPE HTML>
+<html>
+<head th:replace="admin/fragments/head :: head"></head>
+<body>
+	<div id="wrapper">
+		<header id="header" th:replace="admin/fragments/header :: header"></header>
+		<nav th:replace="admin/fragments/nav :: nav"></nav>
+		<div id="main" style="min-height: 600px">
+			<div class="inner">
+				<h2 id="title">传输规范</h2>
+				<div th:replace="admin/fragments/loading :: loading"></div>
+				<div id="tableDiv" class="table-wrapper" style="min-height: 400px;display: none;">
+					<input type="hidden" id="version" th:value="${version}"/>
+					<input type="hidden" id="businessArea" th:value="${businessArea}"/>
+					<table>
+						<thead>
+						<tr>
+							<th style="text-align:center">#</th>
+							<th style="text-align:center">服务名称</th>
+							<th style="text-align:center">修改</th>
+							<th style="text-align:center">删除</th>
+						</tr>
+						</thead>
+						<tbody id="data-table">
+						</tbody>
+					</table>
+
+					<ul class="actions">
+						<li><a id="btnRefresh" href="javascript:CsrPage.importWord();" class="button special icon fa-files-o">批量导入</a></li>
+						<li><a id="btnClear" href="../csr-add" class="button special icon fa-plus">新增</a></li>
+						<li><a id="groupByVersion" href="../csr-statistics-byVersion" class="button">版本迭代</a></li>
+						<li><a id="groupByBusiness" href="../csr-statistics-byBusinessArea" class="button">业务领域</a></li>
+						<li><a id="showAll" href="../csrs-all" class="button">查看全部</a></li>
+					</ul>
+					<input type="file" id="fielUpload" style="display: none" onchange="CsrPage.uploadWordFile()" >
+					<div>
+						<svg width="0" height="0">
+							<defs>
+								<filter id="goo">
+									<feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur"></feGaussianBlur>
+									<feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -9" result="goo"></feColorMatrix>
+									<feComposite in="SourceGraphic" in2="goo" operator="atop"></feComposite>
+								</filter>
+							</defs>
+						</svg>
+						<div class="aside-nav bounceInUp animated" id="aside-nav">
+							<label class="aside-menu"><span class="fa fa-bolt"></span></label>
+							<a href="/" class="menu-item menu-first">首页</a>
+							<a href="javascript:CsrPage.importWord();" class="menu-item menu-second">导入</a>
+							<a href="../csr-add" class="menu-item menu-third">新增</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<footer id="footer" th:replace="admin/fragments/footer :: footer"></footer>
+	</div>
+	<script th:src="@{/assets/common/js/jquery.min.js}"></script>
+	<script th:src="@{/assets/common/js/skel.min.js}"></script>
+	<script th:src="@{/assets/common/js/toastr.min.js}"></script>
+	<script th:src="@{/assets/admin/js/main.js}"></script>
+	<script th:src="@{/assets/admin/js/util.js}"></script>
+	<script th:src="@{/assets/admin/js/csr.js}"></script>
+	<script th:src="@{/assets/admin/js/csr-all.js}"></script>
+</body>
+</html>

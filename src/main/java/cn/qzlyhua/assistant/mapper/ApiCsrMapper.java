@@ -30,7 +30,7 @@ public interface ApiCsrMapper<selectByPath> {
 
     List<ApiCsr> selectAll();
 
-    List<GroupByBusinessArea> selectAllGroupByBusinessArea();
+    List<GroupByBusinessArea> statisticsByBusinessArea();
 
-    List<GroupByVersion> selectAllGroupByVersion();
+    List<GroupByVersion> statisticsByVersion();
 }

@@ -1,0 +1,144 @@
+<!DOCTYPE HTML>
+<html>
+<head th:replace="admin/fragments/head :: head"></head>
+<body>
+<div id="wrapper">
+    <header id="header" th:replace="admin/fragments/header :: header"></header>
+    <nav th:replace="admin/fragments/nav :: nav"></nav>
+    <div id="main" style="min-height: 600px">
+        <div class="inner">
+            <section>
+                <form method="post" action="#">
+                    <div class="row uniform">
+                        <div class="2u 4u$(xsmall)">
+                            <input type="text" readonly onfocus="blur()" value="请求路径："
+                                   style="border:0px; font-weight:bold;">
+                        </div>
+                        <div class="10u 8u$(xsmall)">
+                            <input type="text" name="path" id="ipt-path" value="" placeholder="">
+                        </div>
+
+                        <div class="2u 4u$(xsmall)">
+                            <input type="text" readonly onfocus="blur()" value="方法名称："
+                                   style="border:0px; font-weight:bold;">
+                        </div>
+                        <div class="10u 8u$(xsmall)">
+                            <input type="text" name="name" id="ipt-name" value="" placeholder="">
+                        </div>
+
+                        <div class="2u 4u$(xsmall)">
+                            <input type="text" readonly onfocus="blur()" value="功能描述："
+                                   style="border:0px; font-weight:bold;">
+                        </div>
+                        <div class="10u 8u$(xsmall)">
+                            <input type="text" name="name" id="ipt-description" value="" placeholder="">
+                        </div>
+
+                        <div class="2u 4u$(xsmall)">
+                            <input type="text" readonly onfocus="blur()" value="版本迭代："
+                                   style="border:0px; font-weight:bold;">
+                        </div>
+                        <div class="3u 8u$(xsmall)">
+                            <input type="text" name="path" value="" placeholder="">
+                        </div>
+                        <div class="1u"></div>
+                        <div class="2u 4u$(xsmall)">
+                            <input type="text" readonly onfocus="blur()" value="业务领域："
+                                   style="border:0px; font-weight:bold;">
+                        </div>
+                        <div class="4u 8u$(xsmall)">
+                            <input type="text" name="path" value="" placeholder="">
+                        </div>
+
+                        <div class="2u 4u$(xsmall)">
+                            <input type="text" readonly onfocus="blur()" value="补充说明："
+                                   style="border:0px; font-weight:bold;">
+                        </div>
+                        <div class="10u 8u$(xsmall)">
+                            <textarea name="demo-message" id="demo-message" rows="2"
+                                      style="overflow: hidden; resize: none; height: 100px;"></textarea>
+                        </div>
+
+                        <div class="2u">
+                            <input type="text" readonly onfocus="blur()" value="入参说明："
+                                   style="border:0px; font-weight:bold;">
+                        </div>
+                        <div class="3u">
+                            <input type="text" readonly onfocus="blur()" value="属性名"
+                                   style="border:0px; font-weight:400; text-align: center;">
+                        </div>
+                        <div class="2u">
+                            <input type="text" readonly onfocus="blur()" value="类型"
+                                   style="border:0px; font-weight:400; text-align: center;">
+                        </div>
+                        <div class="4u">
+                            <input type="text" readonly onfocus="blur()" value="描述"
+                                   style="border:0px; font-weight:400; text-align: center;">
+                        </div>
+                        <div class="1u">
+                            <input type="text" readonly onfocus="blur()" value="必填"
+                                   style="border:0px; font-weight:400; text-align: center;">
+                        </div>
+                        <div id="reqParamsTable" class="row uniform"></div>
+
+                        <div class="2u">
+                            <input type="text" readonly onfocus="blur()" value="出参说明："
+                                   style="border:0px; font-weight:bold;">
+                        </div>
+                        <div class="3u">
+                            <input type="text" readonly onfocus="blur()" value="属性名"
+                                   style="border:0px; font-weight:400; text-align: center;">
+                        </div>
+                        <div class="2u">
+                            <input type="text" readonly onfocus="blur()" value="类型"
+                                   style="border:0px; font-weight:400; text-align: center;">
+                        </div>
+                        <div class="4u">
+                            <input type="text" readonly onfocus="blur()" value="描述"
+                                   style="border:0px; font-weight:400; text-align: center;">
+                        </div>
+                        <div class="1u">
+                            <input type="text" readonly onfocus="blur()" value="必填"
+                                   style="border:0px; font-weight:400; text-align: center;">
+                        </div>
+                        <div id="resParamsTable" class="row uniform"></div>
+
+                        <div class="2u 4u$(xsmall)">
+                            <input type="text" readonly onfocus="blur()" value="入参举例："
+                                   style="border:0px; font-weight:bold;">
+                        </div>
+                        <div class="10u 8u$(xsmall)">
+                            <textarea name="demo-message" id="demo-message3" rows="4"
+                                      style="overflow: hidden; resize: none; height: 112px;"></textarea>
+                        </div>
+
+                        <div class="2u 4u$(xsmall)">
+                            <input type="text" readonly onfocus="blur()" value="出参举例："
+                                   style="border:0px; font-weight:bold;">
+                        </div>
+                        <div class="10u 8u$(xsmall)">
+                            <textarea name="demo-message" id="demo-message4" rows="4"
+                                      style="overflow: hidden; resize: none; height: 112px;"></textarea>
+                        </div>
+
+                        <div class="12u$">
+                            <ul class="actions">
+                                <li><a href="#" class="button special icon fa-save">保&nbsp;&nbsp;存</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </form>
+            </section>
+
+        </div>
+    </div>
+    <footer id="footer" th:replace="admin/fragments/footer :: footer"></footer>
+</div>
+<script th:src="@{/assets/common/js/jquery.min.js}"></script>
+<script th:src="@{/assets/common/js/skel.min.js}"></script>
+<script th:src="@{/assets/common/js/toastr.min.js}"></script>
+<script th:src="@{/assets/admin/js/main.js}"></script>
+<script th:src="@{/assets/admin/js/util.js}"></script>
+<script th:src="@{/assets/admin/js/csr-add.js}"></script>
+</body>
+</html>

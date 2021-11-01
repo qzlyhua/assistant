@@ -14,22 +14,6 @@
 						<thead>
 						<tr>
 							<th style="text-align:center">#</th>
-							<th style="text-align:center">版本</th>
-							<th style="text-align:center">总数</th>
-							<th style="text-align:center">最近更新时间</th>
-							<th style="text-align:center">导出文档</th>
-						</tr>
-						</thead>
-						<tbody id="data-table-v">
-						</tbody>
-					</table>
-
-					<br/>
-
-					<table>
-						<thead>
-						<tr>
-							<th style="text-align:center">#</th>
 							<th style="text-align:center">业务领域</th>
 							<th style="text-align:center">总数</th>
 							<th style="text-align:center">最近更新时间</th>
@@ -41,8 +25,10 @@
 					</table>
 
 					<ul class="actions">
-						<li><a id="btnRefresh" href="javascript:CsrPage.importWord();" class="button">批量导入</a></li>
-						<li><a id="btnClear" href="javascript:CsrPage.add();" class="button">新增规范</a></li>
+						<li><a id="btnRefresh" href="javascript:CsrPage.importWord();" class="button special icon fa-files-o">批量导入</a></li>
+						<li><a id="btnClear" href="../csr-add" class="button special icon fa-plus">新增</a></li>
+						<li><a id="groupByVersion" href="../csr-statistics-byVersion" class="button">版本迭代</a></li>
+						<li><a id="showAll" href="../csrs-all" class="button">查看全部</a></li>
 					</ul>
 					<input type="file" id="fielUpload" style="display: none" onchange="CsrPage.uploadWordFile()" >
 					<div>
@@ -59,7 +45,7 @@
 							<label class="aside-menu"><span class="fa fa-bolt"></span></label>
 							<a href="/" class="menu-item menu-first">首页</a>
 							<a href="javascript:CsrPage.importWord();" class="menu-item menu-second">导入</a>
-							<a href="javascript:CsrPage.add();" class="menu-item menu-third">新增</a>
+							<a href="../csr-add" class="menu-item menu-third">新增</a>
 						</div>
 					</div>
 				</div>
@@ -72,6 +58,7 @@
 	<script th:src="@{/assets/common/js/toastr.min.js}"></script>
 	<script th:src="@{/assets/admin/js/main.js}"></script>
 	<script th:src="@{/assets/admin/js/util.js}"></script>
+	<script th:src="@{/assets/admin/js/csr-business-area.js}"></script>
 	<script th:src="@{/assets/admin/js/csr.js}"></script>
 </body>
 </html>
