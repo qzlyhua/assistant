@@ -12,6 +12,7 @@ var CsrAddPage = function () {
             "                   <option value=\"布尔值\">布尔值</option>" +
             "                   <option value=\"JSON数组\">JSON数组</option>" +
             "                   <option value=\"JSON对象\">JSON对象</option>" +
+            "                   <option value=\"字符串数组\">字符串数组</option>" +
             "                   <option value=\"任意属性\">任意属性</option>" +
             "               </select>" +
             "           </div>" +
@@ -27,13 +28,60 @@ var CsrAddPage = function () {
     }
 
     var init = function () {
-        var l = 5;
-        for (let j = 0; j < l; j++) {
-            $("#reqParamsTable").append(genHtml("req", j))
-        }
+        var csrId = $("#csrId").val();
+        if (csrId){
+            $.ajax({
+                url: "/api/csr/" + id,
+                method: 'GET',
+                success: function (data) {
+                    if (data.code == 200) {
+                        var c1 = "<code style=\"float:right\">" +  data.result.apiCsr.businessArea + "</code>";
+                        var c2 = "<code style=\"float:right\">" +  data.result.apiCsr.version + "</code>";
+                        $("#path").html(data.result.apiCsr.path + "（" + data.result.apiCsr.name + "）" + c1 + c2);
+                        $("#description").text(data.result.apiCsr.description);
+                        data.result.remarks ? $("#remarks").text(data.result.apiCsr.remarks) : $(".remarks").remove();
+                        data.result.req.length > 0 ? $("#reqParamsExample").text(data.result.apiCsr.reqParamsExample) : $(".reqParamsExample").remove();
+                        data.result.res.length > 0 ? $("#resParamsExample").text(data.result.apiCsr.resParamsExample) : $(".resParamsExample").remove();
 
-        for (let j = 0; j < l; j++) {
-            $("#resParamsTable").append(genHtml("res", j))
+                        data.result.req.length > 0 ? $.each(data.result.req, function (idx, obj) {
+                            var html = "<tr>";
+                            html += "<td style=\"text-align:center\">" + obj.key + "</td>";
+                            html += "<td style=\"text-align:center\">" + obj.type + "</td>";
+                            html += "<td style=\"text-align:center\">" + obj.describe + "</td>";
+                            html += "<td style=\"text-align:center\">" + obj.required + "</td>";
+                            html += "</tr>";
+                            $("#table-reqParams").append(html);
+                        }) : $("#reqInfo").html("<p>无</p>");
+
+                        data.result.res.length > 0 ? $.each(data.result.res, function (idx, obj) {
+                            var html = "<tr>";
+                            html += "<td style=\"text-align:center\">" + obj.key + "</td>";
+                            html += "<td style=\"text-align:center\">" + obj.type + "</td>";
+                            html += "<td style=\"text-align:center\">" + obj.describe + "</td>";
+                            html += "<td style=\"text-align:center\">" + obj.required + "</td>";
+                            html += "</tr>";
+                            $("#table-resParams").append(html);
+                        }) : $("#resInfo").html("<p>无</p>");
+                    } else {
+                        toastr.clear();
+                        data.message && toastr.error(data.message);
+                    }
+                },
+                error: function (result) {
+                    console.error(result);
+                    toastr.clear();
+                    toastr.error(":接口调用出错：" + result.status);
+                }
+            });
+        } else {
+            var l = 5;
+            for (let j = 0; j < l; j++) {
+                $("#reqParamsTable").append(genHtml("req", j))
+            }
+
+            for (let j = 0; j < l; j++) {
+                $("#resParamsTable").append(genHtml("res", j))
+            }
         }
     }
 

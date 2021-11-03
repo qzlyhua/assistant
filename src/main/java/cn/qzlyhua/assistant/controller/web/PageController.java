@@ -164,4 +164,10 @@ public class PageController {
         model.addAttribute("csrId", id);
         return "admin/csr/csr-view";
     }
+
+    @RequestMapping(value = {"/csr-edit/{id}"})
+    public String csrEdit(Model model, @PathVariable String id) {
+        model.addAttribute("csrId", id);
+        return "admin/csr/csr-edit";
+    }
 }

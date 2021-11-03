@@ -113,6 +113,12 @@
             <artifactId>hutool-all</artifactId>
             <version>5.5.2</version>
         </dependency>
+        <!-- 本地jar包，需要 -->
+        <dependency>
+            <groupId>com.aspose</groupId>
+            <artifactId>aspose-words</artifactId>
+            <version>15.8.0</version>
+        </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
@@ -174,10 +180,10 @@
                     <fork>true</fork>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>pl.project13.maven</groupId>
-                <artifactId>git-commit-id-plugin</artifactId>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>pl.project13.maven</groupId>-->
+<!--                <artifactId>git-commit-id-plugin</artifactId>-->
+<!--            </plugin>-->
 
             <plugin>
                 <groupId>cn.smallbun.screw</groupId>
@@ -232,6 +238,6 @@
             </plugin>
         </plugins>
         <!--suppress UnresolvedMavenProperty -->
-        <finalName>${project.name}-${project.version}-${git.commit.id.abbrev}</finalName>
+<!--        <finalName>${project.name}-${project.version}-${git.commit.id.abbrev}</finalName>-->
     </build>
 </project>

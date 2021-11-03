@@ -13,7 +13,8 @@ var CsrVersionPage = function () {
                         html += "<td style=\"text-align:center\"><a href='../csrs-group-by-version/" + obj.version + "'>" + obj.version + "</a></td>";
                         html += "<td style=\"text-align:center\">" + obj.total + "</td>";
                         html += "<td style=\"text-align:center\">" + obj.lastUpdateTime + "</td>";
-                        html += "<td style=\"text-align:center\"><a class='icon fa fa-file-word-o' href='/api/poi/" + obj.version + "' target='_blank'></a></td>";
+                        html += "<td style=\"text-align:center\"><a class='icon fa fa-file-word-o' href='/api/poi/" + obj.version + "' target='_blank'></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+                        html += "<a class='icon fa fa-file-pdf-o' href='/api/pdf/" + obj.version + "' target='_blank'></a></td>";
                         html += "</tr>";
                         $("#data-table-v").append(html);
                     });

@@ -9,12 +9,13 @@
         <div class="inner">
             <section>
                 <form method="post" action="#">
+                    <input type="hidden" id="csrId" th:value="${csrId}"/>
                     <div class="row uniform">
                         <div class="2u">
                             <input type="text" readonly onfocus="blur()" value="请求路径："
                                    style="border:0px; font-weight:bold;">
                         </div>
-                        <div class="10u">
+                        <div class="10u 8u$(xsmall)">
                             <input type="text" name="path" id="ipt-path" value="" placeholder="">
                         </div>
 
@@ -22,7 +23,7 @@
                             <input type="text" readonly onfocus="blur()" value="方法名称："
                                    style="border:0px; font-weight:bold;">
                         </div>
-                        <div class="10u">
+                        <div class="10u 8u$(xsmall)">
                             <input type="text" name="name" id="ipt-name" value="" placeholder="">
                         </div>
 
@@ -30,7 +31,7 @@
                             <input type="text" readonly onfocus="blur()" value="功能描述："
                                    style="border:0px; font-weight:bold;">
                         </div>
-                        <div class="10u">
+                        <div class="10u 8u$(xsmall)">
                             <input type="text" name="name" id="ipt-description" value="" placeholder="">
                         </div>
 
@@ -38,7 +39,7 @@
                             <input type="text" readonly onfocus="blur()" value="版本迭代："
                                    style="border:0px; font-weight:bold;">
                         </div>
-                        <div class="3u">
+                        <div class="3u 8u$(xsmall)">
                             <input type="text" name="path" value="" placeholder="">
                         </div>
                         <div class="1u"></div>
@@ -46,7 +47,7 @@
                             <input type="text" readonly onfocus="blur()" value="业务领域："
                                    style="border:0px; font-weight:bold;">
                         </div>
-                        <div class="4u">
+                        <div class="4u 8u$(xsmall)">
                             <input type="text" name="path" value="" placeholder="">
                         </div>
 
@@ -54,7 +55,7 @@
                             <input type="text" readonly onfocus="blur()" value="补充说明："
                                    style="border:0px; font-weight:bold;">
                         </div>
-                        <div class="10u">
+                        <div class="10u 8u$(xsmall)">
                             <textarea name="demo-message" id="demo-message" rows="2"
                                       style="overflow: hidden; resize: none; height: 100px;"></textarea>
                         </div>
@@ -107,7 +108,7 @@
                             <input type="text" readonly onfocus="blur()" value="入参举例："
                                    style="border:0px; font-weight:bold;">
                         </div>
-                        <div class="10u">
+                        <div class="10u 8u$(xsmall)">
                             <textarea name="demo-message" id="demo-message3" rows="4"
                                       style="overflow: hidden; resize: none; height: 112px;"></textarea>
                         </div>
@@ -116,7 +117,7 @@
                             <input type="text" readonly onfocus="blur()" value="出参举例："
                                    style="border:0px; font-weight:bold;">
                         </div>
-                        <div class="10u">
+                        <div class="10u 8u$(xsmall)">
                             <textarea name="demo-message" id="demo-message4" rows="4"
                                       style="overflow: hidden; resize: none; height: 112px;"></textarea>
                         </div>

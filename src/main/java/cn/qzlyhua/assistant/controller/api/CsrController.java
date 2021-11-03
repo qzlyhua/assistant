@@ -13,7 +13,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.apache.ibatis.annotations.Delete;
 import org.springframework.util.Assert;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -71,6 +73,14 @@ public class CsrController {
         List<ApiCsrParam> req = apiCsrParamMapper.selectByCsrIdAndParameterType(apiCsr.getId(), "req");
         List<ApiCsrParam> res = apiCsrParamMapper.selectByCsrIdAndParameterType(apiCsr.getId(), "res");
         return new Csr(apiCsr, req, res);
+    }
+
+    @DeleteMapping("/csr/del/{id}")
+    public void deleteApiById(@PathVariable String id) {
+        ApiCsr apiCsr = apiCsrMapper.selectByPrimaryKey(Integer.valueOf(id));
+        Assert.notNull(apiCsr, "传输规范不存在！");
+        apiCsrMapper.deleteByPrimaryKey(Integer.valueOf(id));
+        apiCsrParamMapper.deleteByCsrId(Integer.valueOf(id));
     }
 
     @Data

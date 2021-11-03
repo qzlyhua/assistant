@@ -8,7 +8,7 @@
     <div id="main" style="min-height: 600px">
         <div class="inner">
             <input type="hidden" id="csrId" th:value="${csrId}"/>
-            <div id="reqParamsTable" class="row uniform">
+            <div class="row uniform">
                 <div class="2u">
                     <p><b>方法名称：</b></p>
                 </div>
@@ -40,7 +40,7 @@
                             <th style="text-align:center;">属性名</th>
                             <th style="text-align:center;">类型</th>
                             <th style="text-align:center;">描述</th>
-                            <th style="text-align:center;">必填</th>
+                            <th style="text-align:center; min-width:80px;">必填</th>
                         </tr>
                         </thead>
                         <tbody id="table-reqParams"></tbody>
@@ -57,7 +57,7 @@
                             <th style="text-align:center;">属性名</th>
                             <th style="text-align:center;">类型</th>
                             <th style="text-align:center;">描述</th>
-                            <th style="text-align:center;">必填</th>
+                            <th style="text-align:center; min-width:80px;">必填</th>
                         </tr>
                         </thead>
                         <tbody id="table-resParams"></tbody>
@@ -80,10 +80,24 @@
 
                 <div class="12u$">
                     <ul class="actions" style="float: right;">
-                        <li><a href="" class="button icon fa-pencil">修改</a></li>
+                        <li><a id="btn-edit" href="" class="button icon fa-pencil">修改</a></li>
                     </ul>
                 </div>
             </div>
+            <hr>
+            <section>
+                <h3>相关接口</h3>
+                <div class="row">
+                    <div class="6u">
+                        <h4 id="like-version"></h4>
+                        <ul id="like-version-li"></ul>
+                    </div>
+                    <div class="6u">
+                        <h4 id="like-business-area"></h4>
+                        <ul id="like-business-area-li"></ul>
+                    </div>
+                </div>
+            </section>
         </div>
     </div>
     <footer id="footer" th:replace="admin/fragments/footer :: footer"></footer>

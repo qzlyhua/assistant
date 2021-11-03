@@ -6,8 +6,6 @@ import cn.hutool.core.lang.PatternPool;
 import cn.hutool.core.util.ReUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
-import cn.qzlyhua.assistant.util.word.TransmissionSpecification;
-import cn.qzlyhua.assistant.util.word.TransmissionSpecificationParam;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -243,7 +241,7 @@ public class WordUtil {
 
                 log.info("[T]" + line + "\t" + key);
                 // 简易校验
-                if (StrUtil.isNotBlank(key) && ReUtil.isMatch(PatternPool.WORD, key.replaceAll("\\.", ""))) {
+                if (StrUtil.isNotBlank(key) && ReUtil.isMatch(PatternPool.WORD, key.replaceAll("\\.", "").replaceAll("_", ""))) {
                     // 兼容[描述]单元格内出现换行的场景
                     while (!"Y".equals(required) && !"N".equals(required) && !"".equals(required)) {
                         des.append("\n").append(required);
@@ -251,7 +249,7 @@ public class WordUtil {
 
                         String testLineText = range.getParagraph(line + 1).text().trim().replaceAll("\r\n", "");
                         if (!"Y".equals(testLineText) && !"N".equals(testLineText) &&
-                                ReUtil.isMatch(PatternPool.WORD, testLineText.replaceAll("\\.", ""))) {
+                                ReUtil.isMatch(PatternPool.WORD, testLineText.replaceAll("\\.", "").replaceAll("_", ""))) {
                             break;
                         }
                     }
