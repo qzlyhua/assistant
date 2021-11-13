@@ -1,6 +1,7 @@
 package cn.qzlyhua.assistant.util.word;
 
 import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.lang.Assert;
 import cn.hutool.core.lang.PatternPool;
 import cn.hutool.core.util.ReUtil;
@@ -18,17 +19,18 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 /**
- * Word操作工具类
+ * 03版Word文件（doc）处理工具类
  *
  * @author yanghua
  */
 @Slf4j
-public class WordUtil {
+public class DocUtil {
     /**
      * 一级标题（业务领域）字号
      */
@@ -45,8 +47,11 @@ public class WordUtil {
      */
     public static List<TransmissionSpecification> getAnalysisResult(MultipartFile file, String version) throws IOException {
         Assert.isTrue(file.getOriginalFilename().endsWith("doc"), "仅支持03版的doc文件！");
-        HWPFDocument document = new HWPFDocument(file.getInputStream());
-        return analysis(document, version);
+        InputStream inputStream = file.getInputStream();
+        HWPFDocument document = new HWPFDocument(inputStream);
+        List<TransmissionSpecification> res = analysis(document, version);
+        IoUtil.close(inputStream);
+        return res;
     }
 
     /**
@@ -65,6 +70,7 @@ public class WordUtil {
 
         List<TransmissionSpecification> result = new ArrayList<>();
         String currentBusinessArea = null;
+        String currentBusinessSubArea = null;
         String currentPath = null;
         String currentName = null;
         String currentDescription = null;
@@ -74,7 +80,7 @@ public class WordUtil {
         List<TransmissionSpecificationParam> currentResParams = null;
         String currentResParamsExample = null;
 
-        for (int i = 0; i < range.numParagraphs() - 1; i++) {
+        for (int i = 0; i <= range.numParagraphs() - 1; i++) {
             // 获取第i段
             Paragraph paragraph = range.getParagraph(i);
             // 当前段落
@@ -86,17 +92,23 @@ public class WordUtil {
                     // 检测到一级标题行（业务领域）需要遵循字体格式
                     if (BUS_AREA_LINE_SIZE == characterRun.getFontSize()) {
                         // 遇到一级标题，若有历史数据，需要保存
-                        flush(result, version, currentBusinessArea, currentPath, currentName, currentDescription, currentRemarks,
+                        flush(result, version, currentBusinessArea, currentBusinessSubArea, currentPath, currentName, currentDescription, currentRemarks,
                                 currentReqParams, currentReqParamsExample, currentResParams, currentResParamsExample);
                         currentPath = null;
-                        currentBusinessArea = paragraphText;
+                        if (paragraphText.contains("（") && paragraphText.endsWith("）")) {
+                            currentBusinessArea = paragraphText.split("（")[0];
+                            currentBusinessSubArea = paragraphText.split("（")[1].replace("）", "");
+                        } else {
+                            currentBusinessArea = paragraphText;
+                            currentBusinessSubArea = paragraphText;
+                        }
                     }
                     // 检测到二级标题行（方法名）需要遵循字体格式
                     else if (PATH_LINE_SIZE == characterRun.getFontSize()) {
                         paragraphText = paragraphText.replaceAll("\\(", "（").replaceAll("\\)", ")");
                         if (paragraphText.contains("（") && paragraphText.endsWith("）")) {
                             // 遇到二级标题，若有历史数据，需要保存
-                            flush(result, version, currentBusinessArea, currentPath, currentName, currentDescription, currentRemarks,
+                            flush(result, version, currentBusinessArea, currentBusinessSubArea, currentPath, currentName, currentDescription, currentRemarks,
                                     currentReqParams, currentReqParamsExample, currentResParams, currentResParamsExample);
 
                             currentPath = paragraphText.split("（")[0];
@@ -141,7 +153,7 @@ public class WordUtil {
         }
 
         // 提交最后一个接口
-        flush(result, version, currentBusinessArea, currentPath, currentName, currentDescription, currentRemarks,
+        flush(result, version, currentBusinessArea, currentBusinessSubArea, currentPath, currentName, currentDescription, currentRemarks,
                 currentReqParams, currentReqParamsExample, currentResParams, currentResParamsExample);
         return result;
     }
@@ -161,14 +173,15 @@ public class WordUtil {
      * @param currentResParams
      * @param currentResParamsExample
      */
-    private static void flush(List<TransmissionSpecification> result,
-                              String version, String currentBusinessArea,
-                              String currentPath, String currentName, String currentDescription, String currentRemarks,
-                              List<TransmissionSpecificationParam> currentReqParams, String currentReqParamsExample,
-                              List<TransmissionSpecificationParam> currentResParams, String currentResParamsExample) {
+    public static void flush(List<TransmissionSpecification> result,
+                             String version, String currentBusinessArea, String currentBusinessSubArea,
+                             String currentPath, String currentName, String currentDescription, String currentRemarks,
+                             List<TransmissionSpecificationParam> currentReqParams, String currentReqParamsExample,
+                             List<TransmissionSpecificationParam> currentResParams, String currentResParamsExample) {
         if (StrUtil.isNotBlank(currentPath)) {
             result.add(TransmissionSpecification.builder()
                     .businessArea(currentBusinessArea)
+                    .businessSubArea(currentBusinessSubArea)
                     .version(version)
                     .path(currentPath)
                     .name(currentName)

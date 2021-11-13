@@ -9,6 +9,7 @@
         <div class="inner">
             <section>
                 <form method="post" action="#">
+                    <input type="hidden" id="csrId" name="id"/>
                     <div class="row uniform">
                         <div class="2u">
                             <input type="text" readonly onfocus="blur()" value="请求路径："
@@ -31,7 +32,7 @@
                                    style="border:0px; font-weight:bold;">
                         </div>
                         <div class="10u">
-                            <input type="text" name="name" id="ipt-description" value="" placeholder="">
+                            <input type="text" name="description" id="ipt-description" value="" placeholder="">
                         </div>
 
                         <div class="2u">
@@ -39,7 +40,7 @@
                                    style="border:0px; font-weight:bold;">
                         </div>
                         <div class="3u">
-                            <input type="text" name="path" value="" placeholder="">
+                            <input type="text" name="version" id="ipt-version" value="" placeholder="">
                         </div>
                         <div class="1u"></div>
                         <div class="2u">
@@ -47,7 +48,7 @@
                                    style="border:0px; font-weight:bold;">
                         </div>
                         <div class="4u">
-                            <input type="text" name="path" value="" placeholder="">
+                            <input type="text" name="businessAreaName" id="ipt-businessAreaName" value="" placeholder="">
                         </div>
 
                         <div class="2u">
@@ -55,7 +56,7 @@
                                    style="border:0px; font-weight:bold;">
                         </div>
                         <div class="10u">
-                            <textarea name="demo-message" id="demo-message" rows="2"
+                            <textarea id="ipt-remarks" name="remarks" rows="2"
                                       style="overflow: hidden; resize: none; height: 100px;"></textarea>
                         </div>
 
@@ -108,7 +109,7 @@
                                    style="border:0px; font-weight:bold;">
                         </div>
                         <div class="10u">
-                            <textarea name="demo-message" id="demo-message3" rows="4"
+                            <textarea id="ipt-reqExample" name="reqExample" rows="4"
                                       style="overflow: hidden; resize: none; height: 112px;"></textarea>
                         </div>
 
@@ -117,7 +118,7 @@
                                    style="border:0px; font-weight:bold;">
                         </div>
                         <div class="10u">
-                            <textarea name="demo-message" id="demo-message4" rows="4"
+                            <textarea id="ipt-resExample" name="resExample" rows="4"
                                       style="overflow: hidden; resize: none; height: 112px;"></textarea>
                         </div>
 

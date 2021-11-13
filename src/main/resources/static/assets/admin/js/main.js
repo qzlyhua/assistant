@@ -143,7 +143,7 @@
 	$.ajaxSetup({
 		cache: false,
 		complete: function (XMLHttpRequest, status) {
-			if (status != "success") {
+			if (status != "success" && status != "abort") {
 				toastr.clear();
 				toastr.error("接口调用出错:" + status);
 			}

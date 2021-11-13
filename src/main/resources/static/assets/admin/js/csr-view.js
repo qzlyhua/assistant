@@ -7,11 +7,11 @@ var CsrViewPage = function () {
             method: 'GET',
             success: function (data) {
                 if (data.code == 200) {
-                    var c1 = "<code style=\"float:right\">" +  data.result.apiCsr.businessArea + "</code>";
-                    var c2 = "<code style=\"float:right\">" +  data.result.apiCsr.version + "</code>";
+                    var c1 = "<code style='float:right; cursor:pointer;' onclick='location=\"/csrs-group-by-business-area/" + data.result.apiCsr.businessArea + "\"' >" +  data.result.apiCsr.businessArea + "</code>";
+                    var c2 = "<code style='float:right; cursor:pointer;' onclick='location=\"/csrs-group-by-version/" + data.result.apiCsr.version + "\"' >" +  data.result.apiCsr.version + "</code>";
                     $("#path").html(data.result.apiCsr.path + "（" + data.result.apiCsr.name + "）" + c1 + c2);
                     $("#description").text(data.result.apiCsr.description);
-                    data.result.remarks ? $("#remarks").text(data.result.apiCsr.remarks) : $(".remarks").remove();
+                    data.result.apiCsr.remarks ? $("#remarks").text(data.result.apiCsr.remarks) : $(".remarks").remove();
                     data.result.req.length > 0 ? $("#reqParamsExample").text(data.result.apiCsr.reqParamsExample) : $(".reqParamsExample").remove();
                     data.result.res.length > 0 ? $("#resParamsExample").text(data.result.apiCsr.resParamsExample) : $(".resParamsExample").remove();
 
@@ -47,6 +47,9 @@ var CsrViewPage = function () {
                                     if (obj.id != id){
                                         var html = "<li><a href='../csr-view/" + obj.id + "'>" + obj.path + "</a>（" + obj.name + "）</li>";
                                         $("#like-business-area-li").append(html);
+                                    } else {
+                                        var html = "<li style='color:#8096e6'>" + obj.path + "（" + obj.name + "）</li>";
+                                        $("#like-business-area-li").append(html);
                                     }
                                 });
                             } else {
@@ -69,6 +72,9 @@ var CsrViewPage = function () {
                                 $.each(data.result, function (idx, obj) {
                                     if (obj.id != id){
                                         var html = "<li><a href='../csr-view/" + obj.id + "'>" + obj.path + "</a>（" + obj.name + "）</li>";
+                                        $("#like-version-li").append(html);
+                                    } else {
+                                        var html = "<li style='color:#8096e6'>" + obj.path + "（" + obj.name + "）</li>";
                                         $("#like-version-li").append(html);
                                     }
                                 });

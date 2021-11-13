@@ -7,13 +7,16 @@ import cn.qzlyhua.assistant.dto.specification.Chapter;
 import cn.qzlyhua.assistant.dto.specification.Parameter;
 import cn.qzlyhua.assistant.dto.specification.Service;
 import cn.qzlyhua.assistant.entity.ApiCsr;
+import cn.qzlyhua.assistant.entity.ApiCsrDic;
 import cn.qzlyhua.assistant.entity.ApiCsrParam;
+import cn.qzlyhua.assistant.mapper.ApiCsrDicMapper;
 import cn.qzlyhua.assistant.mapper.ApiCsrMapper;
 import cn.qzlyhua.assistant.mapper.ApiCsrParamMapper;
 import cn.qzlyhua.assistant.service.SpecificationService;
+import cn.qzlyhua.assistant.util.word.CsrBook;
+import cn.qzlyhua.assistant.util.word.DocxUtil;
 import cn.qzlyhua.assistant.util.word.TransmissionSpecification;
 import cn.qzlyhua.assistant.util.word.TransmissionSpecificationParam;
-import cn.qzlyhua.assistant.util.word.WordUtil;
 import com.deepoove.poi.plugin.highlight.HighlightRenderData;
 import com.deepoove.poi.plugin.highlight.HighlightStyle;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -37,6 +40,9 @@ public class SpecificationServiceImpl implements SpecificationService {
 
     @Resource
     ApiCsrParamMapper apiCsrParamMapper;
+
+    @Resource
+    ApiCsrDicMapper apiCsrDicMapper;
 
     @Override
     public List<Chapter> getSpecificationsByVersion(String version) {
@@ -106,8 +112,10 @@ public class SpecificationServiceImpl implements SpecificationService {
                         .description(a.getDescription())
                         .explain(a.getRemarks() == null ? "无" : a.getRemarks())
                         .reqParameters(reqParameters)
+                        .reqExampleStr(prettyJson(a.getReqParamsExample()))
                         .reqExample(getHighlightRenderData(a.getReqParamsExample()))
                         .resParameters(resParameters)
+                        .resExampleStr(prettyJson(a.getResParamsExample()))
                         .resExample(getHighlightRenderData(a.getResParamsExample())).build();
                 services.add(service);
             }
@@ -146,6 +154,9 @@ public class SpecificationServiceImpl implements SpecificationService {
      * @return
      */
     private String prettyJson(String json) {
+        if (StrUtil.isBlank(json)) {
+            return null;
+        }
         try {
             ObjectMapper mapper = new ObjectMapper();
             Object obj = mapper.readValue(json, Object.class);
@@ -162,8 +173,8 @@ public class SpecificationServiceImpl implements SpecificationService {
      */
     @Override
     public int importSpecificationsFromWord(MultipartFile file, String version) throws IOException {
-        List<TransmissionSpecification> list = WordUtil.getAnalysisResult(file, version);
-        return importSpecificationsFromWordToDb(list);
+        CsrBook book = DocxUtil.getAnalysisResult(file, version);
+        return importSpecificationsFromWordToDb(book.getTransmissionSpecifications(), book.getDictionaries());
     }
 
     /**
@@ -172,15 +183,15 @@ public class SpecificationServiceImpl implements SpecificationService {
      */
     @Override
     public void importSpecificationsFromWord(File file, String version) throws IOException {
-        List<TransmissionSpecification> list = WordUtil.getAnalysisResult(file, version);
-        importSpecificationsFromWordToDb(list);
+        CsrBook book = DocxUtil.getAnalysisResult(file, version);
+        importSpecificationsFromWordToDb(book.getTransmissionSpecifications(), book.getDictionaries());
     }
 
     /**
      * word文件导入-入库处理
      */
-    public int importSpecificationsFromWordToDb(List<TransmissionSpecification> list) throws IOException {
-        for (TransmissionSpecification e : list) {
+    public int importSpecificationsFromWordToDb(List<TransmissionSpecification> transmissionSpecifications, List<cn.qzlyhua.assistant.util.word.Dictionary> dictionaries) {
+        for (TransmissionSpecification e : transmissionSpecifications) {
             String path = e.getPath();
             ApiCsr tmp = apiCsrMapper.selectOneByPath(path);
             if (tmp != null) {
@@ -235,6 +246,19 @@ public class SpecificationServiceImpl implements SpecificationService {
                 apiCsrParamMapper.batchInsert(params);
             }
         }
-        return list.size();
+
+        List<ApiCsrDic> csrDics = new ArrayList<>();
+        for (cn.qzlyhua.assistant.util.word.Dictionary d : dictionaries) {
+            ApiCsrDic apiCsrDic = new ApiCsrDic();
+            apiCsrDic.setType(d.getType());
+            apiCsrDic.setCode(d.getCode());
+            apiCsrDic.setName(d.getName());
+            csrDics.add(apiCsrDic);
+        }
+        if (CollUtil.isNotEmpty(csrDics)) {
+            apiCsrDicMapper.batchInsert(csrDics);
+        }
+
+        return transmissionSpecifications.size();
     }
 }

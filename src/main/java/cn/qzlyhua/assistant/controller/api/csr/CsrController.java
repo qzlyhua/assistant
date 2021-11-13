@@ -1,4 +1,4 @@
-package cn.qzlyhua.assistant.controller.api;
+package cn.qzlyhua.assistant.controller.api.csr;
 
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
@@ -25,7 +25,7 @@ import java.net.URLEncoder;
 import java.util.List;
 
 /**
- * 用户域概览
+ * 传输规范
  *
  * @author yanghua
  */
@@ -99,7 +99,7 @@ public class CsrController {
      */
     private String prettyJson(String json) {
         if (StrUtil.isBlank(json)) {
-            json = "{\"_key\":\"待补充\"}";
+            json = "{\"_field_demo\":\"_value_demo\"}";
         }
         try {
             ObjectMapper mapper = new ObjectMapper();

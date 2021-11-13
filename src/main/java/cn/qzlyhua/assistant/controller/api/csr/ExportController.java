@@ -1,12 +1,17 @@
-package cn.qzlyhua.assistant.controller.api;
+package cn.qzlyhua.assistant.controller.api.csr;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.io.file.FileAppender;
 import cn.hutool.core.io.resource.ResourceUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.qzlyhua.assistant.controller.api.response.Response;
 import cn.qzlyhua.assistant.controller.api.response.ResponseData;
 import cn.qzlyhua.assistant.dto.specification.Chapter;
+import cn.qzlyhua.assistant.dto.specification.Parameter;
+import cn.qzlyhua.assistant.dto.specification.Service;
 import cn.qzlyhua.assistant.service.SpecificationService;
 import cn.qzlyhua.assistant.util.word.Word2PdfAsposeUtil;
 import com.aspose.words.SaveFormat;
@@ -18,10 +23,8 @@ import com.deepoove.poi.plugin.toc.TOCRenderPolicy;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
@@ -43,18 +46,17 @@ import java.util.*;
 @Response
 @Slf4j
 @RequestMapping("/api")
-public class PoiController {
+public class ExportController {
     @Resource
     SpecificationService specificationService;
 
     /**
-     * SpecificationService
-     * 测试POI生成word文件
+     * 导出word文档（按版本或业务领域）
      *
      * @param response
      * @throws IOException
      */
-    @RequestMapping("/poi/{fileName}")
+    @RequestMapping("/word/{fileName}")
     public void exportWordFile(@PathVariable String fileName, HttpServletRequest request, HttpServletResponse response) throws IOException {
         fileName = fileName.toUpperCase(Locale.ROOT);
         List<Chapter> chapters = fileName.startsWith("PP") ? specificationService.getSpecificationsByVersion(fileName) :
@@ -126,15 +128,6 @@ public class PoiController {
         FileUtil.writeToStream(tmpPdfFile, response.getOutputStream());
     }
 
-    @PostMapping("/poi/import")
-    public ResponseData importWordFile(MultipartFile file) throws IOException {
-        String originalFilename = file.getOriginalFilename().toUpperCase(Locale.ROOT);
-        Assert.isTrue(originalFilename.contains("PP"), "仅支持按版本导入");
-        String version = originalFilename.substring(originalFilename.indexOf("PP"), originalFilename.lastIndexOf("."));
-        int res = specificationService.importSpecificationsFromWord(file, version);
-        return new ResponseData(200, "成功导入" + res + "条", res);
-    }
-
     /**
      * 针对不同的浏览器进行文件名中文编码处理
      *
@@ -148,5 +141,94 @@ public class PoiController {
             return new String(URLEncoder.encode(fileName, "UTF-8").getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1);
         }
         return fileName;
+    }
+
+    /**
+     * 导出MD文档（按版本）
+     *
+     * @param response
+     * @throws IOException
+     */
+    @RequestMapping("/md/{version}")
+    public ResponseData exportMdFile(@PathVariable String version, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        Assert.isTrue(version.startsWith("PP"), "版本号规则有误！");
+        List<Chapter> chapters = specificationService.getSpecificationsByVersion(version);
+
+        String mdFilePath = "/soft/frontend/docs/" + version + ".md";
+        if (FileUtil.exist(mdFilePath)) {
+            FileUtil.del(mdFilePath);
+        }
+        FileUtil.touch(mdFilePath);
+        FileAppender appender = new FileAppender(FileUtil.file(mdFilePath), 16, true);
+        appender.append("# " + version);
+        appender.append("> 最近更新：" + DateUtil.format(new Date(), DatePattern.NORM_DATETIME_PATTERN));
+        appender.append("----\n");
+        for (Chapter c : chapters) {
+            appendFile(appender, c);
+        }
+
+        appender.flush();
+        appender.toString();
+
+        String sideBarMdFile = "/soft/frontend/docs/_sidebar.md";
+        String sideBarStr = FileUtil.readUtf8String(sideBarMdFile);
+        String currentSide = "* [" + version + "](/" + version + ".md)";
+        if (!sideBarStr.contains(currentSide)) {
+            sideBarStr = sideBarStr.replace("* [概述](/)", "* [概述](/)\n" + currentSide);
+        }
+        FileUtil.del(sideBarMdFile);
+        FileUtil.touch(sideBarMdFile);
+        FileUtil.writeUtf8String(sideBarStr, sideBarMdFile);
+
+        return new ResponseData(200, version + "MD文档发布完成", null);
+    }
+
+    private void appendFile(FileAppender appender, Chapter chapter) {
+        appender.append("## " + chapter.getHeadWord());
+        for (Service s : chapter.getServices()) {
+            appender.append("### " + s.getTitle());
+            appender.append("#### 功能：");
+            appender.append(s.getDescription());
+            if (!StrUtil.isBlank(s.getExplain()) && !"无".equals(s.getExplain())) {
+                appender.append("#### 说明：");
+                appender.append(s.getExplain());
+            }
+
+            if (CollUtil.isNotEmpty(s.getReqParameters())) {
+                appender.append("#### 入参：");
+                appender.append("| 属性名 | 类型 | 描述 | 必填 |");
+                appender.append("| :----- | :----: | :----- | :----: |");
+                for (Parameter p : s.getReqParameters()) {
+                    String parameter = "| " + p.getKey() + " | " + p.getType() + " | " + p.getDes() + " | " + p.getIsRequired() + " |";
+                    appender.append(parameter);
+                }
+            }
+
+            if (CollUtil.isNotEmpty(s.getResParameters())) {
+                appender.append("#### 出参：");
+                appender.append("| 属性名 | 类型 | 描述 | 必填 |");
+                appender.append("| :----- | :----: | :----- | :----: |");
+                for (Parameter p : s.getResParameters()) {
+                    String parameter = "| " + p.getKey() + " | " + p.getType() + " | " + p.getDes() + " | " + p.getIsRequired() + " |";
+                    appender.append(parameter);
+                }
+            }
+
+            if (!StrUtil.isBlank(s.getReqExampleStr())) {
+                appender.append("#### 入参举例：");
+                appender.append("```json");
+                appender.append(s.getReqExampleStr());
+                appender.append("```");
+            }
+
+            if (!StrUtil.isBlank(s.getResExampleStr())) {
+                appender.append("#### 出参举例：");
+                appender.append("```json");
+                appender.append(s.getResExampleStr());
+                appender.append("```");
+            }
+
+            appender.append("----");
+        }
     }
 }

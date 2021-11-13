@@ -142,4 +142,19 @@
         from AS_API_CSR_PARAM
         where csr_id=#{csrId,jdbcType=INTEGER} and parameter_type=#{parameterType,jdbcType=VARCHAR}
     </select>
+
+  <resultMap id="groupByVersion" type="cn.qzlyhua.assistant.dto.csr.GroupByVersion">
+    <result column="version" jdbcType="VARCHAR" property="version" />
+    <result column="total" jdbcType="INTEGER" property="total" />
+    <result column="lastUpdateTime" jdbcType="TIMESTAMP" property="lastUpdateTime" />
+  </resultMap>
+  <select id="statisticsByVersion" resultMap="groupByVersion">
+    select version, count(1) as total, max(update_time) as lastUpdateTime from AS_API_CSR GROUP BY version order by version desc
+  </select>
+
+  <select id="getParamKeysRecommendation" resultType="cn.qzlyhua.assistant.dto.csr.Recommendation">
+    SELECT `key` AS label, `describe`, type, required FROM AS_API_CSR_PARAM
+    where `key` like concat('%',#{query,jdbcType=VARCHAR},'%')
+    GROUP BY `key`,`describe`, type, required ORDER BY `key`, count(1) DESC LIMIT #{limit,jdbcType=INTEGER}
+  </select>
 </mapper>

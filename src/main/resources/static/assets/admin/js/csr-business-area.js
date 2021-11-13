@@ -13,7 +13,7 @@ var CsrBusinessAreaPage = function () {
                         html += "<td style=\"text-align:center\"><a href='../csrs-group-by-business-area/" + obj.businessArea + "'>" + obj.businessArea + "</a></td>";
                         html += "<td style=\"text-align:center\">" + obj.total + "</td>";
                         html += "<td style=\"text-align:center\">" + obj.lastUpdateTime + "</td>";
-                        html += "<td style=\"text-align:center\"><a class='icon fa fa-file-word-o' href='/api/poi/" + obj.businessArea + "' target='_blank'></a>&nbsp;&nbsp;&nbsp;&nbsp;";
+                        html += "<td style=\"text-align:center\"><a class='icon fa fa-file-word-o' href='/api/word/" + obj.businessArea + "' target='_blank'></a>&nbsp;&nbsp;&nbsp;&nbsp;";
                         html += "<a class='icon fa fa-file-pdf-o' href='/api/pdf/" + obj.businessArea + "' target='_blank'></a></td>";
                         html += "</tr>";
                         $("#data-table-b").append(html);

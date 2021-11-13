@@ -13,8 +13,9 @@ var CsrVersionPage = function () {
                         html += "<td style=\"text-align:center\"><a href='../csrs-group-by-version/" + obj.version + "'>" + obj.version + "</a></td>";
                         html += "<td style=\"text-align:center\">" + obj.total + "</td>";
                         html += "<td style=\"text-align:center\">" + obj.lastUpdateTime + "</td>";
-                        html += "<td style=\"text-align:center\"><a class='icon fa fa-file-word-o' href='/api/poi/" + obj.version + "' target='_blank'></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+                        html += "<td style=\"text-align:center\"><a class='icon fa fa-file-word-o' href='/api/word/" + obj.version + "' target='_blank'></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
                         html += "<a class='icon fa fa-file-pdf-o' href='/api/pdf/" + obj.version + "' target='_blank'></a></td>";
+                        html += "<td style=\"text-align:center\"><a class='icon fa fa-send-o' href=\"javascript:CsrVersionPage.releaseDocs('" + obj.version + "')\"></a></td>";
                         html += "</tr>";
                         $("#data-table-v").append(html);
                     });
@@ -28,7 +29,31 @@ var CsrVersionPage = function () {
             error: function (result) {
                 console.error(result);
                 toastr.clear();
-                toastr.error(":接口调用出错：" + result.status);
+                toastr.error("接口调用出错：" + result.status);
+            }
+        });
+    };
+
+    var releaseDocs = function (v) {
+        $.ajax({
+            url: "/api/md/" + v,
+            method: 'GET',
+            success: function (data) {
+                if (data.code == 200) {
+                    toastr.clear();
+                    data.message && toastr.success(data.message);
+
+                    var u = "https://docs.wiseheartdoctor.cn/#/" + v;
+                    window.setTimeout(function(){window.open(u)}, 2500);
+                } else {
+                    toastr.clear();
+                    data.message && toastr.error(data.message);
+                }
+            },
+            error: function (result) {
+                console.error(result);
+                toastr.clear();
+                toastr.error("接口调用出错：" + result.status);
             }
         });
     };
@@ -36,6 +61,9 @@ var CsrVersionPage = function () {
     return {
         init: function () {
             init();
+        },
+        releaseDocs : function (v){
+            releaseDocs(v);
         }
     }
 }();

@@ -21,4 +21,5 @@ public class TransmissionSpecification {
     private String resParamsExample;
     private String version;
     private String businessArea;
+    private String businessSubArea;
 }

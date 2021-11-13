@@ -40,6 +40,7 @@ public class Service {
      * 入参
      */
     private List<Parameter> reqParameters;
+    private String reqExampleStr;
     private HighlightRenderData reqExample;
     private boolean needReq;
 
@@ -47,6 +48,7 @@ public class Service {
      * 出参
      */
     private List<Parameter> resParameters;
+    private String resExampleStr;
     private HighlightRenderData resExample;
     private boolean needRes;
 
