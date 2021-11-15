@@ -18,4 +18,10 @@ public interface ApiCsrDicMapper {
     int updateByPrimaryKey(ApiCsrDic record);
 
     int batchInsert(@Param("list") List<ApiCsrDic> list);
+
+    int deleteByTypeAndCode(@Param("type")String type,@Param("code")String code);
+
+    List<ApiCsrDic> selectAllByType(@Param("type")String type);
+
+
 }

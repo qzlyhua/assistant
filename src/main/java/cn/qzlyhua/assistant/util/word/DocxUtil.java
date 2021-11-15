@@ -134,14 +134,19 @@ public class DocxUtil {
                 XWPFTable table = (XWPFTable) element;
                 if (TABLE_REQ_PARAM.equals(currentTableType)) {
                     currentReqParams = getParamFromTable(table);
+                    currentTableType = "";
                 } else if (TABLE_RES_PARAM.equals(currentTableType)) {
                     currentResParams = getParamFromTable(table);
+                    currentTableType = "";
                 } else if (TABLE_REQ_EXAMPLE.equals(currentTableType)) {
                     currentReqParamsExample = getJsonStrFromTable(table);
+                    currentTableType = "";
                 } else if (TABLE_RES_EXAMPLE.equals(currentTableType)) {
                     currentResParamsExample = getJsonStrFromTable(table);
+                    currentTableType = "";
                 } else if (TABLE_DIC.equals(currentTableType)) {
                     dictionaries = getDictionariesFromTable(table);
+                    currentTableType = "";
                 }
             }
         }

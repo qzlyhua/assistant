@@ -42,9 +42,7 @@ var CsrVersionPage = function () {
                 if (data.code == 200) {
                     toastr.clear();
                     data.message && toastr.success(data.message);
-
-                    var u = "https://docs.wiseheartdoctor.cn/#/" + v;
-                    window.setTimeout(function(){window.open(u)}, 2500);
+                    window.setTimeout(function(){window.open("https://docs.wiseheartdoctor.cn/#/" + v)}, 3000);
                 } else {
                     toastr.clear();
                     data.message && toastr.error(data.message);

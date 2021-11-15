@@ -52,6 +52,11 @@ public class Service {
     private HighlightRenderData resExample;
     private boolean needRes;
 
+    /**
+     * 数据字典
+     */
+    private List<DictionaryTable> dictionaries;
+
     public String getTitle() {
         return serviceName + "（" + serviceNick + "）";
     }

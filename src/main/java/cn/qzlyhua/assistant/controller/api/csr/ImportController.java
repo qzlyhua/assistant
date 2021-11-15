@@ -30,8 +30,8 @@ public class ImportController {
     @PostMapping("/poi/import")
     public ResponseData importWordFile(MultipartFile file) throws IOException {
         String originalFilename = file.getOriginalFilename().toUpperCase(Locale.ROOT);
-        Assert.isTrue(originalFilename.contains("PP"), "仅支持按版本导入");
-        String version = originalFilename.substring(originalFilename.indexOf("PP"), originalFilename.lastIndexOf("."));
+        Assert.isTrue(originalFilename.contains("PP") && originalFilename.contains("-"), "仅支持按版本导入，文件命名格式：传输规范-PP0XX.docx");
+        String version = originalFilename.substring(originalFilename.indexOf("-") + 1, originalFilename.lastIndexOf("."));
         int res = specificationService.importSpecificationsFromWord(file, version);
         return new ResponseData(200, "成功导入" + res + "条", res);
     }

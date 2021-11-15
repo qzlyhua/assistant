@@ -45,23 +45,24 @@ public class DocUtil {
      * 基于接口文档（传输规范-PPxxx.doc）文件进行传输规范解析
      * 网络上传文件模式
      */
-    public static List<TransmissionSpecification> getAnalysisResult(MultipartFile file, String version) throws IOException {
+    public static CsrBook getAnalysisResult(MultipartFile file, String version) throws IOException {
         Assert.isTrue(file.getOriginalFilename().endsWith("doc"), "仅支持03版的doc文件！");
         InputStream inputStream = file.getInputStream();
         HWPFDocument document = new HWPFDocument(inputStream);
         List<TransmissionSpecification> res = analysis(document, version);
         IoUtil.close(inputStream);
-        return res;
+        return new CsrBook(res, null);
     }
 
     /**
      * 基于接口文档（传输规范-PPxxx.doc）文件进行传输规范解析
      * 本地文件模式
      */
-    public static List<TransmissionSpecification> getAnalysisResult(File file, String version) throws IOException {
+    public static CsrBook getAnalysisResult(File file, String version) throws IOException {
         Assert.isTrue(file.getName().endsWith("doc"), "仅支持03版的doc文件！");
         HWPFDocument document = new HWPFDocument(new POIFSFileSystem(file, true));
-        return analysis(document, version);
+        List<TransmissionSpecification> res = analysis(document, version);
+        return new CsrBook(res, null);
     }
 
     private static List<TransmissionSpecification> analysis(HWPFDocument document, String version) {
@@ -285,12 +286,6 @@ public class DocUtil {
         } else {
             return new ParamTableInfo(nextLoopLine, null);
         }
-    }
-
-    public static void main(String[] args) throws IOException {
-        String wordPath = "/Users/yanghua/Downloads/传输规范-PP012.doc";
-        List<TransmissionSpecification> list = getAnalysisResult(FileUtil.file(wordPath), "PP012");
-        log.info(JSONUtil.toJsonStr(list));
     }
 
     @Data

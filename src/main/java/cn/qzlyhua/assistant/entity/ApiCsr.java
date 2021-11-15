@@ -51,12 +51,17 @@ public class ApiCsr {
     private String businessArea;
 
     /**
-     * 创建时间
+     * 二级业务领域
      */
-    private Date createTime;
+    private String businessSubArea;
 
     /**
      * 修改时间
      */
     private Date updateTime;
+
+    /**
+     * 创建时间
+     */
+    private Date createTime;
 }

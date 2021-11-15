@@ -10,6 +10,7 @@ import cn.hutool.core.util.StrUtil;
 import cn.qzlyhua.assistant.controller.api.response.Response;
 import cn.qzlyhua.assistant.controller.api.response.ResponseData;
 import cn.qzlyhua.assistant.dto.specification.Chapter;
+import cn.qzlyhua.assistant.dto.specification.DictionaryTable;
 import cn.qzlyhua.assistant.dto.specification.Parameter;
 import cn.qzlyhua.assistant.dto.specification.Service;
 import cn.qzlyhua.assistant.service.SpecificationService;
@@ -145,12 +146,9 @@ public class ExportController {
 
     /**
      * 导出MD文档（按版本）
-     *
-     * @param response
-     * @throws IOException
      */
     @RequestMapping("/md/{version}")
-    public ResponseData exportMdFile(@PathVariable String version, HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public ResponseData exportMdFile(@PathVariable String version) {
         Assert.isTrue(version.startsWith("PP"), "版本号规则有误！");
         List<Chapter> chapters = specificationService.getSpecificationsByVersion(version);
 
@@ -166,6 +164,7 @@ public class ExportController {
         for (Chapter c : chapters) {
             appendFile(appender, c);
         }
+        appender.append("© 2021 新昌医惠数字科技有限公司. All Rights Reserved.");
 
         appender.flush();
         appender.toString();
@@ -180,22 +179,24 @@ public class ExportController {
         FileUtil.touch(sideBarMdFile);
         FileUtil.writeUtf8String(sideBarStr, sideBarMdFile);
 
-        return new ResponseData(200, version + "MD文档发布完成", null);
+        return new ResponseData(200, version + "文档发布完成", null);
     }
 
     private void appendFile(FileAppender appender, Chapter chapter) {
         appender.append("## " + chapter.getHeadWord());
         for (Service s : chapter.getServices()) {
+            appender.append("");
             appender.append("### " + s.getTitle());
-            appender.append("#### 功能：");
+            appender.append("#### 功能描述：");
             appender.append(s.getDescription());
             if (!StrUtil.isBlank(s.getExplain()) && !"无".equals(s.getExplain())) {
-                appender.append("#### 说明：");
-                appender.append(s.getExplain());
+                appender.append("");
+                appender.append("!> " + s.getExplain());
+                appender.append("");
             }
 
             if (CollUtil.isNotEmpty(s.getReqParameters())) {
-                appender.append("#### 入参：");
+                appender.append("#### 入参说明：");
                 appender.append("| 属性名 | 类型 | 描述 | 必填 |");
                 appender.append("| :----- | :----: | :----- | :----: |");
                 for (Parameter p : s.getReqParameters()) {
@@ -205,7 +206,7 @@ public class ExportController {
             }
 
             if (CollUtil.isNotEmpty(s.getResParameters())) {
-                appender.append("#### 出参：");
+                appender.append("#### 出参说明：");
                 appender.append("| 属性名 | 类型 | 描述 | 必填 |");
                 appender.append("| :----- | :----: | :----- | :----: |");
                 for (Parameter p : s.getResParameters()) {
@@ -214,11 +215,34 @@ public class ExportController {
                 }
             }
 
+            if (CollUtil.isNotEmpty(s.getDictionaries())) {
+                appender.append("#### 数据字典：");
+
+                appender.append("<table>");
+                appender.append("<tr><td>字典类别</td><td>代码</td><td>含义</td></tr>");
+                for (DictionaryTable d : s.getDictionaries()) {
+                    appender.append("<tr><td rowspan=\"" + d.getSize() + "\">" + d.getType() + "</td><td>" +
+                            d.getDictionaryList().get(0).getCode() + "</td><td>" +
+                            d.getDictionaryList().get(0).getName() + "</td></tr>");
+                    for (int i = 1; i <= d.getDictionaryList().size() - 1; i++) {
+                        cn.qzlyhua.assistant.dto.specification.Dictionary dictionary = d.getDictionaryList().get(i);
+                        appender.append("<tr><td>" + dictionary.getCode() + "</td><td>" + dictionary.getName() + "</td></tr>");
+                    }
+                }
+                appender.append("</table>");
+            }
+            appender.append("");
+
             if (!StrUtil.isBlank(s.getReqExampleStr())) {
                 appender.append("#### 入参举例：");
                 appender.append("```json");
                 appender.append(s.getReqExampleStr());
                 appender.append("```");
+            } else if (CollUtil.isNotEmpty(s.getReqParameters()) && StrUtil.isBlank(s.getReqExampleStr())) {
+                appender.append("#### 入参举例：");
+                appender.append("");
+                appender.append("?> _TODO_ 待完善");
+                appender.append("");
             }
 
             if (!StrUtil.isBlank(s.getResExampleStr())) {
@@ -226,6 +250,11 @@ public class ExportController {
                 appender.append("```json");
                 appender.append(s.getResExampleStr());
                 appender.append("```");
+            } else if (CollUtil.isNotEmpty(s.getResParameters()) && StrUtil.isBlank(s.getResExampleStr())) {
+                appender.append("#### 出参举例：");
+                appender.append("");
+                appender.append("?> _TODO_ 待完善");
+                appender.append("");
             }
 
             appender.append("----");

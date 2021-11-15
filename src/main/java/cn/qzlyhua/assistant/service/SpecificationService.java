@@ -15,7 +15,7 @@ public interface SpecificationService {
 
     List<Chapter> getSpecificationsByBusinessArea(String areaName);
 
-    void importSpecificationsFromWord(File file, String version) throws IOException;
-
     int importSpecificationsFromWord(MultipartFile file, String version) throws IOException;
+
+
 }

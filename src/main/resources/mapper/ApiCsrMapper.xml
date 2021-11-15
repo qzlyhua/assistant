@@ -13,13 +13,14 @@
     <result column="res_params_example" jdbcType="LONGVARCHAR" property="resParamsExample" />
     <result column="version" jdbcType="VARCHAR" property="version" />
     <result column="business_area" jdbcType="VARCHAR" property="businessArea" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="business_sub_area" jdbcType="VARCHAR" property="businessSubArea" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
   </resultMap>
   <sql id="Base_Column_List">
     <!--@mbg.generated-->
     id, `path`, `name`, description, remarks, req_params_example, res_params_example, 
-    version, business_area, create_time, update_time
+    version, business_area, business_sub_area, update_time, create_time
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     <!--@mbg.generated-->
@@ -37,12 +38,12 @@
     <!--@mbg.generated-->
     insert into AS_API_CSR (`path`, `name`, description, 
       remarks, req_params_example, res_params_example, 
-      version, business_area, create_time, 
-      update_time)
+      version, business_area, business_sub_area, 
+      update_time, create_time)
     values (#{path,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, 
       #{remarks,jdbcType=VARCHAR}, #{reqParamsExample,jdbcType=LONGVARCHAR}, #{resParamsExample,jdbcType=LONGVARCHAR}, 
-      #{version,jdbcType=VARCHAR}, #{businessArea,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{updateTime,jdbcType=TIMESTAMP})
+      #{version,jdbcType=VARCHAR}, #{businessArea,jdbcType=VARCHAR}, #{businessSubArea,jdbcType=VARCHAR}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="cn.qzlyhua.assistant.entity.ApiCsr" useGeneratedKeys="true">
     <!--@mbg.generated-->
@@ -72,11 +73,14 @@
       <if test="businessArea != null">
         business_area,
       </if>
-      <if test="createTime != null">
-        create_time,
+      <if test="businessSubArea != null">
+        business_sub_area,
       </if>
       <if test="updateTime != null">
         update_time,
+      </if>
+      <if test="createTime != null">
+        create_time,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -104,11 +108,14 @@
       <if test="businessArea != null">
         #{businessArea,jdbcType=VARCHAR},
       </if>
-      <if test="createTime != null">
-        #{createTime,jdbcType=TIMESTAMP},
+      <if test="businessSubArea != null">
+        #{businessSubArea,jdbcType=VARCHAR},
       </if>
       <if test="updateTime != null">
         #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
       </if>
     </trim>
   </insert>
@@ -140,11 +147,14 @@
       <if test="businessArea != null">
         business_area = #{businessArea,jdbcType=VARCHAR},
       </if>
-      <if test="createTime != null">
-        create_time = #{createTime,jdbcType=TIMESTAMP},
+      <if test="businessSubArea != null">
+        business_sub_area = #{businessSubArea,jdbcType=VARCHAR},
       </if>
       <if test="updateTime != null">
         update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
@@ -160,29 +170,30 @@
       res_params_example = #{resParamsExample,jdbcType=LONGVARCHAR},
       version = #{version,jdbcType=VARCHAR},
       business_area = #{businessArea,jdbcType=VARCHAR},
-      create_time = #{createTime,jdbcType=TIMESTAMP},
-      update_time = #{updateTime,jdbcType=TIMESTAMP}
+      business_sub_area = #{businessSubArea,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
   <insert id="batchInsert" keyColumn="id" keyProperty="id" parameterType="map" useGeneratedKeys="true">
     <!--@mbg.generated-->
     insert into AS_API_CSR
     (`path`, `name`, description, remarks, req_params_example, res_params_example, version, 
-      business_area, create_time, update_time)
+      business_area, business_sub_area, update_time, create_time)
     values
     <foreach collection="list" item="item" separator=",">
       (#{item.path,jdbcType=VARCHAR}, #{item.name,jdbcType=VARCHAR}, #{item.description,jdbcType=VARCHAR}, 
         #{item.remarks,jdbcType=VARCHAR}, #{item.reqParamsExample,jdbcType=LONGVARCHAR}, 
         #{item.resParamsExample,jdbcType=LONGVARCHAR}, #{item.version,jdbcType=VARCHAR}, 
-        #{item.businessArea,jdbcType=VARCHAR}, #{item.createTime,jdbcType=TIMESTAMP}, #{item.updateTime,jdbcType=TIMESTAMP}
-        )
+        #{item.businessArea,jdbcType=VARCHAR}, #{item.businessSubArea,jdbcType=VARCHAR}, 
+        #{item.updateTime,jdbcType=TIMESTAMP}, #{item.createTime,jdbcType=TIMESTAMP})
     </foreach>
   </insert>
 
 <!--auto generated by MybatisCodeHelper on 2021-10-28-->
   <select id="selectOneByPath" resultMap="BaseResultMap">
     select
-    <include refid="Base_Column_List"/>
+    <include refid="Base_Column_List" />
     from AS_API_CSR
     where `path`=#{path,jdbcType=VARCHAR}
     limit 1
@@ -191,7 +202,7 @@
 <!--auto generated by MybatisCodeHelper on 2021-10-29-->
   <select id="selectByVersion" resultMap="BaseResultMap">
         select
-        <include refid="Base_Column_List"/>
+        <include refid="Base_Column_List" />
         from AS_API_CSR
         where version=#{version,jdbcType=VARCHAR}
         order by id
@@ -200,7 +211,7 @@
 <!--auto generated by MybatisCodeHelper on 2021-10-29-->
   <select id="selectByBusinessArea" resultMap="BaseResultMap">
     select
-    <include refid="Base_Column_List"/>
+    <include refid="Base_Column_List" />
     from AS_API_CSR
     where business_area=#{businessArea,jdbcType=VARCHAR}
   </select>
@@ -208,7 +219,7 @@
 <!--auto generated by MybatisCodeHelper on 2021-10-29-->
   <select id="selectAll" resultMap="BaseResultMap">
         select
-        <include refid="Base_Column_List"/>
+        <include refid="Base_Column_List" />
         from AS_API_CSR
         order by id desc;
     </select>
