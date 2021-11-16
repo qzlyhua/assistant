@@ -149,7 +149,7 @@ public class ExportController {
      */
     @RequestMapping("/md/{version}")
     public ResponseData exportMdFile(@PathVariable String version) {
-        Assert.isTrue(version.startsWith("PP"), "版本号规则有误！");
+        Assert.isTrue(version.contains("PP"), "版本号规则有误！");
         List<Chapter> chapters = specificationService.getSpecificationsByVersion(version);
 
         String mdFilePath = "/soft/frontend/docs/" + version + ".md";
@@ -200,7 +200,10 @@ public class ExportController {
                 appender.append("| 属性名 | 类型 | 描述 | 必填 |");
                 appender.append("| :----- | :----: | :----- | :----: |");
                 for (Parameter p : s.getReqParameters()) {
-                    String parameter = "| " + p.getKey() + " | " + p.getType() + " | " + p.getDes() + " | " + p.getIsRequired() + " |";
+                    String parameter = "| " + p.getKey()
+                            + " | " + p.getType().replaceAll("\n", "<br/>")
+                            + " | " + p.getDes().replaceAll("\n", "<br/>")
+                            + " | " + p.getIsRequired().replaceAll("\n", "<br/>") + " |";
                     appender.append(parameter);
                 }
             }
@@ -210,7 +213,10 @@ public class ExportController {
                 appender.append("| 属性名 | 类型 | 描述 | 必填 |");
                 appender.append("| :----- | :----: | :----- | :----: |");
                 for (Parameter p : s.getResParameters()) {
-                    String parameter = "| " + p.getKey() + " | " + p.getType() + " | " + p.getDes() + " | " + p.getIsRequired() + " |";
+                    String parameter = "| " + p.getKey()
+                            + " | " + p.getType().replaceAll("\n", "<br/>")
+                            + " | " + p.getDes().replaceAll("\n", "<br/>")
+                            + " | " + p.getIsRequired().replaceAll("\n", "<br/>") + " |";
                     appender.append(parameter);
                 }
             }
@@ -235,7 +241,7 @@ public class ExportController {
 
             if (!StrUtil.isBlank(s.getReqExampleStr())) {
                 appender.append("#### 入参举例：");
-                appender.append("```json");
+                appender.append(s.getReqExampleStr().trim().startsWith("curl") ? "```bash" : "```json");
                 appender.append(s.getReqExampleStr());
                 appender.append("```");
             } else if (CollUtil.isNotEmpty(s.getReqParameters()) && StrUtil.isBlank(s.getReqExampleStr())) {
@@ -247,7 +253,7 @@ public class ExportController {
 
             if (!StrUtil.isBlank(s.getResExampleStr())) {
                 appender.append("#### 出参举例：");
-                appender.append("```json");
+                appender.append(s.getResExampleStr().trim().startsWith("curl") ? "```bash" : "```json");
                 appender.append(s.getResExampleStr());
                 appender.append("```");
             } else if (CollUtil.isNotEmpty(s.getResParameters()) && StrUtil.isBlank(s.getResExampleStr())) {

@@ -96,7 +96,7 @@ public class DocxUtil {
                 }
                 // 检测到二级标题行（方法名）需要遵循字体格式
                 else if ("%1.%2".equals(numLevelText)) {
-                    paragraphText = paragraphText.replaceAll("\\(", "（").replaceAll("\\)", ")");
+                    paragraphText = paragraphText.replaceAll("\\(", "（").replaceAll("\\)", "）");
                     if (paragraphText.contains("（") && paragraphText.endsWith("）")) {
                         // 遇到二级标题，若有历史数据，需要保存
                         DocUtil.flush(transmissionSpecifications, version, currentBusinessArea, currentBusinessSubArea,
