@@ -101,9 +101,27 @@ public class SpecificationServiceImpl implements SpecificationService {
 
         Set<String> businessAreas = new LinkedHashSet<>();
 
+        // 记录所有ID，用于一次查询所有出入参
+        List<Integer> ids = new ArrayList<>(apiCsrs.size());
         for (ApiCsr apiCsr : apiCsrs) {
+            // 记录所有业务领域名称
             String fullBusAreaName = getFullBusAreaName(apiCsr, type);
             businessAreas.add(fullBusAreaName);
+
+            ids.add(apiCsr.getId());
+        }
+
+        Map<String, List<ApiCsrParam>> paramsMap = new HashMap<>();
+        // 查询所有涉及的出入参
+        List<ApiCsrParam> params = apiCsrParamMapper.selectByCsrIdIn(ids);
+        for (ApiCsrParam p : params) {
+            // 以传输规范ID+出入参类型为key，进行整理
+            String key = p.getCsrId() + p.getType();
+            if (paramsMap.containsKey(key)) {
+                paramsMap.get(key).add(p);
+            } else {
+                paramsMap.put(key, new ArrayList() {{add(p);}});
+            }
         }
 
         Map<String, List<ApiCsr>> map = new HashMap<>(businessAreas.size());
@@ -124,27 +142,33 @@ public class SpecificationServiceImpl implements SpecificationService {
                 Set<String> dicTypes = new HashSet<>();
 
                 List<Parameter> reqParameters = new ArrayList<>();
-                List<ApiCsrParam> reqCsrParams = apiCsrParamMapper.selectByCsrIdAndParameterType(a.getId(), "req");
-                for (ApiCsrParam q : reqCsrParams) {
-                    getDicTypeName(q.getDescribe(), dicTypes);
+                // List<ApiCsrParam> reqCsrParams = apiCsrParamMapper.selectByCsrIdAndParameterType(a.getId(), "req");
+                List<ApiCsrParam> reqCsrParams = paramsMap.get(a.getId() + "req");
+                if (CollUtil.isNotEmpty(reqCsrParams)) {
+                    for (ApiCsrParam q : reqCsrParams) {
+                        getDicTypeName(q.getDescribe(), dicTypes);
 
-                    reqParameters.add(Parameter.builder()
-                            .key(q.getKey())
-                            .des(q.getDescribe())
-                            .type(q.getType())
-                            .isRequired(q.getRequired()).build());
+                        reqParameters.add(Parameter.builder()
+                                .key(q.getKey())
+                                .des(q.getDescribe())
+                                .type(q.getType())
+                                .isRequired(q.getRequired()).build());
+                    }
                 }
 
                 List<Parameter> resParameters = new ArrayList<>();
-                List<ApiCsrParam> resCsrParams = apiCsrParamMapper.selectByCsrIdAndParameterType(a.getId(), "res");
-                for (ApiCsrParam s : resCsrParams) {
-                    getDicTypeName(s.getDescribe(), dicTypes);
+                // List<ApiCsrParam> resCsrParams = apiCsrParamMapper.selectByCsrIdAndParameterType(a.getId(), "res");
+                List<ApiCsrParam> resCsrParams = paramsMap.get(a.getId() + "res");
+                if (CollUtil.isNotEmpty(resCsrParams)) {
+                    for (ApiCsrParam s : resCsrParams) {
+                        getDicTypeName(s.getDescribe(), dicTypes);
 
-                    resParameters.add(Parameter.builder()
-                            .key(s.getKey())
-                            .des(s.getDescribe())
-                            .type(s.getType())
-                            .isRequired(s.getRequired()).build());
+                        resParameters.add(Parameter.builder()
+                                .key(s.getKey())
+                                .des(s.getDescribe())
+                                .type(s.getType())
+                                .isRequired(s.getRequired()).build());
+                    }
                 }
 
                 List<DictionaryTable> dictionaryTableList = new ArrayList<>();
