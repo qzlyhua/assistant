@@ -30,7 +30,7 @@ public class LoginController {
         model.addAttribute("url", url);
         return "login/login";
     }
-    
+
     @RequestMapping(value = "/error/{code}")
     public String error(@PathVariable int code, Model model) {
         String pager = "/500";

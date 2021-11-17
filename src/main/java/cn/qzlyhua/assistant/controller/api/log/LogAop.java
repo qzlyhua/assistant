@@ -28,8 +28,8 @@ public class LogAop {
     /**
      * 记录开始请求的时间
      */
-    private static ThreadLocal<Long> startTime = new ThreadLocal<>();
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private static final ThreadLocal<Long> startTime = new ThreadLocal<>();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Pointcut("execution(public * cn.qzlyhua.assistant.controller.api..*Controller..*(..))")
     public void webLog() {

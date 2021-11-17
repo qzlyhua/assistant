@@ -3,7 +3,6 @@ package cn.qzlyhua.assistant.mapper;
 import cn.qzlyhua.assistant.entity.Origin;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
-import org.springframework.cache.annotation.Cacheable;
 
 import java.util.List;
 

@@ -18,24 +18,7 @@ import java.awt.image.BufferedImage;
  * @author BBF
  */
 public class CodeTextPainter implements TextPainter {
-    /**
-     * 获取单例，枚举方式
-     */
-    private enum Singleton {
-        /**
-         * 枚举单例
-         */
-        INSTANCE;
-
-        private CodeTextPainter textPainter;
-
-        Singleton() {
-            textPainter = new CodeTextPainter();
-        }
-
-        private CodeTextPainter getInstance() {
-            return textPainter;
-        }
+    private CodeTextPainter() {
     }
 
     /**
@@ -45,9 +28,6 @@ public class CodeTextPainter implements TextPainter {
      */
     public static CodeTextPainter getInstance() {
         return CodeTextPainter.Singleton.INSTANCE.getInstance();
-    }
-
-    private CodeTextPainter() {
     }
 
     @Override
@@ -66,5 +46,25 @@ public class CodeTextPainter implements TextPainter {
         // 两端对齐
         ImageUtil.drawString(g, code, 2 * TextPainterFactory.MARGIN, fontY,
                 width - 2 * TextPainterFactory.MARGIN);
+    }
+
+    /**
+     * 获取单例，枚举方式
+     */
+    private enum Singleton {
+        /**
+         * 枚举单例
+         */
+        INSTANCE;
+
+        private final CodeTextPainter textPainter;
+
+        Singleton() {
+            textPainter = new CodeTextPainter();
+        }
+
+        private CodeTextPainter getInstance() {
+            return textPainter;
+        }
     }
 }

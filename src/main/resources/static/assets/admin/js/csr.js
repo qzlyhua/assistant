@@ -12,7 +12,7 @@ var CsrPage = function () {
             formData.append('file', $("#fielUpload")[0].files[0]);
 
             $.ajax({
-                url: "/api/poi/import",
+                url: "/api/poi/importAndPublish",
                 type: 'post',
                 async: true,
                 processData: false,

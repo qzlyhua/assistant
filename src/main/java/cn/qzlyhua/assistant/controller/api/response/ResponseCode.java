@@ -30,16 +30,16 @@ public enum ResponseCode {
     /**
      * 数据库配置错误
      */
-    DB_CONFIG_ERROR(5002,"数据库配置错误");
+    DB_CONFIG_ERROR(5002, "数据库配置错误");
 
     /**
      * 状态码
      */
-    private Integer code;
+    private final Integer code;
     /**
      * 返回信息
      */
-    private String message;
+    private final String message;
 
     ResponseCode(int code, String message) {
         this.code = code;

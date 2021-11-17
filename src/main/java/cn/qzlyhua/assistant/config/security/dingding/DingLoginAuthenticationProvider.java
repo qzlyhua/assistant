@@ -58,16 +58,14 @@ public class DingLoginAuthenticationProvider implements AuthenticationProvider {
             } else {
                 // 从数据库获取openid
                 User user = userMapper.getUserByUsername(openid);
-                if (user != null) {
-                    return true;
-                } else {
-                    return false;
-                }
+                return user != null;
             }
         } else if (ADD_PREFIX.equals(state)) {
             DingUser user = DingDingUtils.getDingUserByCode(dingDingLoginProperties, code);
-            log.info("新增钉钉用户！{}", user);
-            userMapper.insertUser(User.builder().nick(user.getNick()).username(user.getOpenid()).type("9").build());
+            if (userMapper.getUserByUsername(user.getOpenid()) == null) {
+                log.info("新增钉钉用户！{}", user);
+                userMapper.insertUser(User.builder().nick(user.getNick()).username(user.getOpenid()).type("9").build());
+            }
             return true;
         } else {
             return false;

@@ -1,7 +1,8 @@
 package cn.qzlyhua.assistant.entity;
 
-import java.util.Date;
 import lombok.Data;
+
+import java.util.Date;
 
 /**
  * 接口传输规范定义

@@ -13,7 +13,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.apache.ibatis.annotations.Delete;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import java.net.URLEncoder;
 import java.util.List;
 
 /**
@@ -83,14 +81,6 @@ public class CsrController {
         apiCsrParamMapper.deleteByCsrId(Integer.valueOf(id));
     }
 
-    @Data
-    @AllArgsConstructor
-    private class Csr {
-        private ApiCsr apiCsr;
-        private List<ApiCsrParam> req;
-        private List<ApiCsrParam> res;
-    }
-
     /**
      * JSON字符串格式化：默认使用Jackson方案，若json格式存在问题，则不校验，使用HuTool格式化。
      *
@@ -109,5 +99,13 @@ public class CsrController {
             // HuTool 方案。不校验JSON格式。
             return JSONUtil.formatJsonStr(json);
         }
+    }
+
+    @Data
+    @AllArgsConstructor
+    private class Csr {
+        private ApiCsr apiCsr;
+        private List<ApiCsrParam> req;
+        private List<ApiCsrParam> res;
     }
 }

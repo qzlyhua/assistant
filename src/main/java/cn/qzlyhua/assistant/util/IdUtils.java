@@ -7,14 +7,14 @@ package cn.qzlyhua.assistant.util;
  * @author Yang Hua
  */
 public class IdUtils {
+    private static final long DEFAULT_WORKER_ID = 1L;
     private static volatile IdUtils idUtils = null;
     private final long workerId;
-    private static final long DEFAULT_WORKER_ID = 1L;
-    private long sequence = 0L;
     /**
      * 工作机器id
      */
     private final long workerIdBits = 10L;
+    private long sequence = 0L;
     private long lastTimestamp = -1L;
 
     private IdUtils(long workerId) {
@@ -24,6 +24,34 @@ public class IdUtils {
             throw new IllegalArgumentException(String.format("worker Id can't be greater than %d or less than 0", maxWorkerId));
         }
         this.workerId = workerId;
+    }
+
+    public static String generator() {
+        if (idUtils == null) {
+            synchronized (IdUtils.class) {
+                idUtils = new IdUtils(DEFAULT_WORKER_ID);
+            }
+        }
+        try {
+            return String.valueOf(idUtils.nextId());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static Long genLong() {
+        if (idUtils == null) {
+            synchronized (IdUtils.class) {
+                idUtils = new IdUtils(DEFAULT_WORKER_ID);
+            }
+        }
+        try {
+            return idUtils.nextId();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     private synchronized long nextId() throws Exception {
@@ -65,34 +93,5 @@ public class IdUtils {
      */
     private long timeGen() {
         return System.currentTimeMillis();
-    }
-
-
-    public static String generator() {
-        if (idUtils == null) {
-            synchronized (IdUtils.class) {
-                idUtils = new IdUtils(DEFAULT_WORKER_ID);
-            }
-        }
-        try {
-            return String.valueOf(idUtils.nextId());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public static Long genLong() {
-        if (idUtils == null) {
-            synchronized (IdUtils.class) {
-                idUtils = new IdUtils(DEFAULT_WORKER_ID);
-            }
-        }
-        try {
-            return idUtils.nextId();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 }

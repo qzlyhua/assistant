@@ -4,6 +4,7 @@ import lombok.Data;
 
 /**
  * 出入参属性自动完成
+ *
  * @author yanghua
  */
 @Data

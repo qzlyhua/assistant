@@ -14,25 +14,6 @@ import java.awt.image.BufferedImage;
  */
 public class UpcaTextPainter implements TextPainter {
     /**
-     * 获取单例，枚举方式
-     */
-    private enum Singleton {
-        /**
-         * 枚举单例
-         */
-        INSTANCE;
-        private UpcaTextPainter textPainter;
-
-        Singleton() {
-            textPainter = new UpcaTextPainter();
-        }
-
-        private UpcaTextPainter getInstance() {
-            return textPainter;
-        }
-    }
-
-    /**
      * 条码中间数字部分宽度
      */
     private static final int PART_WIDTH = 35;
@@ -40,6 +21,8 @@ public class UpcaTextPainter implements TextPainter {
      * EAN-13，无验证码的长度是12
      */
     private static final int NO_CHECKSUM_LENGTH = 11;
+    private UpcaTextPainter() {
+    }
 
     /**
      * 获取单实例
@@ -48,9 +31,6 @@ public class UpcaTextPainter implements TextPainter {
      */
     public static UpcaTextPainter getInstance() {
         return UpcaTextPainter.Singleton.INSTANCE.getInstance();
-    }
-
-    private UpcaTextPainter() {
     }
 
     @Override
@@ -91,5 +71,24 @@ public class UpcaTextPainter implements TextPainter {
         ImageUtil.drawString(g, p2, leftX + 1, fontY, PART_WIDTH);
         ImageUtil.drawString(g, p3, rightX + 1, fontY, PART_WIDTH);
         g.drawString(p4, rightX + PART_WIDTH + 2 * TextPainterFactory.getCharWidth(), fontY);
+    }
+
+    /**
+     * 获取单例，枚举方式
+     */
+    private enum Singleton {
+        /**
+         * 枚举单例
+         */
+        INSTANCE;
+        private final UpcaTextPainter textPainter;
+
+        Singleton() {
+            textPainter = new UpcaTextPainter();
+        }
+
+        private UpcaTextPainter getInstance() {
+            return textPainter;
+        }
     }
 }

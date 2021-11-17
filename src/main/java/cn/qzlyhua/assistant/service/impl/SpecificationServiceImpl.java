@@ -1,6 +1,10 @@
 package cn.qzlyhua.assistant.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.date.DatePattern;
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.io.file.FileAppender;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import cn.qzlyhua.assistant.dto.specification.Chapter;
@@ -56,8 +60,19 @@ public class SpecificationServiceImpl implements SpecificationService {
         return getSpecifications(apiCsrs, GROUP_TYPE_BUSINESS);
     }
 
+    @Override
+    public List<String> getSpecificationsBusinessAreaByUpdateTime(Date time) {
+        return apiCsrMapper.selectBusinessAreaByUpdateTimeAfter(time);
+    }
+
+    @Override
+    public List<String> getSpecificationsBusinessAreaByVersion(String version) {
+        return apiCsrMapper.selectBusinessAreaByVersion(version);
+    }
+
     /**
      * 根据文档类型，提取业务领域
+     *
      * @param apiCsr
      * @param type
      * @return
@@ -199,16 +214,21 @@ public class SpecificationServiceImpl implements SpecificationService {
     }
 
     /**
-     * JSON代码块（带高亮效果）
+     * Word文件内插入代码块（带高亮效果）
      *
      * @param code
      * @return
      */
     private HighlightRenderData getHighlightRenderData(String code) {
         HighlightRenderData source = new HighlightRenderData();
-        // 不能返回空，会导致渲染时报错
-        source.setCode(StrUtil.isNotBlank(code) ? prettyJson(code) : "{\"_key\":\"_value\"}");
-        source.setLanguage("json");
+        if (StrUtil.isNotBlank(code) && code.trim().startsWith("curl")) {
+            source.setCode(code);
+            source.setLanguage("bash");
+        } else {
+            // 不能返回空，会导致渲染时报错
+            source.setCode(StrUtil.isNotBlank(code) ? prettyJson(code) : "{\"_field\":\"_value\"}");
+            source.setLanguage("json");
+        }
         source.setStyle(HighlightStyle.builder()
                 .withShowLine(false)
                 .withFontFamily("Consolas")
@@ -246,6 +266,66 @@ public class SpecificationServiceImpl implements SpecificationService {
                 DocxUtil.getAnalysisResult(file, version) :
                 DocUtil.getAnalysisResult(file, version);
         return importSpecificationsFromWordToDb(book.getTransmissionSpecifications(), book.getDictionaries());
+    }
+
+    @Override
+    public void publishMarkDownFilesByVersion(List<Chapter> chapters, String version) {
+        String mdFilePath = "/soft/frontend/docs/" + version + ".md";
+        if (FileUtil.exist(mdFilePath)) {
+            FileUtil.del(mdFilePath);
+        }
+        FileUtil.touch(mdFilePath);
+        FileAppender appender = new FileAppender(FileUtil.file(mdFilePath), 16, true);
+        appender.append("# " + version);
+        appender.append("> 最近更新：" + DateUtil.format(new Date(), DatePattern.NORM_DATETIME_PATTERN));
+        appender.append("----\n");
+        for (Chapter c : chapters) {
+            appendFileByChapter(appender, c);
+        }
+        appender.append("© 2021 新昌医惠数字科技有限公司. All Rights Reserved.");
+
+        appender.flush();
+        appender.toString();
+
+        String sideBarMdFile = "/soft/frontend/docs/_sidebar.md";
+        String sideBarStr = FileUtil.readUtf8String(sideBarMdFile);
+        String currentSide = "* [" + version + "](/" + version + ".md)";
+        if (!sideBarStr.contains(currentSide)) {
+            sideBarStr = sideBarStr.replace("* [概述](/)", "* [概述](/)\n" + currentSide);
+        }
+        FileUtil.del(sideBarMdFile);
+        FileUtil.touch(sideBarMdFile);
+        FileUtil.writeUtf8String(sideBarStr, sideBarMdFile);
+    }
+
+    @Override
+    public void publishMarkDownFilesByBusinessArea(List<Chapter> chapters, String businessArea) {
+        String mdFilePath = "/soft/frontend/docs/business/" + businessArea + ".md";
+        if (FileUtil.exist(mdFilePath)) {
+            FileUtil.del(mdFilePath);
+        }
+        FileUtil.touch(mdFilePath);
+        FileAppender appender = new FileAppender(FileUtil.file(mdFilePath), 16, true);
+        appender.append("# " + businessArea);
+        appender.append("> 最近更新：" + DateUtil.format(new Date(), DatePattern.NORM_DATETIME_PATTERN));
+        appender.append("----\n");
+        for (Chapter c : chapters) {
+            appendFileByChapter(appender, c);
+        }
+        appender.append("© 2021 新昌医惠数字科技有限公司. All Rights Reserved.");
+
+        appender.flush();
+        appender.toString();
+
+        String sideBarMdFile = "/soft/frontend/docs/business/_sidebar.md";
+        String sideBarStr = FileUtil.readUtf8String(sideBarMdFile);
+        String currentSide = "* [" + businessArea + "](/business/" + businessArea + ".md)";
+        if (!sideBarStr.contains(currentSide)) {
+            sideBarStr = sideBarStr.replace("* [概述](/business/)", "* [概述](/business/)\n" + currentSide);
+        }
+        FileUtil.del(sideBarMdFile);
+        FileUtil.touch(sideBarMdFile);
+        FileUtil.writeUtf8String(sideBarStr, sideBarMdFile);
     }
 
     /**
@@ -325,5 +405,90 @@ public class SpecificationServiceImpl implements SpecificationService {
         }
 
         return transmissionSpecifications.size();
+    }
+
+    private void appendFileByChapter(FileAppender appender, Chapter chapter) {
+        appender.append("## " + chapter.getHeadWord());
+        for (Service s : chapter.getServices()) {
+            appender.append("");
+            appender.append("### `" + s.getServiceName() + "`（" + s.getServiceNick() + "）");
+            appender.append("#### 功能描述：");
+            appender.append(s.getDescription());
+            if (!StrUtil.isBlank(s.getExplain()) && !"无".equals(s.getExplain())) {
+                appender.append("");
+                appender.append("!> " + s.getExplain());
+                appender.append("");
+            }
+
+            if (CollUtil.isNotEmpty(s.getReqParameters())) {
+                appender.append("#### 入参说明：");
+                appender.append("| 属性名 | 类型 | 描述 | 必填 |");
+                appender.append("| :----- | :----: | :----- | :----: |");
+                for (Parameter p : s.getReqParameters()) {
+                    String parameter = "| " + p.getKey()
+                            + " | " + p.getType().replaceAll("\n", "<br/>")
+                            + " | " + p.getDes().replaceAll("\n", "<br/>")
+                            + " | " + p.getIsRequired().replaceAll("\n", "<br/>") + " |";
+                    appender.append(parameter);
+                }
+            }
+
+            if (CollUtil.isNotEmpty(s.getResParameters())) {
+                appender.append("#### 出参说明：");
+                appender.append("| 属性名 | 类型 | 描述 | 必填 |");
+                appender.append("| :----- | :----: | :----- | :----: |");
+                for (Parameter p : s.getResParameters()) {
+                    String parameter = "| " + p.getKey()
+                            + " | " + p.getType().replaceAll("\n", "<br/>")
+                            + " | " + p.getDes().replaceAll("\n", "<br/>")
+                            + " | " + p.getIsRequired().replaceAll("\n", "<br/>") + " |";
+                    appender.append(parameter);
+                }
+            }
+
+            if (CollUtil.isNotEmpty(s.getDictionaries())) {
+                appender.append("#### 数据字典：");
+
+                appender.append("<table>");
+                appender.append("<tr><td>字典类别</td><td>代码</td><td>含义</td></tr>");
+                for (DictionaryTable d : s.getDictionaries()) {
+                    appender.append("<tr><td rowspan=\"" + d.getSize() + "\">" + d.getType() + "</td><td>" +
+                            d.getDictionaryList().get(0).getCode() + "</td><td>" +
+                            d.getDictionaryList().get(0).getName() + "</td></tr>");
+                    for (int i = 1; i <= d.getDictionaryList().size() - 1; i++) {
+                        cn.qzlyhua.assistant.dto.specification.Dictionary dictionary = d.getDictionaryList().get(i);
+                        appender.append("<tr><td>" + dictionary.getCode() + "</td><td>" + dictionary.getName() + "</td></tr>");
+                    }
+                }
+                appender.append("</table>");
+            }
+            appender.append("");
+
+            if (!StrUtil.isBlank(s.getReqExampleStr())) {
+                appender.append("#### 入参举例：");
+                appender.append(s.getReqExampleStr().trim().startsWith("curl") ? "```bash" : "```json");
+                appender.append(s.getReqExampleStr());
+                appender.append("```");
+            } else if (CollUtil.isNotEmpty(s.getReqParameters()) && StrUtil.isBlank(s.getReqExampleStr())) {
+                appender.append("#### 入参举例：");
+                appender.append("");
+                appender.append("?> _TODO_ 待完善");
+                appender.append("");
+            }
+
+            if (!StrUtil.isBlank(s.getResExampleStr())) {
+                appender.append("#### 出参举例：");
+                appender.append(s.getResExampleStr().trim().startsWith("curl") ? "```bash" : "```json");
+                appender.append(s.getResExampleStr());
+                appender.append("```");
+            } else if (CollUtil.isNotEmpty(s.getResParameters()) && StrUtil.isBlank(s.getResExampleStr())) {
+                appender.append("#### 出参举例：");
+                appender.append("");
+                appender.append("?> _TODO_ 待完善");
+                appender.append("");
+            }
+
+            appender.append("----");
+        }
     }
 }

@@ -15,6 +15,6 @@ public interface UserMapper {
     @Select("select * from AS_RE_USER where username=#{username}")
     User getUserByUsername(String username);
 
-    @Insert({ "insert into AS_RE_USER(nick, username, type) values( #{nick}, #{username}, #{type})" })
+    @Insert({"insert into AS_RE_USER(nick, username, type) values( #{nick}, #{username}, #{type})"})
     int insertUser(User user);
 }

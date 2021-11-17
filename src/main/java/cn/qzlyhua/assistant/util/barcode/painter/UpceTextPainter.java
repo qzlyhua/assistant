@@ -15,25 +15,6 @@ import java.awt.image.BufferedImage;
  */
 public class UpceTextPainter implements TextPainter {
     /**
-     * 获取单例，枚举方式
-     */
-    private enum Singleton {
-        /**
-         * 枚举单例
-         */
-        INSTANCE;
-        private UpceTextPainter textPainter;
-
-        Singleton() {
-            textPainter = new UpceTextPainter();
-        }
-
-        private UpceTextPainter getInstance() {
-            return textPainter;
-        }
-    }
-
-    /**
      * 条码中间数字部分宽度
      */
     private static final int PART_WIDTH = 42;
@@ -41,6 +22,8 @@ public class UpceTextPainter implements TextPainter {
      * EAN-13，无验证码的长度是12
      */
     private static final int NO_CHECKSUM_LENGTH = 7;
+    private UpceTextPainter() {
+    }
 
     /**
      * 获取单实例
@@ -49,9 +32,6 @@ public class UpceTextPainter implements TextPainter {
      */
     public static UpceTextPainter getInstance() {
         return UpceTextPainter.Singleton.INSTANCE.getInstance();
-    }
-
-    private UpceTextPainter() {
     }
 
     @Override
@@ -88,5 +68,24 @@ public class UpceTextPainter implements TextPainter {
         // 两端对齐
         ImageUtil.drawString(g, p2, leftX + 1, fontY, PART_WIDTH);
         g.drawString(p3, leftX + PART_WIDTH + TextPainterFactory.getCharWidth(), fontY);
+    }
+
+    /**
+     * 获取单例，枚举方式
+     */
+    private enum Singleton {
+        /**
+         * 枚举单例
+         */
+        INSTANCE;
+        private final UpceTextPainter textPainter;
+
+        Singleton() {
+            textPainter = new UpceTextPainter();
+        }
+
+        private UpceTextPainter getInstance() {
+            return textPainter;
+        }
     }
 }

@@ -14,25 +14,6 @@ import java.awt.image.BufferedImage;
  */
 public class Ean13TextPainter implements TextPainter {
     /**
-     * 获取单例，枚举方式
-     */
-    private enum Singleton {
-        /**
-         * 枚举单例
-         */
-        INSTANCE;
-        private Ean13TextPainter textPainter;
-
-        Singleton() {
-            textPainter = new Ean13TextPainter();
-        }
-
-        private Ean13TextPainter getInstance() {
-            return textPainter;
-        }
-    }
-
-    /**
      * 条码中间数字部分宽度
      */
     private static final int PART_WIDTH = 42;
@@ -40,6 +21,8 @@ public class Ean13TextPainter implements TextPainter {
      * EAN-13，无验证码的长度是12
      */
     private static final int NO_CHECKSUM_LENGTH = 12;
+    private Ean13TextPainter() {
+    }
 
     /**
      * 获取单实例
@@ -48,9 +31,6 @@ public class Ean13TextPainter implements TextPainter {
      */
     public static Ean13TextPainter getInstance() {
         return Ean13TextPainter.Singleton.INSTANCE.getInstance();
-    }
-
-    private Ean13TextPainter() {
     }
 
     @Override
@@ -87,5 +67,24 @@ public class Ean13TextPainter implements TextPainter {
         // 两端对齐
         ImageUtil.drawString(g, p2, leftX + 1, fontY, PART_WIDTH);
         ImageUtil.drawString(g, p3, rightX + 1, fontY, PART_WIDTH);
+    }
+
+    /**
+     * 获取单例，枚举方式
+     */
+    private enum Singleton {
+        /**
+         * 枚举单例
+         */
+        INSTANCE;
+        private final Ean13TextPainter textPainter;
+
+        Singleton() {
+            textPainter = new Ean13TextPainter();
+        }
+
+        private Ean13TextPainter getInstance() {
+            return textPainter;
+        }
     }
 }

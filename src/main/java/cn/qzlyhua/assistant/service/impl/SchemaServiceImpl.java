@@ -15,7 +15,6 @@ import cn.qzlyhua.assistant.entity.TableInfo;
 import cn.qzlyhua.assistant.mapper.DbInfoMapper;
 import cn.qzlyhua.assistant.service.SchemaService;
 import cn.qzlyhua.assistant.util.DruidDataSourceUtils;
-import com.alibaba.druid.pool.DruidDataSource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 

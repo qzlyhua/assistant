@@ -26,16 +26,14 @@ import java.util.*;
 @Service
 public class DbManagerImpl implements DbManager {
     private static Map<Integer, Db> dbMap;
+    @Resource
+    DbConfigMapper dbConfigMapper;
+    @Resource
+    OriginMapper originMapper;
 
     DbManagerImpl() {
         dbMap = new HashMap<>();
     }
-
-    @Resource
-    DbConfigMapper dbConfigMapper;
-
-    @Resource
-    OriginMapper originMapper;
 
     @Override
     public int selectRouteConfigCount(String originCode) throws SQLException {

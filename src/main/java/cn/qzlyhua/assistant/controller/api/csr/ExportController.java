@@ -1,18 +1,12 @@
 package cn.qzlyhua.assistant.controller.api.csr;
 
-import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
-import cn.hutool.core.io.file.FileAppender;
 import cn.hutool.core.io.resource.ResourceUtil;
-import cn.hutool.core.util.StrUtil;
 import cn.qzlyhua.assistant.controller.api.response.Response;
 import cn.qzlyhua.assistant.controller.api.response.ResponseData;
 import cn.qzlyhua.assistant.dto.specification.Chapter;
-import cn.qzlyhua.assistant.dto.specification.DictionaryTable;
-import cn.qzlyhua.assistant.dto.specification.Parameter;
-import cn.qzlyhua.assistant.dto.specification.Service;
 import cn.qzlyhua.assistant.service.SpecificationService;
 import cn.qzlyhua.assistant.util.word.Word2PdfAsposeUtil;
 import com.aspose.words.SaveFormat;
@@ -39,7 +33,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 /**
- * MySQL数据库操作
+ * 传输规范导出
  *
  * @author yanghua
  */
@@ -50,6 +44,21 @@ import java.util.*;
 public class ExportController {
     @Resource
     SpecificationService specificationService;
+
+    /**
+     * 针对不同的浏览器进行文件名中文编码处理
+     *
+     * @param fileName
+     * @param request
+     * @return
+     */
+    public static String encodeFileName(String fileName, HttpServletRequest request) throws UnsupportedEncodingException {
+        String agent = request.getHeader("USER-AGENT");
+        if (agent != null && agent.contains("Mozilla")) {
+            return new String(URLEncoder.encode(fileName, "UTF-8").getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1);
+        }
+        return fileName;
+    }
 
     /**
      * 导出word文档（按版本或业务领域）
@@ -130,140 +139,19 @@ public class ExportController {
     }
 
     /**
-     * 针对不同的浏览器进行文件名中文编码处理
-     *
-     * @param fileName
-     * @param request
-     * @return
-     */
-    public static String encodeFileName(String fileName, HttpServletRequest request) throws UnsupportedEncodingException {
-        String agent = request.getHeader("USER-AGENT");
-        if (agent != null && agent.contains("Mozilla")) {
-            return new String(URLEncoder.encode(fileName, "UTF-8").getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1);
-        }
-        return fileName;
-    }
-
-    /**
      * 导出MD文档（按版本）
      */
     @RequestMapping("/md/{version}")
     public ResponseData exportMdFile(@PathVariable String version) {
         Assert.isTrue(version.contains("PP"), "版本号规则有误！");
         List<Chapter> chapters = specificationService.getSpecificationsByVersion(version);
-
-        String mdFilePath = "/soft/frontend/docs/" + version + ".md";
-        if (FileUtil.exist(mdFilePath)) {
-            FileUtil.del(mdFilePath);
+        specificationService.publishMarkDownFilesByVersion(chapters, version);
+        // 对应业务领域的文档同步发布
+        List<String> businessAreas = specificationService.getSpecificationsBusinessAreaByVersion(version);
+        for (String bizName : businessAreas) {
+            List<Chapter> cs = specificationService.getSpecificationsByBusinessArea(bizName);
+            specificationService.publishMarkDownFilesByBusinessArea(cs, bizName);
         }
-        FileUtil.touch(mdFilePath);
-        FileAppender appender = new FileAppender(FileUtil.file(mdFilePath), 16, true);
-        appender.append("# " + version);
-        appender.append("> 最近更新：" + DateUtil.format(new Date(), DatePattern.NORM_DATETIME_PATTERN));
-        appender.append("----\n");
-        for (Chapter c : chapters) {
-            appendFile(appender, c);
-        }
-        appender.append("© 2021 新昌医惠数字科技有限公司. All Rights Reserved.");
-
-        appender.flush();
-        appender.toString();
-
-        String sideBarMdFile = "/soft/frontend/docs/_sidebar.md";
-        String sideBarStr = FileUtil.readUtf8String(sideBarMdFile);
-        String currentSide = "* [" + version + "](/" + version + ".md)";
-        if (!sideBarStr.contains(currentSide)) {
-            sideBarStr = sideBarStr.replace("* [概述](/)", "* [概述](/)\n" + currentSide);
-        }
-        FileUtil.del(sideBarMdFile);
-        FileUtil.touch(sideBarMdFile);
-        FileUtil.writeUtf8String(sideBarStr, sideBarMdFile);
-
         return new ResponseData(200, version + "文档发布完成", null);
-    }
-
-    private void appendFile(FileAppender appender, Chapter chapter) {
-        appender.append("## " + chapter.getHeadWord());
-        for (Service s : chapter.getServices()) {
-            appender.append("");
-            appender.append("### " + s.getTitle());
-            appender.append("#### 功能描述：");
-            appender.append(s.getDescription());
-            if (!StrUtil.isBlank(s.getExplain()) && !"无".equals(s.getExplain())) {
-                appender.append("");
-                appender.append("!> " + s.getExplain());
-                appender.append("");
-            }
-
-            if (CollUtil.isNotEmpty(s.getReqParameters())) {
-                appender.append("#### 入参说明：");
-                appender.append("| 属性名 | 类型 | 描述 | 必填 |");
-                appender.append("| :----- | :----: | :----- | :----: |");
-                for (Parameter p : s.getReqParameters()) {
-                    String parameter = "| " + p.getKey()
-                            + " | " + p.getType().replaceAll("\n", "<br/>")
-                            + " | " + p.getDes().replaceAll("\n", "<br/>")
-                            + " | " + p.getIsRequired().replaceAll("\n", "<br/>") + " |";
-                    appender.append(parameter);
-                }
-            }
-
-            if (CollUtil.isNotEmpty(s.getResParameters())) {
-                appender.append("#### 出参说明：");
-                appender.append("| 属性名 | 类型 | 描述 | 必填 |");
-                appender.append("| :----- | :----: | :----- | :----: |");
-                for (Parameter p : s.getResParameters()) {
-                    String parameter = "| " + p.getKey()
-                            + " | " + p.getType().replaceAll("\n", "<br/>")
-                            + " | " + p.getDes().replaceAll("\n", "<br/>")
-                            + " | " + p.getIsRequired().replaceAll("\n", "<br/>") + " |";
-                    appender.append(parameter);
-                }
-            }
-
-            if (CollUtil.isNotEmpty(s.getDictionaries())) {
-                appender.append("#### 数据字典：");
-
-                appender.append("<table>");
-                appender.append("<tr><td>字典类别</td><td>代码</td><td>含义</td></tr>");
-                for (DictionaryTable d : s.getDictionaries()) {
-                    appender.append("<tr><td rowspan=\"" + d.getSize() + "\">" + d.getType() + "</td><td>" +
-                            d.getDictionaryList().get(0).getCode() + "</td><td>" +
-                            d.getDictionaryList().get(0).getName() + "</td></tr>");
-                    for (int i = 1; i <= d.getDictionaryList().size() - 1; i++) {
-                        cn.qzlyhua.assistant.dto.specification.Dictionary dictionary = d.getDictionaryList().get(i);
-                        appender.append("<tr><td>" + dictionary.getCode() + "</td><td>" + dictionary.getName() + "</td></tr>");
-                    }
-                }
-                appender.append("</table>");
-            }
-            appender.append("");
-
-            if (!StrUtil.isBlank(s.getReqExampleStr())) {
-                appender.append("#### 入参举例：");
-                appender.append(s.getReqExampleStr().trim().startsWith("curl") ? "```bash" : "```json");
-                appender.append(s.getReqExampleStr());
-                appender.append("```");
-            } else if (CollUtil.isNotEmpty(s.getReqParameters()) && StrUtil.isBlank(s.getReqExampleStr())) {
-                appender.append("#### 入参举例：");
-                appender.append("");
-                appender.append("?> _TODO_ 待完善");
-                appender.append("");
-            }
-
-            if (!StrUtil.isBlank(s.getResExampleStr())) {
-                appender.append("#### 出参举例：");
-                appender.append(s.getResExampleStr().trim().startsWith("curl") ? "```bash" : "```json");
-                appender.append(s.getResExampleStr());
-                appender.append("```");
-            } else if (CollUtil.isNotEmpty(s.getResParameters()) && StrUtil.isBlank(s.getResExampleStr())) {
-                appender.append("#### 出参举例：");
-                appender.append("");
-                appender.append("?> _TODO_ 待完善");
-                appender.append("");
-            }
-
-            appender.append("----");
-        }
     }
 }

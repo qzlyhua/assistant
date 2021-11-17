@@ -24,14 +24,6 @@ import java.util.List;
 public class DingLoginAuthenticationProcessingFilter extends AbstractAuthenticationProcessingFilter {
     public static final String SPRING_SECURITY_FORM_STATE_KEY = "state";
     public static final String SPRING_SECURITY_FORM_CODE_KEY = "code";
-
-    private String codeParameter = SPRING_SECURITY_FORM_CODE_KEY;
-    private String stateParameter = SPRING_SECURITY_FORM_STATE_KEY;
-
-    public DingLoginAuthenticationProcessingFilter() {
-        super(new AntPathRequestMatcher("/dinglogin", "GET"));
-    }
-
     /**
      * 钉钉登录用户拥有 ROLE_DING 权限
      */
@@ -39,6 +31,12 @@ public class DingLoginAuthenticationProcessingFilter extends AbstractAuthenticat
             new SimpleGrantedAuthority(SecurityConfig.ROLE_DING),
             new SimpleGrantedAuthority(SecurityConfig.ROLE_USER)
     );
+    private final String codeParameter = SPRING_SECURITY_FORM_CODE_KEY;
+    private final String stateParameter = SPRING_SECURITY_FORM_STATE_KEY;
+
+    public DingLoginAuthenticationProcessingFilter() {
+        super(new AntPathRequestMatcher("/dinglogin", "GET"));
+    }
 
     protected String obtainCode(HttpServletRequest request) {
         return request.getParameter(codeParameter);

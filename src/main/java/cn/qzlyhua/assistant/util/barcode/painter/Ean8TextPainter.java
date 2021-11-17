@@ -14,25 +14,6 @@ import java.awt.image.BufferedImage;
  */
 public class Ean8TextPainter implements TextPainter {
     /**
-     * 获取单例，枚举方式
-     */
-    private enum Singleton {
-        /**
-         * 枚举单例
-         */
-        INSTANCE;
-        private Ean8TextPainter textPainter;
-
-        Singleton() {
-            textPainter = new Ean8TextPainter();
-        }
-
-        private Ean8TextPainter getInstance() {
-            return textPainter;
-        }
-    }
-
-    /**
      * 条码中间数字部分宽度
      */
     private static final int PART_WIDTH = 28;
@@ -40,6 +21,8 @@ public class Ean8TextPainter implements TextPainter {
      * EAN-8，无验证码的长度是7
      */
     private static final int NO_CHECKSUM_LENGTH = 7;
+    private Ean8TextPainter() {
+    }
 
     /**
      * 获取单实例
@@ -48,9 +31,6 @@ public class Ean8TextPainter implements TextPainter {
      */
     public static Ean8TextPainter getInstance() {
         return Ean8TextPainter.Singleton.INSTANCE.getInstance();
-    }
-
-    private Ean8TextPainter() {
     }
 
     @Override
@@ -84,5 +64,24 @@ public class Ean8TextPainter implements TextPainter {
         // 两端对齐
         ImageUtil.drawString(g, p1, leftX + 1, fontY, PART_WIDTH);
         ImageUtil.drawString(g, p2, rightX + 1, fontY, PART_WIDTH);
+    }
+
+    /**
+     * 获取单例，枚举方式
+     */
+    private enum Singleton {
+        /**
+         * 枚举单例
+         */
+        INSTANCE;
+        private final Ean8TextPainter textPainter;
+
+        Singleton() {
+            textPainter = new Ean8TextPainter();
+        }
+
+        private Ean8TextPainter getInstance() {
+            return textPainter;
+        }
     }
 }

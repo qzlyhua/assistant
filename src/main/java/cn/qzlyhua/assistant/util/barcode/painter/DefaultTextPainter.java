@@ -10,23 +10,7 @@ import java.awt.image.BufferedImage;
  * @author BBF
  */
 public class DefaultTextPainter implements TextPainter {
-    /**
-     * 获取单例，枚举方式
-     */
-    private enum Singleton {
-        /**
-         * 枚举单例
-         */
-        INSTANCE;
-        private DefaultTextPainter textPainter;
-
-        Singleton() {
-            textPainter = new DefaultTextPainter();
-        }
-
-        private DefaultTextPainter getInstance() {
-            return textPainter;
-        }
+    private DefaultTextPainter() {
     }
 
     /**
@@ -36,9 +20,6 @@ public class DefaultTextPainter implements TextPainter {
      */
     public static DefaultTextPainter getInstance() {
         return DefaultTextPainter.Singleton.INSTANCE.getInstance();
-    }
-
-    private DefaultTextPainter() {
     }
 
     @Override
@@ -58,5 +39,24 @@ public class DefaultTextPainter implements TextPainter {
         int fontY = height - TextPainterFactory.FONT_SIZE / 4;
         // 两个字符间距
         g.drawString(code, fontX, fontY);
+    }
+
+    /**
+     * 获取单例，枚举方式
+     */
+    private enum Singleton {
+        /**
+         * 枚举单例
+         */
+        INSTANCE;
+        private final DefaultTextPainter textPainter;
+
+        Singleton() {
+            textPainter = new DefaultTextPainter();
+        }
+
+        private DefaultTextPainter getInstance() {
+            return textPainter;
+        }
     }
 }

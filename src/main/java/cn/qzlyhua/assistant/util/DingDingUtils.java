@@ -28,7 +28,7 @@ public class DingDingUtils {
     /**
      * 缓存的 AccessToken
      */
-    private static AccessToken accessToken = new AccessToken();
+    private static final AccessToken accessToken = new AccessToken();
 
     public static String getUrl(DingDingProperties dingDingLoginProperties, String state) {
         try {
@@ -130,21 +130,6 @@ public class DingDingUtils {
         }
     }
 
-    @Getter
-    private static class AccessToken {
-        private Date getTime;
-        private String token;
-
-        private void setGetTime(Date time) {
-            this.getTime = time;
-        }
-
-        private void setToken(String token) {
-            setGetTime(new Date());
-            this.token = token;
-        }
-    }
-
     /**
      * 新增钉钉用户到文件内
      */
@@ -170,7 +155,6 @@ public class DingDingUtils {
         }
     }
 
-
     /**
      * 从文件内读取钉钉用户
      *
@@ -194,6 +178,21 @@ public class DingDingUtils {
         } catch (IOException e) {
             e.printStackTrace();
             return new HashSet<>();
+        }
+    }
+
+    @Getter
+    private static class AccessToken {
+        private Date getTime;
+        private String token;
+
+        private void setGetTime(Date time) {
+            this.getTime = time;
+        }
+
+        private void setToken(String token) {
+            setGetTime(new Date());
+            this.token = token;
         }
     }
 }

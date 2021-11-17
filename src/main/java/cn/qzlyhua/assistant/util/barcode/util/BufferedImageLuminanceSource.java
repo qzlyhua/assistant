@@ -14,12 +14,11 @@ import java.awt.image.BufferedImage;
  */
 public final class BufferedImageLuminanceSource extends LuminanceSource {
 
+    public static final int BLACK = 0xFF000000;
+    public static final int WHITE = 0xFFFFFFFF;
     private final BufferedImage image;
     private final int left;
     private final int top;
-
-    public static final int BLACK = 0xFF000000;
-    public static final int WHITE = 0xFFFFFFFF;
 
     /**
      * 构造函数

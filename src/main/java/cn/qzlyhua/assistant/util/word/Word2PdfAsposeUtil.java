@@ -1,7 +1,6 @@
 package cn.qzlyhua.assistant.util.word;
 
 import com.aspose.words.Document;
-import com.aspose.words.ImportFormatMode;
 import com.aspose.words.License;
 import com.aspose.words.SaveFormat;
 import org.springframework.core.io.ClassPathResource;

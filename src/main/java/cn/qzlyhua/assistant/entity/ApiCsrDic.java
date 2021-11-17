@@ -5,22 +5,22 @@ import lombok.Data;
 @Data
 public class ApiCsrDic {
     /**
-    * 主键
-    */
+     * 主键
+     */
     private Integer id;
 
     /**
-    * 字典类别
-    */
+     * 字典类别
+     */
     private String type;
 
     /**
-    * 代码
-    */
+     * 代码
+     */
     private String code;
 
     /**
-    * 含义
-    */
+     * 含义
+     */
     private String name;
 }
