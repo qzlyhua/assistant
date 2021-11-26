@@ -7,6 +7,7 @@ import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.file.FileAppender;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
+import cn.qzlyhua.assistant.dto.csr.message.NoticeForChange;
 import cn.qzlyhua.assistant.dto.specification.Chapter;
 import cn.qzlyhua.assistant.dto.specification.DictionaryTable;
 import cn.qzlyhua.assistant.dto.specification.Parameter;
@@ -70,6 +71,24 @@ public class SpecificationServiceImpl implements SpecificationService {
         return apiCsrMapper.selectBusinessAreaByVersion(version);
     }
 
+    @Override
+    public void deleteAllByVersion(String version) {
+        // 删除参数
+        apiCsrParamMapper.deleteByCsrIdIn(apiCsrMapper.selectIdByVersion(version));
+        // 删除传输规范主表
+        apiCsrMapper.deleteByVersion(version);
+    }
+
+    @Override
+    public List<ApiCsr> getApiCsrsByVersion(String version) {
+        return apiCsrMapper.selectByVersion(version);
+    }
+
+    @Override
+    public List<ApiCsrParam> getApiCsrParamsByVersion(String version) {
+        return apiCsrParamMapper.selectByVersion(version);
+    }
+
     /**
      * 根据文档类型，提取业务领域
      *
@@ -111,16 +130,18 @@ public class SpecificationServiceImpl implements SpecificationService {
             ids.add(apiCsr.getId());
         }
 
-        Map<String, List<ApiCsrParam>> paramsMap = new HashMap<>();
+        Map<String, List<ApiCsrParam>> paramsMap = new HashMap<>(2 * ids.size());
         // 查询所有涉及的出入参
         List<ApiCsrParam> params = apiCsrParamMapper.selectByCsrIdIn(ids);
         for (ApiCsrParam p : params) {
             // 以传输规范ID+出入参类型为key，进行整理
-            String key = p.getCsrId() + p.getType();
+            String key = p.getCsrId() + p.getParameterType();
             if (paramsMap.containsKey(key)) {
                 paramsMap.get(key).add(p);
             } else {
-                paramsMap.put(key, new ArrayList() {{add(p);}});
+                paramsMap.put(key, new ArrayList() {{
+                    add(p);
+                }});
             }
         }
 
@@ -196,6 +217,8 @@ public class SpecificationServiceImpl implements SpecificationService {
                 Service service = Service.builder()
                         .serviceName(a.getPath())
                         .serviceNick(a.getName())
+                        .version(a.getVersion())
+                        .businessArea(a.getBusinessArea())
                         .description(a.getDescription())
                         .explain(a.getRemarks() == null ? "无" : a.getRemarks())
                         .reqParameters(reqParameters)
@@ -304,7 +327,7 @@ public class SpecificationServiceImpl implements SpecificationService {
         appender.append("> 最近更新：" + DateUtil.format(new Date(), DatePattern.NORM_DATETIME_PATTERN));
         appender.append("----\n");
         for (Chapter c : chapters) {
-            appendFileByChapter(appender, c);
+            appendFileByChapter(appender, c, GROUP_TYPE_VERSION);
         }
         appender.append("© 2021 新昌医惠数字科技有限公司. All Rights Reserved.");
 
@@ -334,7 +357,7 @@ public class SpecificationServiceImpl implements SpecificationService {
         appender.append("> 最近更新：" + DateUtil.format(new Date(), DatePattern.NORM_DATETIME_PATTERN));
         appender.append("----\n");
         for (Chapter c : chapters) {
-            appendFileByChapter(appender, c);
+            appendFileByChapter(appender, c, GROUP_TYPE_BUSINESS);
         }
         appender.append("© 2021 新昌医惠数字科技有限公司. All Rights Reserved.");
 
@@ -352,17 +375,32 @@ public class SpecificationServiceImpl implements SpecificationService {
         FileUtil.writeUtf8String(sideBarStr, sideBarMdFile);
     }
 
+    @Override
+    public void publishMarkDownFilesOfChangelog(NoticeForChange noticeForChange) {
+        String changeInfoMarkDownText = noticeForChange.getChangeInfoMarkDownText();
+        List<String> lines = new ArrayList<>(Arrays.asList(changeInfoMarkDownText.split("\n")));
+
+        String mdFilePath = "/soft/frontend/docs/changelog.md";
+        lines.addAll(FileUtil.readUtf8Lines(mdFilePath));
+
+        FileUtil.del(mdFilePath);
+        FileUtil.touch(mdFilePath);
+        FileUtil.writeUtf8Lines(lines, mdFilePath);
+    }
+
     /**
      * word文件导入-入库处理
      */
     public int importSpecificationsFromWordToDb(List<TransmissionSpecification> transmissionSpecifications, List<cn.qzlyhua.assistant.util.word.Dictionary> dictionaries) {
+
         for (TransmissionSpecification e : transmissionSpecifications) {
-            String path = e.getPath();
-            ApiCsr tmp = apiCsrMapper.selectOneByPath(path);
-            if (tmp != null) {
-                apiCsrMapper.deleteByPrimaryKey(tmp.getId());
-                apiCsrParamMapper.deleteByCsrId(tmp.getId());
-            }
+            // 需要预先删除重复数据，此处不再单独校验删除
+//            String path = e.getPath();
+//            ApiCsr tmp = apiCsrMapper.selectOneByPath(path);
+//            if (tmp != null) {
+//                apiCsrMapper.deleteByPrimaryKey(tmp.getId());
+//                apiCsrParamMapper.deleteByCsrId(tmp.getId());
+//            }
 
             ApiCsr apiCsr = new ApiCsr();
             apiCsr.setPath(e.getPath());
@@ -377,6 +415,7 @@ public class SpecificationServiceImpl implements SpecificationService {
             apiCsr.setCreateTime(new Date());
             apiCsr.setUpdateTime(new Date());
 
+            // 因为需要拿到ID，简单处理，此处使用单条插入。
             apiCsrMapper.insert(apiCsr);
 
             List<ApiCsrParam> params = new ArrayList<>();
@@ -431,11 +470,26 @@ public class SpecificationServiceImpl implements SpecificationService {
         return transmissionSpecifications.size();
     }
 
-    private void appendFileByChapter(FileAppender appender, Chapter chapter) {
+    private void appendFileByChapter(FileAppender appender, Chapter chapter, String type) {
         appender.append("## " + chapter.getHeadWord());
         for (Service s : chapter.getServices()) {
             appender.append("");
             appender.append("### `" + s.getServiceName() + "`（" + s.getServiceNick() + "）");
+
+            if (GROUP_TYPE_BUSINESS.equals(type)) {
+                appender.append("[![VERSION](https://img.shields.io/badge/Version-"
+                        + s.getVersion()
+                        + "-f2849e.svg \"VERSION\")](https://docs.wiseheartdoctor.cn/#/"
+                        + s.getVersion()
+                        + " \"VERSION\")");
+            } else {
+                appender.append("[![Business Domain](https://img.shields.io/badge/Business%20Domain-"
+                        + s.getBusinessArea()
+                        + "-f2849e.svg \"Business Domain\")](https://docs.wiseheartdoctor.cn/#/business/"
+                        + s.getBusinessArea()
+                        + " \"Business Domain\")");
+            }
+
             appender.append("#### 功能描述：");
             appender.append(s.getDescription());
             if (!StrUtil.isBlank(s.getExplain()) && !"无".equals(s.getExplain())) {

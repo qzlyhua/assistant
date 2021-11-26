@@ -1,0 +1,9 @@
+[my_oms]
+url = jdbc:mysql://124.71.195.67:3306/dev_oms?useUnicode=true&characterEncoding=UTF-8&useSSL=false&useTimezone=true&serverTimezone=Asia/Shanghai&allowMultiQueries=true&autoReconnect=true
+user = root
+pass = XCwjj@xcewell123
+
+[my_ass]
+url = jdbc:mysql://124.71.195.67:3306/assistant?useUnicode=true&characterEncoding=UTF-8&useSSL=false&useTimezone=true&serverTimezone=Asia/Shanghai&allowMultiQueries=true&autoReconnect=true
+user = root
+pass = XCwjj@xcewell123

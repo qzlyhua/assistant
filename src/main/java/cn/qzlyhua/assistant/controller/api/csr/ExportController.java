@@ -69,7 +69,7 @@ public class ExportController {
     @RequestMapping("/word/{fileName}")
     public void exportWordFile(@PathVariable String fileName, HttpServletRequest request, HttpServletResponse response) throws IOException {
         fileName = fileName.toUpperCase(Locale.ROOT);
-        List<Chapter> chapters = fileName.startsWith("PP") ? specificationService.getSpecificationsByVersion(fileName) :
+        List<Chapter> chapters = fileName.contains("PP") ? specificationService.getSpecificationsByVersion(fileName) :
                 specificationService.getSpecificationsByBusinessArea(fileName);
         response.setContentType("application/msword");
         response.setHeader("Content-Disposition", "attachment;filename=" + encodeFileName("传输规范-" + fileName, request) + ".docx");

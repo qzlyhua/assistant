@@ -1,0 +1,18 @@
+connectionsPerHost=10
+threadsAllowedToBlockForConnectionMultiplier=10
+maxWaitTime = 120000
+connectTimeout=0
+socketTimeout=0
+socketKeepAlive=false
+
+[group_dev_mongo]
+host = 124.71.195.67:27017
+user = admin
+pass = XCwjj@xcewell123
+database = admin
+
+[group_pro_mongo]
+host = 10.175.53.119:27017
+user = xcadmin
+pass = XCwjj@xcewell123
+database = admin

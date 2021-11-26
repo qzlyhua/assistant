@@ -29,4 +29,8 @@ public interface ApiCsrParamMapper<selectAllByDescribeLike> {
     List<ApiCsrParam> selectByCsrIdIn(@Param("csrIdCollection")Collection<Integer> csrIdCollection);
 
     List<Recommendation> getParamKeysRecommendation(@Param("query") String query, @Param("limit") Integer limit);
+
+    int deleteByCsrIdIn(@Param("csrIdCollection")Collection<Integer> csrIdCollection);
+
+    List<ApiCsrParam> selectByVersion(@Param("version")String version);
 }

@@ -27,6 +27,16 @@ public class Service {
     private String serviceNick;
 
     /**
+     * 服务所属版本
+     */
+    private String version;
+
+    /**
+     * 业务领域
+     */
+    private String businessArea;
+
+    /**
      * 功能描述
      */
     private String description;

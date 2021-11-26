@@ -1,6 +1,9 @@
 package cn.qzlyhua.assistant.service;
 
+import cn.qzlyhua.assistant.dto.csr.message.NoticeForChange;
 import cn.qzlyhua.assistant.dto.specification.Chapter;
+import cn.qzlyhua.assistant.entity.ApiCsr;
+import cn.qzlyhua.assistant.entity.ApiCsrParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -24,4 +27,12 @@ public interface SpecificationService {
     void publishMarkDownFilesByVersion(List<Chapter> chapters, String version);
 
     void publishMarkDownFilesByBusinessArea(List<Chapter> chapters, String businessArea);
+
+    void publishMarkDownFilesOfChangelog(NoticeForChange noticeForChange);
+
+    void deleteAllByVersion(String version);
+
+    List<ApiCsr> getApiCsrsByVersion(String version);
+
+    List<ApiCsrParam> getApiCsrParamsByVersion(String version);
 }

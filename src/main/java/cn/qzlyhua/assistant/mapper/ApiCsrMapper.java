@@ -38,4 +38,8 @@ public interface ApiCsrMapper {
     List<GroupByBusinessArea> statisticsByBusinessArea();
 
     List<GroupByVersion> statisticsByVersion();
+
+    int deleteByVersion(@Param("version")String version);
+
+    List<Integer> selectIdByVersion(@Param("version")String version);
 }

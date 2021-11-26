@@ -63,10 +63,7 @@
             <artifactId>spring-boot-starter-security</artifactId>
             <version>2.1.10.RELEASE</version>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-mongodb</artifactId>
-        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
@@ -109,9 +106,14 @@
             <scope>runtime</scope>
         </dependency>
         <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongo-java-driver</artifactId>
+            <version>3.12.10</version>
+        </dependency>
+        <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
-            <version>5.5.2</version>
+            <version>5.7.16</version>
         </dependency>
         <!-- 本地jar包，需要 -->
         <dependency>
@@ -185,57 +187,57 @@
 <!--                <artifactId>git-commit-id-plugin</artifactId>-->
 <!--            </plugin>-->
 
-            <plugin>
-                <groupId>cn.smallbun.screw</groupId>
-                <artifactId>screw-maven-plugin</artifactId>
-                <version>1.0.5</version>
-                <dependencies>
-                    <!-- HikariCP -->
-                    <dependency>
-                        <groupId>com.zaxxer</groupId>
-                        <artifactId>HikariCP</artifactId>
-                        <version>3.4.5</version>
-                    </dependency>
-                    <!--mysql driver-->
-                    <dependency>
-                        <groupId>mysql</groupId>
-                        <artifactId>mysql-connector-java</artifactId>
-                        <version>8.0.20</version>
-                    </dependency>
-                </dependencies>
-                <configuration>
-                    <!--username-->
-                    <username>root</username>
-                    <!--password-->
-                    <password>ewell@xc</password>
-                    <!--driver-->
-                    <driverClassName>com.mysql.cj.jdbc.Driver</driverClassName>
-                    <!--jdbc url-->
-                    <jdbcUrl>jdbc:mysql://192.168.150.103:3306/assistant</jdbcUrl>
-                    <!--生成文件类型-->
-                    <fileType>HTML</fileType>
-                    <!--打开文件输出目录-->
-                    <openOutputDir>false</openOutputDir>
-                    <!--生成模板-->
-                    <produceType>freemarker</produceType>
-                    <!--文档名称 为空时:将采用[数据库名称-描述-版本号]作为文档名称-->
-                    <!-- <fileName>测试文档名称</fileName>-->
-                    <!--描述-->
-                    <description>数据库文档</description>
-                    <!--版本-->
-                    <version>${project.version}</version>
-                    <!--标题-->
-                    <title>数据库文档</title>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>cn.smallbun.screw</groupId>-->
+<!--                <artifactId>screw-maven-plugin</artifactId>-->
+<!--                <version>1.0.5</version>-->
+<!--                <dependencies>-->
+<!--                    &lt;!&ndash; HikariCP &ndash;&gt;-->
+<!--                    <dependency>-->
+<!--                        <groupId>com.zaxxer</groupId>-->
+<!--                        <artifactId>HikariCP</artifactId>-->
+<!--                        <version>3.4.5</version>-->
+<!--                    </dependency>-->
+<!--                    &lt;!&ndash;mysql driver&ndash;&gt;-->
+<!--                    <dependency>-->
+<!--                        <groupId>mysql</groupId>-->
+<!--                        <artifactId>mysql-connector-java</artifactId>-->
+<!--                        <version>8.0.20</version>-->
+<!--                    </dependency>-->
+<!--                </dependencies>-->
+<!--                <configuration>-->
+<!--                    &lt;!&ndash;username&ndash;&gt;-->
+<!--                    <username>root</username>-->
+<!--                    &lt;!&ndash;password&ndash;&gt;-->
+<!--                    <password>ewell@xc</password>-->
+<!--                    &lt;!&ndash;driver&ndash;&gt;-->
+<!--                    <driverClassName>com.mysql.cj.jdbc.Driver</driverClassName>-->
+<!--                    &lt;!&ndash;jdbc url&ndash;&gt;-->
+<!--                    <jdbcUrl>jdbc:mysql://192.168.150.103:3306/assistant</jdbcUrl>-->
+<!--                    &lt;!&ndash;生成文件类型&ndash;&gt;-->
+<!--                    <fileType>HTML</fileType>-->
+<!--                    &lt;!&ndash;打开文件输出目录&ndash;&gt;-->
+<!--                    <openOutputDir>false</openOutputDir>-->
+<!--                    &lt;!&ndash;生成模板&ndash;&gt;-->
+<!--                    <produceType>freemarker</produceType>-->
+<!--                    &lt;!&ndash;文档名称 为空时:将采用[数据库名称-描述-版本号]作为文档名称&ndash;&gt;-->
+<!--                    &lt;!&ndash; <fileName>测试文档名称</fileName>&ndash;&gt;-->
+<!--                    &lt;!&ndash;描述&ndash;&gt;-->
+<!--                    <description>数据库文档</description>-->
+<!--                    &lt;!&ndash;版本&ndash;&gt;-->
+<!--                    <version>${project.version}</version>-->
+<!--                    &lt;!&ndash;标题&ndash;&gt;-->
+<!--                    <title>数据库文档</title>-->
+<!--                </configuration>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <phase>compile</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>run</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
         </plugins>
         <!--suppress UnresolvedMavenProperty -->
 <!--        <finalName>${project.name}-${project.version}-${git.commit.id.abbrev}</finalName>-->

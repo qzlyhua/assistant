@@ -67,7 +67,7 @@ public class LogAop {
             log.warn("Can't serialize return Object to json string", e);
         }
 
-        log.info("HANDLE_TIME : {} ms", +(System.currentTimeMillis() - startTime.get()));
+        log.info("HANDLE_TIME : {} ms", (System.currentTimeMillis() - startTime.get()));
         startTime.remove();
     }
 }
