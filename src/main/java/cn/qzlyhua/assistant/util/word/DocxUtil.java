@@ -78,7 +78,7 @@ public class DocxUtil {
                 System.out.println("[" + numLevelText + "][" + style + "] \t" + paragraphText);
 
                 // 检测到一级标题行（业务领域）
-                if ("%1、".equals(numLevelText)) {
+                if ("%1、".equals(numLevelText) || "3".equals(style)) {
                     // 遇到一级标题，若有历史数据，需要保存
                     DocUtil.flush(transmissionSpecifications, version, currentBusinessArea, currentBusinessSubArea,
                             currentPath, currentName, currentDescription, currentRemarks,
@@ -95,7 +95,7 @@ public class DocxUtil {
                     }
                 }
                 // 检测到二级标题行（方法名）需要遵循字体格式
-                else if ("%1.%2".equals(numLevelText)) {
+                else if ("%1.%2".equals(numLevelText) || "5".equals(style)) {
                     paragraphText = paragraphText.replaceAll("\\(", "（").replaceAll("\\)", "）");
                     if (paragraphText.contains("（") && paragraphText.endsWith("）")) {
                         // 遇到二级标题，若有历史数据，需要保存

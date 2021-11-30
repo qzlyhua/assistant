@@ -68,7 +68,7 @@ public class FillReqAndResExample {
      * @throws SQLException
      */
     private static List<String> getServiceNameWhereReqExampleIsNull() throws SQLException {
-        String sql = "select path from AS_API_CSR where req_params_example is null";
+        String sql = "select path from AS_API_CSR where req_params_example is null and version = 'PP001'";
         List<Entity> entities = Db.use("my_ass").query(sql);
         return entities.stream().map(e -> e.getStr("path")).collect(Collectors.toList());
     }
@@ -80,7 +80,7 @@ public class FillReqAndResExample {
      * @throws SQLException
      */
     private static List<String> getServiceNameWhereResExampleIsNull() throws SQLException {
-        String sql = "select path from AS_API_CSR where res_params_example is null";
+        String sql = "select path from AS_API_CSR where res_params_example is null and version = 'PP001'";
         List<Entity> entities = Db.use("my_ass").query(sql);
         return entities.stream().map(e -> e.getStr("path")).collect(Collectors.toList());
     }

@@ -2,8 +2,10 @@ package cn.qzlyhua.assistant.service;
 
 import cn.qzlyhua.assistant.dto.csr.message.NoticeForChange;
 import cn.qzlyhua.assistant.dto.specification.Chapter;
+import cn.qzlyhua.assistant.dto.specification.DictionaryTable;
 import cn.qzlyhua.assistant.entity.ApiCsr;
 import cn.qzlyhua.assistant.entity.ApiCsrParam;
+import com.deepoove.poi.data.RowRenderData;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -35,4 +37,8 @@ public interface SpecificationService {
     List<ApiCsr> getApiCsrsByVersion(String version);
 
     List<ApiCsrParam> getApiCsrParamsByVersion(String version);
+
+    NoticeForChange getNoticeForChange(String version, List<ApiCsr> origApiCsrs, List<ApiCsrParam> origApiCsrParams);
+
+    List<DictionaryTable> getCsrDictionariesFromChapters(List<Chapter> chapters);
 }

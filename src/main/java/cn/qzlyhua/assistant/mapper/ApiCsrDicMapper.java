@@ -24,5 +24,7 @@ public interface ApiCsrDicMapper {
 
     List<ApiCsrDic> selectAllByType(@Param("type") String type);
 
+    List<ApiCsrDic> selectAllByCsrVersion(@Param("version")String version);
 
+    List<ApiCsrDic> selectAllByCsrBusinessArea(@Param("area")String area);
 }

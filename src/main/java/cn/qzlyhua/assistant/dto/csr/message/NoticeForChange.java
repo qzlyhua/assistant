@@ -8,6 +8,7 @@ import lombok.Data;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * 接口变更通知
@@ -47,25 +48,28 @@ public class NoticeForChange {
             sb.append("#### 传输规范变更：[" + getVersion() + "](https://docs.wiseheartdoctor.cn/#/" + getVersion() + ")\n");
 
             if (CollUtil.isNotEmpty(getInterfaceAdded())) {
-                sb.append("##### 新增接口：\n");
                 for (InterfaceChangeInfo i : getInterfaceAdded()) {
-                    sb.append("[" + i.getServicePath() + "（" + i.getServiceName() + "）](https://docs.wiseheartdoctor.cn/#/" + getVersion()
-                            + "?id=" + i.getServicePath() + "%EF%BC%88" + URLUtil.encode(i.getServiceName()) + "%EF%BC%89" + ")\n");
+                    sb.append("##### 新增接口：[`" + i.getServicePath() + "`（" + i.getServiceName() + "）](https://docs.wiseheartdoctor.cn/#/"
+                            + getVersion()
+                            + "?id=" + i.getServicePath().replaceAll("/", "").toLowerCase(Locale.ROOT)
+                            + "%EF%BC%88" + URLUtil.encode(i.getServiceName()) + "%EF%BC%89" + ")\n");
+                    sb.append("----\n");
                 }
             }
 
             if (CollUtil.isNotEmpty(getInterfaceDeleted())) {
-                sb.append("##### 删除接口：\n");
                 for (InterfaceChangeInfo i : getInterfaceAdded()) {
-                    sb.append(i.getServicePath() + "（" + i.getServiceName() + "）\n");
+                    sb.append("##### 删除接口：`" + i.getServicePath() + "`（" + i.getServiceName() + "）\n");
+                    sb.append("----\n");
                 }
             }
 
             if (CollUtil.isNotEmpty(getInterfaceEdited())) {
-                sb.append("##### 修改接口：\n");
                 for (InterfaceChangeInfo i : getInterfaceEdited()) {
-                    sb.append("###### [" + i.getServicePath() + "（" + i.getServiceName() + "）](https://docs.wiseheartdoctor.cn/#/" + getVersion()
-                            + "?id=" + i.getServicePath() + "%EF%BC%88" + URLUtil.encode(i.getServiceName()) + "%EF%BC%89" + ")\n");
+                    sb.append("##### 修改接口： [`" + i.getServicePath() + "`（" + i.getServiceName() + "）](https://docs.wiseheartdoctor.cn/#/"
+                            + getVersion()
+                            + "?id=" + i.getServicePath().replaceAll("/", "").toLowerCase(Locale.ROOT)
+                            + "%EF%BC%88" + URLUtil.encode(i.getServiceName()) + "%EF%BC%89" + ")\n");
 
                     appendParametersTable(sb, "新增入参", i.getReqParamsAdded());
                     appendParametersTable(sb, "删除入参", i.getReqParamsDeleted());
@@ -73,32 +77,65 @@ public class NoticeForChange {
                     appendParametersTable(sb, "新增出参", i.getResParamsAdded());
                     appendParametersTable(sb, "删除出参", i.getResParamsDeleted());
                     appendParametersTable(sb, "修改出参", i.getResParamsEdited());
+                    sb.append("----\n");
                 }
             }
         }
-        sb.append("----\n");
-        return sb.toString();
+
+        return sb.append("\n").toString();
     }
 
     private static void appendParametersTable(StringBuffer sb, String title, List<Parameter> parameters) {
         if (CollUtil.isNotEmpty(parameters)) {
-            sb.append("###### " + title + "：\n\n");
+            sb.append(title + "：\n\n");
             sb.append("| 属性名 | 类型 | 描述 | 必填 |\n");
             sb.append("| :----- | :----: | :----- | :----: |\n");
             for (Parameter p : parameters) {
                 sb.append("| " + p.getKey() + " | " + p.getType() + " | " + p.getDes() + " | " + p.getIsRequired() + " | \n");
             }
+            sb.append("\n");
         }
     }
 
+    /**
+     * 获取发送钉钉机器人提醒消息的Markdown文本内容
+     * 钉钉消息不支持表格等复杂格式
+     *
+     * @return
+     */
     public String getDingTalkNoticeMarkDownText() {
-        //https://docs.wiseheartdoctor.cn/#/changelog?id=_2021-11-26-165032
         StringBuffer sb = new StringBuffer("#### 传输规范发布通知\n");
         if (isNewVersion) {
             sb.append("\uD83D\uDCE3 传输规范发布：[" + getVersion() + "](https://docs.wiseheartdoctor.cn/#/" + URLUtil.encode(getVersion()) + ")\n");
         } else {
-            sb.append("\uD83D\uDCE3 传输规范变更：[" + getVersion() + "](https://docs.wiseheartdoctor.cn/#/changelog?id=_" + DateUtil.format(getChangeTime(), "yyyy-MM-dd-hhmmss") + ")\n");
+            sb.append("\uD83D\uDCE3 传输规范变更：[" + getVersion() + "](https://docs.wiseheartdoctor.cn/#/changelog?id=_" + DateUtil.format(getChangeTime(), "yyyy-MM-dd-hhmmss") + ")\n\n");
 
+            if (CollUtil.isNotEmpty(getInterfaceDeleted())) {
+                sb.append("\n\n删除接口：\n\n");
+                for (InterfaceChangeInfo i : getInterfaceDeleted()) {
+                    sb.append(i.getServicePath() + "（" + i.getServiceName() + "）\n\n");
+                }
+            }
+
+            if (CollUtil.isNotEmpty(getInterfaceAdded())) {
+                sb.append("\n\n新增接口：\n\n");
+                for (InterfaceChangeInfo i : getInterfaceAdded()) {
+                    sb.append("[" + i.getServicePath() + "（" + i.getServiceName() + "）](https://docs.wiseheartdoctor.cn/#/"
+                            + getVersion()
+                            + "?id=" + i.getServicePath().replaceAll("/", "").toLowerCase(Locale.ROOT)
+                            + "%EF%BC%88" + URLUtil.encode(i.getServiceName()) + "%EF%BC%89" + ")\n\n");
+                }
+            }
+
+            if (CollUtil.isNotEmpty(getInterfaceEdited())) {
+                sb.append("\n\n修改接口：\n\n");
+                for (InterfaceChangeInfo i : getInterfaceEdited()) {
+                    sb.append("[" + i.getServicePath() + "（" + i.getServiceName() + "）](https://docs.wiseheartdoctor.cn/#/"
+                            + getVersion()
+                            + "?id=" + i.getServicePath().replaceAll("/", "").toLowerCase(Locale.ROOT)
+                            + "%EF%BC%88" + URLUtil.encode(i.getServiceName()) + "%EF%BC%89" + ")\n\n");
+                }
+            }
         }
         return sb.toString();
     }

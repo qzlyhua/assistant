@@ -106,4 +106,29 @@
         from AS_API_CSR_DIC
         where `type`=#{type,jdbcType=VARCHAR}
     </select>
+
+  <select id="selectAllByCsrVersion" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from AS_API_CSR_DIC where type in(
+          select SUBSTR(d , POSITION('：' IN d) +1 ) from (
+          select DISTINCT REPLACE(`describe`,'）','') as d from AS_API_CSR_PARAM where csr_id in(
+          select id from AS_API_CSR where version=#{version,jdbcType=VARCHAR}
+          ) and `describe` like '%字典：%）'
+          )t
+          ) order by type asc, (id + 1) asc
+    </select>
+
+  <select id="selectAllByCsrBusinessArea" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from AS_API_CSR_DIC where type in(
+    select SUBSTR(d , POSITION('：' IN d) +1 ) from (
+    select DISTINCT REPLACE(`describe`,'）','') as d from AS_API_CSR_PARAM where csr_id in(
+    select id from AS_API_CSR where business_area=#{area,jdbcType=VARCHAR}
+    ) and `describe` like '%字典：%）'
+    )t
+    ) order by type asc, (id + 1) asc
+  </select>
+
 </mapper>

@@ -28,6 +28,7 @@ public class DingLoginAuthenticationToken extends AbstractAuthenticationToken {
         } else {
             throw new IllegalArgumentException("principal cannot be null or empty");
         }
+
     }
 
     @Override

@@ -3,7 +3,7 @@ var CsrPage = function () {
         $("#fielUpload").click();
     };
 
-    var uploadWordFile = function () {
+    var uploadAndPublish = function (sendMessage) {
         if ($("#fielUpload")[0].files[0]) {
             $("#tableDiv").hide();
             $("#loadingDiv").show();
@@ -12,7 +12,7 @@ var CsrPage = function () {
             formData.append('file', $("#fielUpload")[0].files[0]);
 
             $.ajax({
-                url: "/api/poi/importAndPublish",
+                url: sendMessage ? "/api/poi/importAndPublish" : "/api/poi/importAndPublishQuietly",
                 type: 'post',
                 async: true,
                 processData: false,
@@ -23,20 +23,34 @@ var CsrPage = function () {
                     if (data.code == 200) {
                         toastr.success(data.message);
                         $("#loadingDiv").hide();
-                        window.setTimeout(function(){location.reload()}, 2500);
+                        window.setTimeout(function () {
+                            location.reload()
+                        }, 2500);
                     } else {
                         toastr.clear();
                         toastr.error(data.message);
-                        window.setTimeout(function(){location.reload()}, 3000);
+                        window.setTimeout(function () {
+                            location.reload()
+                        }, 3000);
                     }
                 },
                 error: function (data) {
                     toastr.clear();
                     toastr.error(data.message);
-                    window.setTimeout(function(){location.reload()}, 3000);
+                    window.setTimeout(function () {
+                        location.reload()
+                    }, 3000);
                 }
             });
         }
+    }
+
+    var uploadWordFile = function () {
+        uploadAndPublish(true);
+    };
+
+    var uploadWordFileQuietly = function () {
+        uploadAndPublish(false);
     };
 
     return {
@@ -45,6 +59,9 @@ var CsrPage = function () {
         },
         uploadWordFile: function () {
             uploadWordFile();
+        },
+        uploadWordFileQuietly: function () {
+            uploadWordFileQuietly();
         }
     }
 }();

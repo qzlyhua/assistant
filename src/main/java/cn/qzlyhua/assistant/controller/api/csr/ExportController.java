@@ -7,7 +7,9 @@ import cn.hutool.core.io.resource.ResourceUtil;
 import cn.qzlyhua.assistant.controller.api.response.Response;
 import cn.qzlyhua.assistant.controller.api.response.ResponseData;
 import cn.qzlyhua.assistant.dto.specification.Chapter;
+import cn.qzlyhua.assistant.dto.specification.DictionaryTable;
 import cn.qzlyhua.assistant.service.SpecificationService;
+import cn.qzlyhua.assistant.util.word.CsrDictionariesTablePolicy;
 import cn.qzlyhua.assistant.util.word.Word2PdfAsposeUtil;
 import com.aspose.words.SaveFormat;
 import com.deepoove.poi.XWPFTemplate;
@@ -71,6 +73,8 @@ public class ExportController {
         fileName = fileName.toUpperCase(Locale.ROOT);
         List<Chapter> chapters = fileName.contains("PP") ? specificationService.getSpecificationsByVersion(fileName) :
                 specificationService.getSpecificationsByBusinessArea(fileName);
+
+        List<DictionaryTable> dictionaries = specificationService.getCsrDictionariesFromChapters(chapters);
         response.setContentType("application/msword");
         response.setHeader("Content-Disposition", "attachment;filename=" + encodeFileName("传输规范-" + fileName, request) + ".docx");
         ServletOutputStream out = response.getOutputStream();
@@ -79,6 +83,7 @@ public class ExportController {
         map.put("version", fileName);
         map.put("today", DateUtil.format(new Date(), DatePattern.CHINESE_DATE_PATTERN));
         map.put("chapters", chapters);
+        map.put("dictionaries", dictionaries);
         // 目录，打开word文件后会提醒生成目录
         map.put("toc", "");
 
@@ -90,6 +95,7 @@ public class ExportController {
                 .bind("reqExample", highlightRenderPolicy)
                 .bind("resExample", highlightRenderPolicy)
                 .bind("toc", new TOCRenderPolicy())
+                .bind("dictionaries", new CsrDictionariesTablePolicy())
                 .useSpringEL()
                 .build();
 
@@ -112,6 +118,7 @@ public class ExportController {
         fileName = fileName.toUpperCase(Locale.ROOT);
         List<Chapter> chapters = fileName.startsWith("PP") ? specificationService.getSpecificationsByVersion(fileName) :
                 specificationService.getSpecificationsByBusinessArea(fileName);
+        List<DictionaryTable> dictionaries = specificationService.getCsrDictionariesFromChapters(chapters);
         response.setContentType("application/pdf");
         response.setHeader("Content-Disposition", "attachment;filename=" + encodeFileName("传输规范-" + fileName, request) + ".pdf");
 
@@ -119,6 +126,7 @@ public class ExportController {
         map.put("version", fileName);
         map.put("today", DateUtil.format(new Date(), DatePattern.CHINESE_DATE_PATTERN));
         map.put("chapters", chapters);
+        map.put("dictionaries", dictionaries);
 
         LoopRowTableRenderPolicy loopRowTableRenderPolicy = new LoopRowTableRenderPolicy();
         HighlightRenderPolicy highlightRenderPolicy = new HighlightRenderPolicy();
@@ -127,6 +135,7 @@ public class ExportController {
                 .bind("resParameters", loopRowTableRenderPolicy)
                 .bind("reqExample", highlightRenderPolicy)
                 .bind("resExample", highlightRenderPolicy)
+                .bind("dictionaries", new CsrDictionariesTablePolicy())
                 .useSpringEL()
                 .build();
 
