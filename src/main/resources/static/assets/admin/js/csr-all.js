@@ -29,7 +29,6 @@ var CsrAllPage = function () {
         } else {
             $a.attr("lastClickTime", now);
             toastr.info("请再次点击确认该操作");
-
         }
     };
 
@@ -45,14 +44,14 @@ var CsrAllPage = function () {
 
     var exportWord = function () {
         if ($(".fa-minus").length == 0) {
-            toastr.error("请选择要导出的接口！");
+            toastr.error("请添加要导出的接口！");
             return;
         } else {
             var ids = [];
             $(".fa-minus").each(function () {
                 ids.push($(this).attr("csrId"));
             });
-            var fileName = prompt("请输入文件名", "");
+            var fileName = prompt("请输入文件名", "").trim();
             if (fileName) {
                 var url = document.location.protocol + "//" + document.location.host + "/api/exportWord?fileName=" + fileName + "&ids=" + ids.join(",");
                 down(url, fileName);
@@ -61,6 +60,7 @@ var CsrAllPage = function () {
     };
 
     function down(url, name) {
+        toastr.info("正在导出，请稍后...");
         var a = document.createElement("a");
         a.download = name + ".docx";
         a.href = url;
