@@ -22,6 +22,7 @@ public class UpceTextPainter implements TextPainter {
      * EAN-13，无验证码的长度是12
      */
     private static final int NO_CHECKSUM_LENGTH = 7;
+
     private UpceTextPainter() {
     }
 

@@ -21,6 +21,7 @@ public class Ean8TextPainter implements TextPainter {
      * EAN-8，无验证码的长度是7
      */
     private static final int NO_CHECKSUM_LENGTH = 7;
+
     private Ean8TextPainter() {
     }
 

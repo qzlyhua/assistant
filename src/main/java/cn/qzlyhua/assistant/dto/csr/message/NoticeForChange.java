@@ -40,6 +40,18 @@ public class NoticeForChange {
      */
     private List<InterfaceChangeInfo> interfaceEdited = new ArrayList<>();
 
+    private static void appendParametersTable(StringBuffer sb, String title, List<Parameter> parameters) {
+        if (CollUtil.isNotEmpty(parameters)) {
+            sb.append(title + "：\n\n");
+            sb.append("| 属性名 | 类型 | 描述 | 必填 |\n");
+            sb.append("| :----- | :----: | :----- | :----: |\n");
+            for (Parameter p : parameters) {
+                sb.append("| " + p.getKey() + " | " + p.getType() + " | " + p.getDes() + " | " + p.getIsRequired() + " | \n");
+            }
+            sb.append("\n");
+        }
+    }
+
     public String getChangeInfoMarkDownText() {
         StringBuffer sb = new StringBuffer("### " + DateUtil.formatDateTime(getChangeTime()) + "\n");
         if (isNewVersion) {
@@ -83,18 +95,6 @@ public class NoticeForChange {
         }
 
         return sb.append("\n").toString();
-    }
-
-    private static void appendParametersTable(StringBuffer sb, String title, List<Parameter> parameters) {
-        if (CollUtil.isNotEmpty(parameters)) {
-            sb.append(title + "：\n\n");
-            sb.append("| 属性名 | 类型 | 描述 | 必填 |\n");
-            sb.append("| :----- | :----: | :----- | :----: |\n");
-            for (Parameter p : parameters) {
-                sb.append("| " + p.getKey() + " | " + p.getType() + " | " + p.getDes() + " | " + p.getIsRequired() + " | \n");
-            }
-            sb.append("\n");
-        }
     }
 
     /**

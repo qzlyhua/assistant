@@ -1,5 +1,6 @@
 package cn.qzlyhua.assistant.controller.api.csr;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
@@ -21,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
@@ -68,12 +70,32 @@ public class ExportController {
      * @param response
      * @throws IOException
      */
+    @RequestMapping("/exportWord")
+    public void exportWordFileByIds(@RequestParam String fileName, @RequestParam String ids, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String[] sids = ids.split(",");
+        Integer[] is = new Integer[sids.length];
+        for (int i = 0; i < sids.length; i++) {
+            is[i] = Integer.parseInt(sids[i]);
+        }
+        List<Chapter> chapters = specificationService.getSpecificationsByIds(is);
+        exportWord(chapters, fileName, request, response);
+    }
+
+    /**
+     * 导出word文档（按版本或业务领域）
+     *
+     * @param response
+     * @throws IOException
+     */
     @RequestMapping("/word/{fileName}")
     public void exportWordFile(@PathVariable String fileName, HttpServletRequest request, HttpServletResponse response) throws IOException {
         fileName = fileName.toUpperCase(Locale.ROOT);
         List<Chapter> chapters = fileName.contains("PP") ? specificationService.getSpecificationsByVersion(fileName) :
                 specificationService.getSpecificationsByBusinessArea(fileName);
+        exportWord(chapters, fileName, request, response);
+    }
 
+    private void exportWord(List<Chapter> chapters, String fileName, HttpServletRequest request, HttpServletResponse response) throws IOException {
         List<DictionaryTable> dictionaries = specificationService.getCsrDictionariesFromChapters(chapters);
         response.setContentType("application/msword");
         response.setHeader("Content-Disposition", "attachment;filename=" + encodeFileName("传输规范-" + fileName, request) + ".docx");
@@ -84,6 +106,7 @@ public class ExportController {
         map.put("today", DateUtil.format(new Date(), DatePattern.CHINESE_DATE_PATTERN));
         map.put("chapters", chapters);
         map.put("dictionaries", dictionaries);
+        map.put("needDic", CollUtil.isNotEmpty(dictionaries));
         // 目录，打开word文件后会提醒生成目录
         map.put("toc", "");
 
@@ -127,6 +150,7 @@ public class ExportController {
         map.put("today", DateUtil.format(new Date(), DatePattern.CHINESE_DATE_PATTERN));
         map.put("chapters", chapters);
         map.put("dictionaries", dictionaries);
+        map.put("needDic", CollUtil.isNotEmpty(dictionaries));
 
         LoopRowTableRenderPolicy loopRowTableRenderPolicy = new LoopRowTableRenderPolicy();
         HighlightRenderPolicy highlightRenderPolicy = new HighlightRenderPolicy();

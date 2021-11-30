@@ -1,4 +1,5 @@
 package cn.qzlyhua.assistant.mapper;
+import java.util.Collection;
 
 import cn.qzlyhua.assistant.dto.csr.GroupByBusinessArea;
 import cn.qzlyhua.assistant.dto.csr.GroupByVersion;
@@ -29,9 +30,11 @@ public interface ApiCsrMapper {
 
     List<ApiCsr> selectByBusinessArea(@Param("businessArea") String businessArea);
 
+    List<ApiCsr> selectByIdIn(@Param("idCollection")Collection<Integer> idCollection);
+
     List<String> selectBusinessAreaByUpdateTimeAfter(@Param("minUpdateTime") Date minUpdateTime);
 
-    List<String> selectBusinessAreaByVersion(@Param("version")String version);
+    List<String> selectBusinessAreaByVersion(@Param("version") String version);
 
     List<ApiCsr> selectAll();
 
@@ -39,7 +42,7 @@ public interface ApiCsrMapper {
 
     List<GroupByVersion> statisticsByVersion();
 
-    int deleteByVersion(@Param("version")String version);
+    int deleteByVersion(@Param("version") String version);
 
-    List<Integer> selectIdByVersion(@Param("version")String version);
+    List<Integer> selectIdByVersion(@Param("version") String version);
 }

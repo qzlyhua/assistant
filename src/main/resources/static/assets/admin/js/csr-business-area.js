@@ -19,7 +19,9 @@ var CsrBusinessAreaPage = function () {
                         $("#data-table-b").append(html);
                     });
 
-                    $("#loadingDiv").fadeOut(function(){$("#tableDiv").show()});
+                    $("#loadingDiv").fadeOut(function () {
+                        $("#tableDiv").show()
+                    });
                 } else {
                     toastr.clear();
                     data.message && toastr.error(data.message);

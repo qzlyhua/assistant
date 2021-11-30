@@ -20,7 +20,9 @@ var CsrVersionPage = function () {
                         $("#data-table-v").append(html);
                     });
 
-                    $("#loadingDiv").fadeOut(function(){$("#tableDiv").show()});
+                    $("#loadingDiv").fadeOut(function () {
+                        $("#tableDiv").show()
+                    });
                 } else {
                     toastr.clear();
                     data.message && toastr.error(data.message);
@@ -42,7 +44,9 @@ var CsrVersionPage = function () {
                 if (data.code == 200) {
                     toastr.clear();
                     data.message && toastr.success(data.message);
-                    window.setTimeout(function(){window.open("https://docs.wiseheartdoctor.cn/#/" + v)}, 3000);
+                    window.setTimeout(function () {
+                        window.open("https://docs.wiseheartdoctor.cn/#/" + v)
+                    }, 3000);
                 } else {
                     toastr.clear();
                     data.message && toastr.error(data.message);
@@ -60,7 +64,7 @@ var CsrVersionPage = function () {
         init: function () {
             init();
         },
-        releaseDocs : function (v){
+        releaseDocs: function (v) {
             releaseDocs(v);
         }
     }

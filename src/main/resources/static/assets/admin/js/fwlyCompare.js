@@ -55,13 +55,15 @@ var FwlyComparePage = function () {
                         $("#data-table").append(html);
                     });
 
-                    $(".claSync").mouseover(function(){
+                    $(".claSync").mouseover(function () {
                         $(this).removeClass("fa-close").addClass("fa-plus");
-                    }).mouseleave(function(){
+                    }).mouseleave(function () {
                         $(this).removeClass("fa-plus").addClass("fa-close");
                     });
 
-                    $("#loadingDiv").fadeOut(function(){$("#tableDiv").show()});
+                    $("#loadingDiv").fadeOut(function () {
+                        $("#tableDiv").show()
+                    });
                     res.length == 0 && toastr.info("暂无数据");
                 } else {
                     toastr.clear();
@@ -91,16 +93,16 @@ var FwlyComparePage = function () {
 
     var sync = function (from, to, fwmc, id) {
         var $a = $("#" + id);
-        var now = parseInt(new Date().getTime()/1000);
+        var now = parseInt(new Date().getTime() / 1000);
         var last = $a.attr("lastClickTime") ? $a.attr("lastClickTime") : 0;
 
-        if(now - last < 3){
+        if (now - last < 3) {
             toastr.clear();
             $a.removeClass("fa-plus claSync").addClass("fa-circle-o-notch fa-spin");
             $.ajax({
-                url: "/api/route/sync/" + from + "/" + to + "?route=" + encodeURIComponent(fwmc) ,
+                url: "/api/route/sync/" + from + "/" + to + "?route=" + encodeURIComponent(fwmc),
                 type: 'GET',
-                success: function(result) {
+                success: function (result) {
                     if (result.code == 200) {
                         $a.parent().html("<span style='color: rgb(80 210 210)' class=\"icon fa-check\"></span>");
                         toastr.clear();
@@ -111,7 +113,7 @@ var FwlyComparePage = function () {
                         result.message && toastr.error(result.message);
                     }
                 },
-                error:function(result){
+                error: function (result) {
                     console.error(result);
                     $a.removeClass("fa-circle-o-notch fa-spin").addClass("claSync fa-close");
                     toastr.clear();
@@ -122,15 +124,23 @@ var FwlyComparePage = function () {
         } else {
             $a.attr("lastClickTime", now);
             toastr.info("请再次点击确认该操作");
-            return;
+
         }
     };
 
     return {
-        init: function () {init();},
-        changeAndRefresh: function () {changeAndRefresh();},
-        refresh: function () {refresh();},
-        sync: function (from, to, fwmc, id) {sync(from, to, fwmc, id);}
+        init: function () {
+            init();
+        },
+        changeAndRefresh: function () {
+            changeAndRefresh();
+        },
+        refresh: function () {
+            refresh();
+        },
+        sync: function (from, to, fwmc, id) {
+            sync(from, to, fwmc, id);
+        }
     }
 }();
 

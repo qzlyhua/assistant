@@ -65,6 +65,12 @@ public class SpecificationServiceImpl implements SpecificationService {
     }
 
     @Override
+    public List<Chapter> getSpecificationsByIds(Integer[] ids) {
+        List<ApiCsr> apiCsrs = apiCsrMapper.selectByIdIn(Arrays.asList(ids));
+        return getSpecifications(apiCsrs, GROUP_TYPE_VERSION);
+    }
+
+    @Override
     public List<String> getSpecificationsBusinessAreaByUpdateTime(Date time) {
         return apiCsrMapper.selectBusinessAreaByUpdateTimeAfter(time);
     }

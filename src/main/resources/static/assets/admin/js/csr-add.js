@@ -100,7 +100,7 @@ var CsrAddPage = function () {
         toastr.error("修改功能暂未开发！");
     }
 
-    var autoComplate = function (obj, i){
+    var autoComplate = function (obj, i) {
         $(obj).autocompleter({
             highlightMatches: true,
             source: "/api/paramKeysRec",

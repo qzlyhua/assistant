@@ -5,7 +5,6 @@ import cn.qzlyhua.assistant.dto.specification.Chapter;
 import cn.qzlyhua.assistant.dto.specification.DictionaryTable;
 import cn.qzlyhua.assistant.entity.ApiCsr;
 import cn.qzlyhua.assistant.entity.ApiCsrParam;
-import com.deepoove.poi.data.RowRenderData;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -19,6 +18,8 @@ public interface SpecificationService {
     List<Chapter> getSpecificationsByVersion(String version);
 
     List<Chapter> getSpecificationsByBusinessArea(String areaName);
+
+    List<Chapter> getSpecificationsByIds(Integer[] ids);
 
     List<String> getSpecificationsBusinessAreaByUpdateTime(Date time);
 

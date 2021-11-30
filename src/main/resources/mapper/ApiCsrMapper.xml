@@ -1,271 +1,290 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.qzlyhua.assistant.mapper.ApiCsrMapper">
-  <resultMap id="BaseResultMap" type="cn.qzlyhua.assistant.entity.ApiCsr">
-    <!--@mbg.generated-->
-    <!--@Table AS_API_CSR-->
-    <id column="id" jdbcType="INTEGER" property="id" />
-    <result column="path" jdbcType="VARCHAR" property="path" />
-    <result column="name" jdbcType="VARCHAR" property="name" />
-    <result column="description" jdbcType="VARCHAR" property="description" />
-    <result column="remarks" jdbcType="VARCHAR" property="remarks" />
-    <result column="req_params_example" jdbcType="LONGVARCHAR" property="reqParamsExample" />
-    <result column="res_params_example" jdbcType="LONGVARCHAR" property="resParamsExample" />
-    <result column="version" jdbcType="VARCHAR" property="version" />
-    <result column="business_area" jdbcType="VARCHAR" property="businessArea" />
-    <result column="business_sub_area" jdbcType="VARCHAR" property="businessSubArea" />
-    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-  </resultMap>
-  <sql id="Base_Column_List">
-    <!--@mbg.generated-->
-    id, `path`, `name`, description, remarks, req_params_example, res_params_example, 
-    version, business_area, business_sub_area, update_time, create_time
-  </sql>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-    <!--@mbg.generated-->
-    select 
-    <include refid="Base_Column_List" />
-    from AS_API_CSR
-    where id = #{id,jdbcType=INTEGER}
-  </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-    <!--@mbg.generated-->
-    delete from AS_API_CSR
-    where id = #{id,jdbcType=INTEGER}
-  </delete>
-  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="cn.qzlyhua.assistant.entity.ApiCsr" useGeneratedKeys="true">
-    <!--@mbg.generated-->
-    insert into AS_API_CSR (`path`, `name`, description, 
-      remarks, req_params_example, res_params_example, 
-      version, business_area, business_sub_area, 
-      update_time, create_time)
-    values (#{path,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, 
-      #{remarks,jdbcType=VARCHAR}, #{reqParamsExample,jdbcType=LONGVARCHAR}, #{resParamsExample,jdbcType=LONGVARCHAR}, 
-      #{version,jdbcType=VARCHAR}, #{businessArea,jdbcType=VARCHAR}, #{businessSubArea,jdbcType=VARCHAR}, 
-      #{updateTime,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP})
-  </insert>
-  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="cn.qzlyhua.assistant.entity.ApiCsr" useGeneratedKeys="true">
-    <!--@mbg.generated-->
-    insert into AS_API_CSR
-    <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="path != null">
-        `path`,
-      </if>
-      <if test="name != null">
-        `name`,
-      </if>
-      <if test="description != null">
-        description,
-      </if>
-      <if test="remarks != null">
-        remarks,
-      </if>
-      <if test="reqParamsExample != null">
-        req_params_example,
-      </if>
-      <if test="resParamsExample != null">
-        res_params_example,
-      </if>
-      <if test="version != null">
-        version,
-      </if>
-      <if test="businessArea != null">
-        business_area,
-      </if>
-      <if test="businessSubArea != null">
-        business_sub_area,
-      </if>
-      <if test="updateTime != null">
-        update_time,
-      </if>
-      <if test="createTime != null">
-        create_time,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="path != null">
-        #{path,jdbcType=VARCHAR},
-      </if>
-      <if test="name != null">
-        #{name,jdbcType=VARCHAR},
-      </if>
-      <if test="description != null">
-        #{description,jdbcType=VARCHAR},
-      </if>
-      <if test="remarks != null">
-        #{remarks,jdbcType=VARCHAR},
-      </if>
-      <if test="reqParamsExample != null">
-        #{reqParamsExample,jdbcType=LONGVARCHAR},
-      </if>
-      <if test="resParamsExample != null">
-        #{resParamsExample,jdbcType=LONGVARCHAR},
-      </if>
-      <if test="version != null">
-        #{version,jdbcType=VARCHAR},
-      </if>
-      <if test="businessArea != null">
-        #{businessArea,jdbcType=VARCHAR},
-      </if>
-      <if test="businessSubArea != null">
-        #{businessSubArea,jdbcType=VARCHAR},
-      </if>
-      <if test="updateTime != null">
-        #{updateTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="createTime != null">
-        #{createTime,jdbcType=TIMESTAMP},
-      </if>
-    </trim>
-  </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="cn.qzlyhua.assistant.entity.ApiCsr">
-    <!--@mbg.generated-->
-    update AS_API_CSR
-    <set>
-      <if test="path != null">
-        `path` = #{path,jdbcType=VARCHAR},
-      </if>
-      <if test="name != null">
-        `name` = #{name,jdbcType=VARCHAR},
-      </if>
-      <if test="description != null">
-        description = #{description,jdbcType=VARCHAR},
-      </if>
-      <if test="remarks != null">
-        remarks = #{remarks,jdbcType=VARCHAR},
-      </if>
-      <if test="reqParamsExample != null">
-        req_params_example = #{reqParamsExample,jdbcType=LONGVARCHAR},
-      </if>
-      <if test="resParamsExample != null">
-        res_params_example = #{resParamsExample,jdbcType=LONGVARCHAR},
-      </if>
-      <if test="version != null">
-        version = #{version,jdbcType=VARCHAR},
-      </if>
-      <if test="businessArea != null">
-        business_area = #{businessArea,jdbcType=VARCHAR},
-      </if>
-      <if test="businessSubArea != null">
-        business_sub_area = #{businessSubArea,jdbcType=VARCHAR},
-      </if>
-      <if test="updateTime != null">
-        update_time = #{updateTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="createTime != null">
-        create_time = #{createTime,jdbcType=TIMESTAMP},
-      </if>
-    </set>
-    where id = #{id,jdbcType=INTEGER}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="cn.qzlyhua.assistant.entity.ApiCsr">
-    <!--@mbg.generated-->
-    update AS_API_CSR
-    set `path` = #{path,jdbcType=VARCHAR},
-      `name` = #{name,jdbcType=VARCHAR},
-      description = #{description,jdbcType=VARCHAR},
-      remarks = #{remarks,jdbcType=VARCHAR},
-      req_params_example = #{reqParamsExample,jdbcType=LONGVARCHAR},
-      res_params_example = #{resParamsExample,jdbcType=LONGVARCHAR},
-      version = #{version,jdbcType=VARCHAR},
-      business_area = #{businessArea,jdbcType=VARCHAR},
-      business_sub_area = #{businessSubArea,jdbcType=VARCHAR},
-      update_time = #{updateTime,jdbcType=TIMESTAMP},
-      create_time = #{createTime,jdbcType=TIMESTAMP}
-    where id = #{id,jdbcType=INTEGER}
-  </update>
-  <insert id="batchInsert" keyColumn="id" keyProperty="id" parameterType="map" useGeneratedKeys="true">
-    <!--@mbg.generated-->
-    insert into AS_API_CSR
-    (`path`, `name`, description, remarks, req_params_example, res_params_example, version, 
-      business_area, business_sub_area, update_time, create_time)
-    values
-    <foreach collection="list" item="item" separator=",">
-      (#{item.path,jdbcType=VARCHAR}, #{item.name,jdbcType=VARCHAR}, #{item.description,jdbcType=VARCHAR}, 
-        #{item.remarks,jdbcType=VARCHAR}, #{item.reqParamsExample,jdbcType=LONGVARCHAR}, 
-        #{item.resParamsExample,jdbcType=LONGVARCHAR}, #{item.version,jdbcType=VARCHAR}, 
-        #{item.businessArea,jdbcType=VARCHAR}, #{item.businessSubArea,jdbcType=VARCHAR}, 
-        #{item.updateTime,jdbcType=TIMESTAMP}, #{item.createTime,jdbcType=TIMESTAMP})
-    </foreach>
-  </insert>
-
-<!--auto generated by MybatisCodeHelper on 2021-10-28-->
-  <select id="selectOneByPath" resultMap="BaseResultMap">
-    select
-    <include refid="Base_Column_List" />
-    from AS_API_CSR
-    where `path`=#{path,jdbcType=VARCHAR}
-    limit 1
-  </select>
-
-<!--auto generated by MybatisCodeHelper on 2021-10-29-->
-  <select id="selectByVersion" resultMap="BaseResultMap">
+    <resultMap id="BaseResultMap" type="cn.qzlyhua.assistant.entity.ApiCsr">
+        <!--@mbg.generated-->
+        <!--@Table AS_API_CSR-->
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="path" jdbcType="VARCHAR" property="path"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="description" jdbcType="VARCHAR" property="description"/>
+        <result column="remarks" jdbcType="VARCHAR" property="remarks"/>
+        <result column="req_params_example" jdbcType="LONGVARCHAR" property="reqParamsExample"/>
+        <result column="res_params_example" jdbcType="LONGVARCHAR" property="resParamsExample"/>
+        <result column="version" jdbcType="VARCHAR" property="version"/>
+        <result column="business_area" jdbcType="VARCHAR" property="businessArea"/>
+        <result column="business_sub_area" jdbcType="VARCHAR" property="businessSubArea"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        id, `path`, `name`, description, remarks, req_params_example, res_params_example,
+        version, business_area, business_sub_area, update_time, create_time
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        <!--@mbg.generated-->
         select
-        <include refid="Base_Column_List" />
+        <include refid="Base_Column_List"/>
+        from AS_API_CSR
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        <!--@mbg.generated-->
+        delete from AS_API_CSR
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+    <insert id="insert" keyColumn="id" keyProperty="id" parameterType="cn.qzlyhua.assistant.entity.ApiCsr"
+            useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into AS_API_CSR (`path`, `name`, description,
+        remarks, req_params_example, res_params_example,
+        version, business_area, business_sub_area,
+        update_time, create_time)
+        values (#{path,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR},
+        #{remarks,jdbcType=VARCHAR}, #{reqParamsExample,jdbcType=LONGVARCHAR}, #{resParamsExample,jdbcType=LONGVARCHAR},
+        #{version,jdbcType=VARCHAR}, #{businessArea,jdbcType=VARCHAR}, #{businessSubArea,jdbcType=VARCHAR},
+        #{updateTime,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP})
+    </insert>
+    <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="cn.qzlyhua.assistant.entity.ApiCsr"
+            useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into AS_API_CSR
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="path != null">
+                `path`,
+            </if>
+            <if test="name != null">
+                `name`,
+            </if>
+            <if test="description != null">
+                description,
+            </if>
+            <if test="remarks != null">
+                remarks,
+            </if>
+            <if test="reqParamsExample != null">
+                req_params_example,
+            </if>
+            <if test="resParamsExample != null">
+                res_params_example,
+            </if>
+            <if test="version != null">
+                version,
+            </if>
+            <if test="businessArea != null">
+                business_area,
+            </if>
+            <if test="businessSubArea != null">
+                business_sub_area,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="path != null">
+                #{path,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="description != null">
+                #{description,jdbcType=VARCHAR},
+            </if>
+            <if test="remarks != null">
+                #{remarks,jdbcType=VARCHAR},
+            </if>
+            <if test="reqParamsExample != null">
+                #{reqParamsExample,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="resParamsExample != null">
+                #{resParamsExample,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="version != null">
+                #{version,jdbcType=VARCHAR},
+            </if>
+            <if test="businessArea != null">
+                #{businessArea,jdbcType=VARCHAR},
+            </if>
+            <if test="businessSubArea != null">
+                #{businessSubArea,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="cn.qzlyhua.assistant.entity.ApiCsr">
+        <!--@mbg.generated-->
+        update AS_API_CSR
+        <set>
+            <if test="path != null">
+                `path` = #{path,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                `name` = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="description != null">
+                description = #{description,jdbcType=VARCHAR},
+            </if>
+            <if test="remarks != null">
+                remarks = #{remarks,jdbcType=VARCHAR},
+            </if>
+            <if test="reqParamsExample != null">
+                req_params_example = #{reqParamsExample,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="resParamsExample != null">
+                res_params_example = #{resParamsExample,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="version != null">
+                version = #{version,jdbcType=VARCHAR},
+            </if>
+            <if test="businessArea != null">
+                business_area = #{businessArea,jdbcType=VARCHAR},
+            </if>
+            <if test="businessSubArea != null">
+                business_sub_area = #{businessSubArea,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="cn.qzlyhua.assistant.entity.ApiCsr">
+        <!--@mbg.generated-->
+        update AS_API_CSR
+        set `path` = #{path,jdbcType=VARCHAR},
+        `name` = #{name,jdbcType=VARCHAR},
+        description = #{description,jdbcType=VARCHAR},
+        remarks = #{remarks,jdbcType=VARCHAR},
+        req_params_example = #{reqParamsExample,jdbcType=LONGVARCHAR},
+        res_params_example = #{resParamsExample,jdbcType=LONGVARCHAR},
+        version = #{version,jdbcType=VARCHAR},
+        business_area = #{businessArea,jdbcType=VARCHAR},
+        business_sub_area = #{businessSubArea,jdbcType=VARCHAR},
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+        create_time = #{createTime,jdbcType=TIMESTAMP}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <insert id="batchInsert" keyColumn="id" keyProperty="id" parameterType="map" useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into AS_API_CSR
+        (`path`, `name`, description, remarks, req_params_example, res_params_example, version,
+        business_area, business_sub_area, update_time, create_time)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.path,jdbcType=VARCHAR}, #{item.name,jdbcType=VARCHAR}, #{item.description,jdbcType=VARCHAR},
+            #{item.remarks,jdbcType=VARCHAR}, #{item.reqParamsExample,jdbcType=LONGVARCHAR},
+            #{item.resParamsExample,jdbcType=LONGVARCHAR}, #{item.version,jdbcType=VARCHAR},
+            #{item.businessArea,jdbcType=VARCHAR}, #{item.businessSubArea,jdbcType=VARCHAR},
+            #{item.updateTime,jdbcType=TIMESTAMP}, #{item.createTime,jdbcType=TIMESTAMP})
+        </foreach>
+    </insert>
+
+    <!--auto generated by MybatisCodeHelper on 2021-10-28-->
+    <select id="selectOneByPath" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from AS_API_CSR
+        where `path`=#{path,jdbcType=VARCHAR}
+        limit 1
+    </select>
+
+    <!--auto generated by MybatisCodeHelper on 2021-10-29-->
+    <select id="selectByVersion" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
         from AS_API_CSR
         where version=#{version,jdbcType=VARCHAR}
         order by id
     </select>
 
-<!--auto generated by MybatisCodeHelper on 2021-10-29-->
-  <select id="selectByBusinessArea" resultMap="BaseResultMap">
-    select
-    <include refid="Base_Column_List" />
-    from AS_API_CSR
-    where business_area=#{businessArea,jdbcType=VARCHAR}
-  </select>
-
-<!--auto generated by MybatisCodeHelper on 2021-10-29-->
-  <select id="selectAll" resultMap="BaseResultMap">
+    <!--auto generated by MybatisCodeHelper on 2021-10-29-->
+    <select id="selectByBusinessArea" resultMap="BaseResultMap">
         select
-        <include refid="Base_Column_List" />
+        <include refid="Base_Column_List"/>
+        from AS_API_CSR
+        where business_area=#{businessArea,jdbcType=VARCHAR}
+    </select>
+
+    <!--auto generated by MybatisCodeHelper on 2021-10-29-->
+    <select id="selectAll" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
         from AS_API_CSR
         order by id desc;
     </select>
 
-  <resultMap id="groupByVersion" type="cn.qzlyhua.assistant.dto.csr.GroupByVersion">
-    <result column="version" jdbcType="VARCHAR" property="version" />
-    <result column="total" jdbcType="INTEGER" property="total" />
-    <result column="lastUpdateTime" jdbcType="TIMESTAMP" property="lastUpdateTime" />
-  </resultMap>
-  <select id="statisticsByVersion" resultMap="groupByVersion">
-    select version, count(1) as total, max(update_time) as lastUpdateTime from AS_API_CSR GROUP BY version order by version desc
-  </select>
+    <resultMap id="groupByVersion" type="cn.qzlyhua.assistant.dto.csr.GroupByVersion">
+        <result column="version" jdbcType="VARCHAR" property="version"/>
+        <result column="total" jdbcType="INTEGER" property="total"/>
+        <result column="lastUpdateTime" jdbcType="TIMESTAMP" property="lastUpdateTime"/>
+    </resultMap>
+    <select id="statisticsByVersion" resultMap="groupByVersion">
+        select version, count(1) as total, max(update_time) as lastUpdateTime
+        from AS_API_CSR
+        GROUP BY version
+        order by version desc
+    </select>
 
-  <resultMap id="groupByBusinessArea" type="cn.qzlyhua.assistant.dto.csr.GroupByBusinessArea">
-    <result column="businessArea" jdbcType="VARCHAR" property="businessArea" />
-    <result column="total" jdbcType="INTEGER" property="total" />
-    <result column="lastUpdateTime" jdbcType="TIMESTAMP" property="lastUpdateTime" />
-  </resultMap>
-  <select id="statisticsByBusinessArea" resultMap="groupByBusinessArea">
-    select business_area as businessArea, count(1) as total, max(update_time) as lastUpdateTime from AS_API_CSR GROUP BY business_area
-  </select>
+    <resultMap id="groupByBusinessArea" type="cn.qzlyhua.assistant.dto.csr.GroupByBusinessArea">
+        <result column="businessArea" jdbcType="VARCHAR" property="businessArea"/>
+        <result column="total" jdbcType="INTEGER" property="total"/>
+        <result column="lastUpdateTime" jdbcType="TIMESTAMP" property="lastUpdateTime"/>
+    </resultMap>
+    <select id="statisticsByBusinessArea" resultMap="groupByBusinessArea">
+        select business_area as businessArea, count(1) as total, max(update_time) as lastUpdateTime
+        from AS_API_CSR
+        GROUP BY business_area
+    </select>
 
-<!--auto generated by MybatisCodeHelper on 2021-11-17-->
-  <select id="selectBusinessAreaByUpdateTimeAfter" resultType="java.lang.String">
-    select distinct  business_area
-    from AS_API_CSR
-    where update_time <![CDATA[>]]> #{minUpdateTime,jdbcType=TIMESTAMP}
-  </select>
+    <!--auto generated by MybatisCodeHelper on 2021-11-17-->
+    <select id="selectBusinessAreaByUpdateTimeAfter" resultType="java.lang.String">
+        select distinct business_area
+        from AS_API_CSR
+        where update_time <![CDATA[>]]> #{minUpdateTime,jdbcType=TIMESTAMP}
+    </select>
 
-<!--auto generated by MybatisCodeHelper on 2021-11-17-->
-  <select id="selectBusinessAreaByVersion" resultType="java.lang.String">
-    select distinct business_area
-    from AS_API_CSR
-    where version=#{version,jdbcType=VARCHAR}
-  </select>
+    <!--auto generated by MybatisCodeHelper on 2021-11-17-->
+    <select id="selectBusinessAreaByVersion" resultType="java.lang.String">
+        select distinct business_area
+        from AS_API_CSR
+        where version=#{version,jdbcType=VARCHAR}
+    </select>
 
-<!--auto generated by MybatisCodeHelper on 2021-11-18-->
-  <delete id="deleteByVersion">
-    delete from AS_API_CSR
-    where version=#{version,jdbcType=VARCHAR}
-  </delete>
+    <!--auto generated by MybatisCodeHelper on 2021-11-18-->
+    <delete id="deleteByVersion">
+        delete from AS_API_CSR
+        where version=#{version,jdbcType=VARCHAR}
+    </delete>
 
-<!--auto generated by MybatisCodeHelper on 2021-11-18-->
-  <select id="selectIdByVersion" resultType="java.lang.Integer">
-    select id
-    from AS_API_CSR
-    where version=#{version,jdbcType=VARCHAR}
-  </select>
+    <!--auto generated by MybatisCodeHelper on 2021-11-18-->
+    <select id="selectIdByVersion" resultType="java.lang.Integer">
+        select id
+        from AS_API_CSR
+        where version=#{version,jdbcType=VARCHAR}
+    </select>
+
+<!--auto generated by MybatisCodeHelper on 2021-11-30-->
+    <select id="selectByIdIn" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from AS_API_CSR
+        where id in
+        <foreach item="item" index="index" collection="idCollection"
+                 open="(" separator="," close=")">
+            #{item,jdbcType=INTEGER}
+        </foreach>
+    </select>
 </mapper>

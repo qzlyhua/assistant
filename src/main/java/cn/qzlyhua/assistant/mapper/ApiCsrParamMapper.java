@@ -1,10 +1,10 @@
 package cn.qzlyhua.assistant.mapper;
-import java.util.Collection;
 
 import cn.qzlyhua.assistant.dto.csr.Recommendation;
 import cn.qzlyhua.assistant.entity.ApiCsrParam;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Collection;
 import java.util.List;
 
 public interface ApiCsrParamMapper<selectAllByDescribeLike> {
@@ -26,11 +26,11 @@ public interface ApiCsrParamMapper<selectAllByDescribeLike> {
 
     List<ApiCsrParam> selectByCsrIdAndParameterType(@Param("csrId") Integer csrId, @Param("parameterType") String parameterType);
 
-    List<ApiCsrParam> selectByCsrIdIn(@Param("csrIdCollection")Collection<Integer> csrIdCollection);
+    List<ApiCsrParam> selectByCsrIdIn(@Param("csrIdCollection") Collection<Integer> csrIdCollection);
 
     List<Recommendation> getParamKeysRecommendation(@Param("query") String query, @Param("limit") Integer limit);
 
-    int deleteByCsrIdIn(@Param("csrIdCollection")Collection<Integer> csrIdCollection);
+    int deleteByCsrIdIn(@Param("csrIdCollection") Collection<Integer> csrIdCollection);
 
-    List<ApiCsrParam> selectByVersion(@Param("version")String version);
+    List<ApiCsrParam> selectByVersion(@Param("version") String version);
 }
