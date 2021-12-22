@@ -98,7 +98,7 @@ public class ImportController {
         String originalFilename = file.getOriginalFilename().toUpperCase(Locale.ROOT);
         Assert.isTrue(originalFilename.startsWith("传输规范-"), "文件命名格式：传输规范-PP0XX.docx");
         String version = originalFilename.substring(originalFilename.indexOf("-") + 1, originalFilename.lastIndexOf("."));
-        return version;
+        return version.replaceAll("\\(1\\)", "").replaceAll("（1）", "");
     }
 
     private void sendDingTalkMessage(NoticeForChange noticeForChange) {

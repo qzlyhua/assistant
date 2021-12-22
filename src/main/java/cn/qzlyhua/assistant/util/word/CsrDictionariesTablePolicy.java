@@ -47,7 +47,9 @@ public class CsrDictionariesTablePolicy extends DynamicTableRenderPolicy {
             }
 
             // 合并单元格
-            TableTools.mergeCellsVertically(table, 0, dicStartRow, dicStartRow + t.getSize() - 1);
+            if (t.getSize() > 1) {
+                TableTools.mergeCellsVertically(table, 0, dicStartRow, dicStartRow + t.getSize() - 1);
+            }
 
             // 修改游标位置
             dicStartRow += t.getSize();

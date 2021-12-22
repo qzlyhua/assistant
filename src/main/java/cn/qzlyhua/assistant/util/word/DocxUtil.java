@@ -85,7 +85,7 @@ public class DocxUtil {
                             currentReqParams, currentReqParamsExample, currentResParams, currentResParamsExample);
 
                     currentPath = null;
-
+                    paragraphText = paragraphText.replaceAll("\\(", "（").replaceAll("\\)", "）");
                     if (paragraphText.contains("（") && paragraphText.endsWith("）")) {
                         currentBusinessArea = paragraphText.split("（")[0];
                         currentBusinessSubArea = paragraphText.split("（")[1].replace("）", "");
@@ -103,9 +103,9 @@ public class DocxUtil {
                                 currentPath, currentName, currentDescription, currentRemarks,
                                 currentReqParams, currentReqParamsExample, currentResParams, currentResParamsExample);
 
-                        currentPath = paragraphText.split("（")[0];
+                        currentPath = paragraphText.split("（")[0].replaceAll(" ", "");
                         currentPath = currentPath.startsWith("/") ? currentPath.substring(1) : currentPath;
-                        currentName = paragraphText.split("（")[1].replace("）", "");
+                        currentName = paragraphText.split("（")[1].replace("）", "").replaceAll(" ", "");
 
                         // 清空相关属性
                         currentDescription = null;
@@ -210,12 +210,5 @@ public class DocxUtil {
         } else {
             return def;
         }
-    }
-
-    public static void main(String[] args) throws Exception {
-        String version = "PP003";
-        String docx = "/Users/yanghua/SVN/研发文档库/接口规范/迭代接口/传输规范-" + version + ".docx";
-        CsrBook book = getAnalysisResult(FileUtil.file(docx), version);
-        System.out.println(book);
     }
 }

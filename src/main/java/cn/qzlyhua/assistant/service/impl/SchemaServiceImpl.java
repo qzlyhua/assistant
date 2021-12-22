@@ -76,7 +76,7 @@ public class SchemaServiceImpl implements SchemaService {
         List<DbInfo> Dbs = dbInfoMapper.getAllDbInfos();
 
         // 系统索引：数据库名称-系统名称
-        Map<String, DbInfo> indexMap = new HashMap<>();
+        Map<String, DbInfo> indexMap = new HashMap<>(Dbs.size());
         for (DbInfo d : Dbs) {
             indexMap.put(d.getDbSchema(), d);
         }
@@ -103,7 +103,9 @@ public class SchemaServiceImpl implements SchemaService {
         // 返回最终结果
         List<TableInfoDTO> result = new ArrayList<>(group.values());
         for (TableInfoDTO dto : result) {
-            boolean b = DateUtil.parse(dto.getVersionOfDev()).isAfter(DateUtil.parse(dto.getVersionOfStandard()));
+            boolean b = dto.getVersionOfDev() != null &&
+                    dto.getVersionOfStandard() != null &&
+                    DateUtil.parse(dto.getVersionOfDev()).isAfter(DateUtil.parse(dto.getVersionOfStandard()));
             dto.setHasUpdate(b ? 1 : 0);
             dto.setCompareUrl("db-doc/compare/" + dto.getSchemaNameOfDev() + "/" + dto.getSchemaNameOfStandard());
         }
