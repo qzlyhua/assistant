@@ -50,7 +50,7 @@ public class LogAop {
         startTime.set(System.currentTimeMillis());
         HttpServletRequest request = sra.getRequest();
         log.info("============================================================");
-        log.info("{} : {} [FROM : {}]", request.getMethod(), request.getRequestURL().toString(), request.getRemoteAddr());
+        log.info("[{}][{}] : {} ", request.getUserPrincipal().getName(), request.getMethod(), request.getRequestURL().toString());
         log.info("ARGS :{} ", Arrays.toString(joinPoint.getArgs()));
     }
 

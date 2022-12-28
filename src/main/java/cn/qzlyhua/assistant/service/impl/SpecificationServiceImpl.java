@@ -2,6 +2,7 @@ package cn.qzlyhua.assistant.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DatePattern;
+import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.file.FileAppender;
@@ -344,7 +345,7 @@ public class SpecificationServiceImpl implements SpecificationService {
             ids.add(apiCsr.getId());
         }
 
-        Map<String, List<ApiCsrParam>> paramsMap = new HashMap<>(2 * ids.size());
+        LinkedHashMap<String, LinkedList<ApiCsrParam>> paramsMap = new LinkedHashMap<>(2 * ids.size());
         // 查询所有涉及的出入参
         List<ApiCsrParam> params = apiCsrParamMapper.selectByCsrIdIn(ids);
         for (ApiCsrParam p : params) {
@@ -353,7 +354,7 @@ public class SpecificationServiceImpl implements SpecificationService {
             if (paramsMap.containsKey(key)) {
                 paramsMap.get(key).add(p);
             } else {
-                paramsMap.put(key, new ArrayList() {{
+                paramsMap.put(key, new LinkedList() {{
                     add(p);
                 }});
             }
@@ -376,9 +377,9 @@ public class SpecificationServiceImpl implements SpecificationService {
             for (ApiCsr a : apis) {
                 Set<String> dicTypes = new HashSet<>();
 
-                List<Parameter> reqParameters = new ArrayList<>();
+                LinkedList<Parameter> reqParameters = new LinkedList<>();
                 // List<ApiCsrParam> reqCsrParams = apiCsrParamMapper.selectByCsrIdAndParameterType(a.getId(), "req");
-                List<ApiCsrParam> reqCsrParams = paramsMap.get(a.getId() + "req");
+                LinkedList<ApiCsrParam> reqCsrParams = paramsMap.get(a.getId() + "req");
                 if (CollUtil.isNotEmpty(reqCsrParams)) {
                     for (ApiCsrParam q : reqCsrParams) {
                         getDicTypeName(q.getDescribe(), dicTypes);
@@ -391,9 +392,9 @@ public class SpecificationServiceImpl implements SpecificationService {
                     }
                 }
 
-                List<Parameter> resParameters = new ArrayList<>();
+                LinkedList<Parameter> resParameters = new LinkedList<>();
                 // List<ApiCsrParam> resCsrParams = apiCsrParamMapper.selectByCsrIdAndParameterType(a.getId(), "res");
-                List<ApiCsrParam> resCsrParams = paramsMap.get(a.getId() + "res");
+                LinkedList<ApiCsrParam> resCsrParams = paramsMap.get(a.getId() + "res");
                 if (CollUtil.isNotEmpty(resCsrParams)) {
                     for (ApiCsrParam s : resCsrParams) {
                         getDicTypeName(s.getDescribe(), dicTypes);
@@ -543,7 +544,7 @@ public class SpecificationServiceImpl implements SpecificationService {
         for (Chapter c : chapters) {
             appendFileByChapter(appender, c, GROUP_TYPE_VERSION);
         }
-        appender.append("© 2021 新昌医惠数字科技有限公司. All Rights Reserved.");
+        appender.append("© " + DateTime.of(new Date()).year() + " 新昌医惠数字科技有限公司. All Rights Reserved. 😎");
 
         appender.flush();
         appender.toString();

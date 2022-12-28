@@ -25,8 +25,8 @@ import static com.mongodb.client.model.Filters.eq;
 @Slf4j
 public class FillReqAndResExample {
     private static final String DB_MYSQL_OMS = "my_oms";
-    private static final String DB_MONGO_OMS = "group_pro_mongo";
-    private static final String DB_MONGO_LOG_COLL = "2021_11_esb_log";
+    private static final String DB_MONGO_OMS = "group_dev_mongo";
+    private static final String DB_MONGO_LOG_COLL = "2021_12_esb_log";
     private static final Integer MONGO_SELECT_ROWS = 10;
 
     public static void main(String[] args) throws SQLException {
@@ -68,7 +68,7 @@ public class FillReqAndResExample {
      * @throws SQLException
      */
     private static List<String> getServiceNameWhereReqExampleIsNull() throws SQLException {
-        String sql = "select path from AS_API_CSR where req_params_example is null and version = 'PP001'";
+        String sql = "select path from AS_API_CSR where version = 'PP013'";
         List<Entity> entities = Db.use("my_ass").query(sql);
         return entities.stream().map(e -> e.getStr("path")).collect(Collectors.toList());
     }
@@ -80,7 +80,7 @@ public class FillReqAndResExample {
      * @throws SQLException
      */
     private static List<String> getServiceNameWhereResExampleIsNull() throws SQLException {
-        String sql = "select path from AS_API_CSR where res_params_example is null and version = 'PP001'";
+        String sql = "select path from AS_API_CSR where version = 'PP013'";
         List<Entity> entities = Db.use("my_ass").query(sql);
         return entities.stream().map(e -> e.getStr("path")).collect(Collectors.toList());
     }

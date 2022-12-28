@@ -59,6 +59,43 @@ public class Word2PdfAsposeUtil {
             // 新建一个空白pdf文档
             File file = new File(outPath);
             os = new FileOutputStream(file);
+
+            // Address是将要被转化的word文档
+            Document doc = new Document(inPath);
+            doc.save(os, saveFormat);
+
+            long now = System.currentTimeMillis();
+            // 转化用时
+            System.out.println("pdf转换成功，共耗时：" + ((now - old) / 1000.0) + "秒");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        } finally {
+            if (os != null) {
+                try {
+                    os.flush();
+                    os.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return true;
+    }
+
+    public static boolean html2pdf(String inPath, String outPath, int saveFormat) {
+        // 验证License 若不验证则转化出的pdf文档会有水印产生
+        if (!getLicense()) {
+            return false;
+        }
+
+        FileOutputStream os = null;
+
+        try {
+            long old = System.currentTimeMillis();
+            // 新建一个空白pdf文档
+            File file = new File(outPath);
+            os = new FileOutputStream(file);
             // Address是将要被转化的word文档
             Document doc = new Document(inPath);
             doc.save(os, saveFormat);
@@ -100,7 +137,7 @@ public class Word2PdfAsposeUtil {
     }
 
     public static void main(String[] arg) {
-        String docPath = "/Users/yanghua/Downloads/传输规范-PP013.docx";
-        formatConversion(docPath, SaveFormat.HTML);
+        String docPath = "/Users/yanghua/Downloads/bgd2.html";
+        formatConversion(docPath, SaveFormat.PDF);
     }
 }
