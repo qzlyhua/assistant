@@ -486,10 +486,15 @@ public class SpecificationServiceImpl implements SpecificationService {
             String idx = key + "：";
             if (des.contains(idx) && des.contains(endKey)) {
                 try {
-                    String name = des.substring(des.indexOf(idx) + idx.length(), des.indexOf(endKey));
+                    // 截取不一定正确，优先保证程序不报错；约定从【字典：】到最后一个【）】之间的内容为字典名称
+                    // 举例描述：【性别（详见字典数据：性别）】、【就诊状态（多选）（详见数据字典：就诊状态）】
+                    // 异常场景举例描述：【就诊状态（详见数据字典：就诊状态）（多选）】
+                    String name = des.substring(des.indexOf(idx) + idx.length(), des.lastIndexOf(endKey));
                     set.add(name);
                 } catch (Exception e) {
-                    log.info("从描述：【{}】中提取字典名称失败：{}", des, e.getMessage());
+                    log.error("从描述：【{}】中提取字典名称失败：{}", des, e.getMessage());
+                    // 一般都是截取时越界（String index out of range），为了方便定位错误信息，打印堆栈信息，方便找到错误位置
+                    e.printStackTrace();
                 }
             }
         }
