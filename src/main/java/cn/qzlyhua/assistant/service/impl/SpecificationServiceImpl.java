@@ -108,7 +108,8 @@ public class SpecificationServiceImpl implements SpecificationService {
      * @return
      */
     @Override
-    public NoticeForChange getNoticeForChange(String version, List<ApiCsr> origApiCsrs, List<ApiCsrParam> origApiCsrParams) {
+    public NoticeForChange getNoticeForChange(String version, List<ApiCsr> origApiCsrs,
+                                              List<ApiCsrParam> origApiCsrParams) {
         // 获取当前最新版本
         List<ApiCsr> apiCsrs = getApiCsrsByVersion(version);
         List<ApiCsrParam> apiCsrParams = getApiCsrParamsByVersion(version);
@@ -194,10 +195,18 @@ public class SpecificationServiceImpl implements SpecificationService {
                     List<ApiCsrParam> resParamsList = apiCsrParamsMap.get("res" + a.getPath());
 
                     // 数据整理
-                    Map<String, ApiCsrParam> oriReqParamsMap = oriReqParamsList.stream().collect(Collectors.toMap(ApiCsrParam::getKey, Function.identity(), (key1, key2) -> key2));
-                    Map<String, ApiCsrParam> oriResParamsMap = oriResParamsList.stream().collect(Collectors.toMap(ApiCsrParam::getKey, Function.identity(), (key1, key2) -> key2));
-                    Map<String, ApiCsrParam> reqParamsMap = reqParamsList.stream().collect(Collectors.toMap(ApiCsrParam::getKey, Function.identity(), (key1, key2) -> key2));
-                    Map<String, ApiCsrParam> resParamsMap = resParamsList.stream().collect(Collectors.toMap(ApiCsrParam::getKey, Function.identity(), (key1, key2) -> key2));
+                    Map<String, ApiCsrParam> oriReqParamsMap =
+                            oriReqParamsList.stream().collect(Collectors.toMap(ApiCsrParam::getKey,
+                                    Function.identity(), (key1, key2) -> key2));
+                    Map<String, ApiCsrParam> oriResParamsMap =
+                            oriResParamsList.stream().collect(Collectors.toMap(ApiCsrParam::getKey,
+                                    Function.identity(), (key1, key2) -> key2));
+                    Map<String, ApiCsrParam> reqParamsMap =
+                            reqParamsList.stream().collect(Collectors.toMap(ApiCsrParam::getKey, Function.identity(),
+                                    (key1, key2) -> key2));
+                    Map<String, ApiCsrParam> resParamsMap =
+                            resParamsList.stream().collect(Collectors.toMap(ApiCsrParam::getKey, Function.identity(),
+                                    (key1, key2) -> key2));
 
                     // 入参检查-删除（在新入参集合内，找不到历史入参）
                     for (ApiCsrParam o : oriReqParamsList) {
@@ -226,9 +235,12 @@ public class SpecificationServiceImpl implements SpecificationService {
                                     || !o.getRequired().equals(q.getRequired())) {
                                 anyChange = true;
                                 edit.getReqParamsEdited().add(cn.qzlyhua.assistant.dto.csr.message.Parameter.builder().key(q.getKey())
-                                        .type(o.getType().equals(q.getType()) ? q.getType() : "~~" + o.getType() + "~~ > " + q.getType())
-                                        .des(o.getDescribe().equals(q.getDescribe()) ? q.getDescribe() : "~~" + o.getDescribe() + "~~ > " + q.getDescribe())
-                                        .isRequired(o.getRequired().equals(q.getRequired()) ? q.getRequired() : "~~" + o.getRequired() + "~~ > " + q.getRequired())
+                                        .type(o.getType().equals(q.getType()) ? q.getType() : "~~" + o.getType() +
+                                                "~~ > " + q.getType())
+                                        .des(o.getDescribe().equals(q.getDescribe()) ? q.getDescribe() :
+                                                "~~" + o.getDescribe() + "~~ > " + q.getDescribe())
+                                        .isRequired(o.getRequired().equals(q.getRequired()) ? q.getRequired() :
+                                                "~~" + o.getRequired() + "~~ > " + q.getRequired())
                                         .build());
                             }
 
@@ -262,9 +274,12 @@ public class SpecificationServiceImpl implements SpecificationService {
                                     || !o.getRequired().equals(s.getRequired())) {
                                 anyChange = true;
                                 edit.getResParamsEdited().add(cn.qzlyhua.assistant.dto.csr.message.Parameter.builder().key(s.getKey())
-                                        .type(o.getType().equals(s.getType()) ? s.getType() : "~~" + o.getType() + "~~ > " + s.getType())
-                                        .des(o.getDescribe().equals(s.getDescribe()) ? s.getDescribe() : "~~" + o.getDescribe() + "~~ > " + s.getDescribe())
-                                        .isRequired(o.getRequired().equals(s.getRequired()) ? s.getRequired() : "~~" + o.getRequired() + "~~ > " + s.getRequired())
+                                        .type(o.getType().equals(s.getType()) ? s.getType() : "~~" + o.getType() +
+                                                "~~ > " + s.getType())
+                                        .des(o.getDescribe().equals(s.getDescribe()) ? s.getDescribe() :
+                                                "~~" + o.getDescribe() + "~~ > " + s.getDescribe())
+                                        .isRequired(o.getRequired().equals(s.getRequired()) ? s.getRequired() :
+                                                "~~" + o.getRequired() + "~~ > " + s.getRequired())
                                         .build());
                             }
                         }
@@ -470,7 +485,12 @@ public class SpecificationServiceImpl implements SpecificationService {
                     .replaceAll("字典数据", "数据字典");
             String idx = key + "：";
             if (des.contains(idx) && des.contains(endKey)) {
-                set.add(des.substring(des.indexOf(idx) + idx.length(), des.indexOf(endKey)));
+                try {
+                    String name = des.substring(des.indexOf(idx) + idx.length(), des.indexOf(endKey));
+                    set.add(name);
+                } catch (Exception e) {
+                    log.info("从描述：【{}】中提取字典名称失败：{}", des, e.getMessage());
+                }
             }
         }
     }
@@ -606,7 +626,8 @@ public class SpecificationServiceImpl implements SpecificationService {
     /**
      * word文件导入-入库处理
      */
-    public int importSpecificationsFromWordToDb(List<TransmissionSpecification> transmissionSpecifications, List<cn.qzlyhua.assistant.util.word.Dictionary> dictionaries) {
+    public int importSpecificationsFromWordToDb(List<TransmissionSpecification> transmissionSpecifications,
+                                                List<cn.qzlyhua.assistant.util.word.Dictionary> dictionaries) {
 
         for (TransmissionSpecification e : transmissionSpecifications) {
             // 需要预先删除重复数据（同方法名的）
@@ -750,7 +771,8 @@ public class SpecificationServiceImpl implements SpecificationService {
                             d.getDictionaryList().get(0).getName() + "</td></tr>");
                     for (int i = 1; i <= d.getDictionaryList().size() - 1; i++) {
                         cn.qzlyhua.assistant.dto.specification.Dictionary dictionary = d.getDictionaryList().get(i);
-                        appender.append("<tr><td>" + dictionary.getCode() + "</td><td>" + dictionary.getName() + "</td></tr>");
+                        appender.append("<tr><td>" + dictionary.getCode() + "</td><td>" + dictionary.getName() +
+                                "</td></tr>");
                     }
                 }
                 appender.append("</table>");
