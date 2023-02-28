@@ -115,7 +115,7 @@
         <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
-            <version>5.7.16</version>
+            <version>5.8.12</version>
         </dependency>
         <!-- 本地jar包，需要安装到本地 maven 仓库或引入本地jar包 -->
         <!-- mvn install:install-file -Dfile=/Users/yanghua/Downloads/软件/aspose-words-15.8.0-jdk16.jar -DgroupId=com.aspose -DartifactId=aspose-words -Dversion=15.8.0 -Dpackaging=jar -Dclassifier=jdk16 -->
