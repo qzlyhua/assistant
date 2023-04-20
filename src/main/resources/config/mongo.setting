@@ -6,7 +6,7 @@ socketTimeout=0
 socketKeepAlive=false
 
 [group_dev_mongo]
-host = 124.71.195.67:27017
+host = 192.168.190.48:27017
 user = admin
 pass = XCwjj@xcewell123
 database = admin

@@ -119,19 +119,17 @@
         </dependency>
         <!-- 本地jar包，需要安装到本地 maven 仓库或引入本地jar包 -->
         <!-- mvn install:install-file -Dfile=/Users/yanghua/Downloads/软件/aspose-words-15.8.0-jdk16.jar -DgroupId=com.aspose -DartifactId=aspose-words -Dversion=15.8.0 -Dpackaging=jar -Dclassifier=jdk16 -->
+        <!--        <dependency>-->
+        <!--            <groupId>com.aspose</groupId>-->
+        <!--            <artifactId>aspose-words</artifactId>-->
+        <!--            <version>15.8.0</version>-->
+        <!--            <scope>system</scope>-->
+        <!--            <systemPath>/Users/yanghua/Downloads/软件/aspose-words-15.8.0-jdk16.jar</systemPath>-->
+        <!--        </dependency>-->
         <dependency>
             <groupId>com.aspose</groupId>
             <artifactId>aspose-words</artifactId>
             <version>15.8.0</version>
-            <scope>system</scope>
-            <systemPath>/Users/yanghua/Downloads/软件/aspose-words-15.8.0-jdk16.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>com.aspose</groupId>
-            <artifactId>aspose-html</artifactId>
-            <version>22.7</version>
-            <scope>system</scope>
-            <systemPath>/Users/yanghua/Downloads/软件/aspose-html-22.7-jdk1.8.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>
